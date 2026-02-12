@@ -1,0 +1,47 @@
+version: 2
+contracts:
+  - filesystem:
+      directory: specs
+    provides:
+      - specs:
+          - product_search_bff_v6.yaml
+        specType: openapi
+        config:
+          baseUrl: "{APP_URL:http://order-bff:8080}"
+          examples:
+            - ./examples/bff
+          resiliencyTests:
+            enable: "all"
+    consumes:
+      - specs:
+          - api_order_v5.yaml
+        specType: openapi
+        config:
+          baseUrl: http://studio:8090
+          examples:
+            - ./examples/domain_service
+      - specs:
+          - kafka.yaml
+        specType: asyncapi
+        config:
+          inMemoryBroker:
+            host: studio
+            port: 9092
+          servers:
+            - host: studio:9092
+              protocol: kafka
+hooks:
+  post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh
+report:
+  types:
+    APICoverage:
+      OpenAPI:
+        successCriteria:
+          minThresholdPercentage: 70
+          maxMissedEndpointsInSpec: 0
+          enforce: true
+test:
+  filter: "PATH!='/health,/monitor/{id},/swagger'"
+  actuatorUrl: "{APP_URL:http://order-bff:8080}/actuator/mappings"
+  resiliencyTests:
+    enable: all
