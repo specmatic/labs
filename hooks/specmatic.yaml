@@ -1,0 +1,43 @@
+version: 3
+
+systemUnderTest:
+  service:
+    $ref: "#/components/services/pascalCaseService"
+    runOptions:
+      openapi:
+        type: test
+        baseUrl: http://localhost:9090
+
+dependencies:
+  services:
+    - service:
+        $ref: "#/components/services/camelCaseService"
+        runOptions:
+          openapi:
+            type: mock
+            baseUrl: http://localhost:9090
+
+components:
+  sources:
+    localSpecs:
+      filesystem:
+        directory: '.'
+   
+  services:
+    pascalCaseService:
+      description: Service using PascalCase contract
+      definitions:
+        - definition:
+            source:
+              $ref: "#/components/sources/localSpecs"
+            specs:
+              - pascalCase.yaml
+
+    camelCaseService:
+      description: Service using camelCase contract
+      definitions:
+        - definition:
+            source:
+              $ref: "#/components/sources/localSpecs"
+            specs:
+              - camelCase.yaml

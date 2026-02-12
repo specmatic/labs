@@ -1,0 +1,50 @@
+openapi: 3.0.3
+info:
+  title: Simple Test API
+  version: 1.0.0
+
+paths:
+  /test:
+    post:
+      summary: Simple POST test
+      parameters:
+        - name: requestQuery
+          in: query
+          required: true
+          schema:
+            type: string
+
+        - name: requestHeader
+          in: header
+          required: true
+          schema:
+            type: string
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - requestKey
+              properties:
+                requestKey:
+                  type: string
+
+      responses:
+        "200":
+          description: Success response
+          headers:
+            responseHeader:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - responseKey
+                properties:
+                  responseKey:
+                    type: string
