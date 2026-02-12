@@ -1,67 +1,24 @@
-# Case Insensitive API Testing
+# Sample Contract Testing and API Mocking Demo
 
-A minimal lab that validates API compatibility between:
+## Background
+In this sample project, we will use [Specmatic](https://specmatic.io) to contract test the BFF (Backend for Frontend) in isolation. BFF is dependent on Domain API and Kafka. Using this sample project we'll demonstrate both OpenAPI and AsyncAPI support in Specmatic.
 
-- a **PascalCase** service (`pascalCase.yaml`) - expects all the API request and response field names to be in PascalCase
-- a **camelCase** service (`camelCase.yaml`) - expects all the API request and response field names to be in camelCase
+Following are the specifications used in this project:
 
-When `PascalCase` service is tested against `camelCase` service, the request and response field names need to be transformed from PascalCase to camelCase before hitting the `camelCase` service.
+* [BFF's OpenAPI spec](https://github.com/specmatic/specmatic-order-contracts/blob/main/io/specmatic/examples/store/openapi/product_search_bff_v4.yaml) is used for running contract tests against the BFF.
+* [Domain API's OpenAPI spec](https://github.com/specmatic/specmatic-order-contracts/blob/main/io/specmatic/examples/store/openapi/api_order_v3.yaml) is used for stubbing the Domain API.
+* [AsyncAPI spec](https://github.com/specmatic/specmatic-order-contracts/blob/main/io/specmatic/examples/store/asyncapi/kafka.yaml) of Kafka that defines the topics and message schema and is used for mocking interactions with Kafka.
 
-The objective of this lab is to understand how you can uses Specmatic hook adapters to translate request/response field names between the two cases.
+![HTML client talks to BFF API which in-turn talks to backend API](assets/specmatic-order-bff-architecture.gif)
 
-## Run the test
+## Run Contract Tests
 
-### 1. Via Studio:
-
-#### Step 1: Start the studio
-```bash
-docker run --rm \
-  --name studio \
-  -v "$PWD":/usr/src/app \
-  -v "$HOME/.specmatic":/root/.specmatic \
-  -p 9000:9000 \
-  -p 9001:9001 \
-  specmatic/enterprise:latest \
-  studio
+```shell
+docker compose -f docker-compose-test.yaml up
 ```
 
-#### Step 2: Open the studio in your browser
+In the logs, you should see the following lines indicating that the contract tests run successfully:
 
-Open the studio in your browser at `http://localhost:9000/_specmatic/studio`
+**Tests run: 227, Successes: 223, Failures: 0, Errors: 4**
 
-#### Step 3: Open `camelCase.yaml` in the studio
-
-Click on the `camelCase.yaml` link in the studio to open the contract in the studio.
-
-#### Step 4: Start the mock
-
-Click the `Mock` tab  and then click on the `Run` button to start the mock.
-
-#### Step 5: Open `pascalCase.yaml` in the studio
-
-Click on the `pascalCase.yaml` link in the studio to open the contract in the studio.
-
-#### Step 6: Start the test
-
-Click the `Test` tab  and then click on the `Run` button to start the test.
-
-You should see 1 test fail because of the mismatch in the case of the field names.
-
-### 2. Via Docker Compose:
-
-```bash
-docker compose up
-```
-You should see 1 test fail because of the mismatch in the case of the field names.
-
-## Goal of this lab
-
-Your goal is to make the test pass by using Specmatic hook adapters to translate request/response field names between the two cases.
-
-### Verify you've met the goal
-
-Run the test again to verify that 1 test is passing.
-
-### Notes
-
-- Reports are written to `build/reports/specmatic/`
+Also look at the report in `build/reports/specmatic/html/index.html` to see the details of the tests that were run.

@@ -17,7 +17,7 @@ contracts:
           - api_order_v5.yaml
         specType: openapi
         config:
-          baseUrl: http://studio:8090
+          baseUrl: http://mock:8090
           examples:
             - ./examples/domain_service
       - specs:
@@ -25,10 +25,10 @@ contracts:
         specType: asyncapi
         config:
           inMemoryBroker:
-            host: studio
+            host: mock
             port: 9092
           servers:
-            - host: studio:9092
+            - host: mock:9092
               protocol: kafka
 hooks:
   post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh

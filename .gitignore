@@ -27,3 +27,4 @@ replay_pid*
 *.iws
 build/
 .specmatic/
+/order-bff/kafka-logs/
