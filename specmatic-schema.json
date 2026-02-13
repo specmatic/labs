@@ -1825,9 +1825,6 @@
         "workflow": {
           "$ref": "#/definitions/WorkflowConfigurationV3"
         },
-        "swaggerUiBaseUrl": {
-          "$ref": "#/definitions/SubstitutableString"
-        },
         "swaggerUrl": {
           "$ref": "#/definitions/SubstitutableString"
         },
