@@ -1,47 +1,71 @@
-version: 2
-contracts:
-  - filesystem:
-      directory: specs
-    provides:
-      - specs:
-          - product_search_bff_v6.yaml
-        specType: openapi
-        config:
-          baseUrl: "{APP_URL:http://order-bff:8080}"
-          examples:
+version: 3
+
+components:
+  sources:
+    localSpecs:
+      filesystem:
+        directory: specs
+
+systemUnderTest:
+  service:
+    definitions:
+      - definition:
+          source:
+            $ref: "#/components/sources/localSpecs"
+          specs:
+            - product_search_bff_v6.yaml
+    runOptions:
+      openapi:
+        type: test
+        baseUrl: "{APP_URL:http://order-bff:8080}"
+        filter: "PATH!='/health,/monitor/{id},/swagger'"
+        actuatorUrl: "{APP_URL:http://order-bff:8080}/actuator/mappings"
+    data:
+      examples:
+        - directories:
             - ./examples/bff
-          resiliencyTests:
-            enable: "all"
-    consumes:
-      - specs:
-          - api_order_v5.yaml
-        specType: openapi
-        config:
-          baseUrl: http://mock:8090
+    settings:
+      schemaResiliencyTests: all
+
+dependencies:
+  services:
+    - service:
+        definitions:
+          - definition:
+              source:
+                $ref: "#/components/sources/localSpecs"
+              specs:
+                - api_order_v5.yaml
+        runOptions:
+          openapi:
+            type: mock
+            baseUrl: http://mock:8090
+        data:
           examples:
-            - ./examples/domain_service
-      - specs:
-          - kafka.yaml
-        specType: asyncapi
-        config:
-          inMemoryBroker:
-            host: mock
-            port: 9092
-          servers:
-            - host: mock:9092
-              protocol: kafka
-hooks:
-  post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh
-report:
-  types:
-    APICoverage:
-      OpenAPI:
-        successCriteria:
-          minThresholdPercentage: 70
-          maxMissedEndpointsInSpec: 0
-          enforce: true
-test:
-  filter: "PATH!='/health,/monitor/{id},/swagger'"
-  actuatorUrl: "{APP_URL:http://order-bff:8080}/actuator/mappings"
-  resiliencyTests:
-    enable: all
+            - directories:
+                - ./examples/domain_service
+          adapters:
+            post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh
+    - service:
+        definitions:
+          - definition:
+              source:
+                $ref: "#/components/sources/localSpecs"
+              specs:
+                - kafka.yaml
+        runOptions:
+          asyncapi:
+            type: mock
+            inMemoryBroker:
+              host: mock
+              port: 9092
+            servers:
+              - host: mock:9092
+                protocol: kafka
+
+specmatic:
+  governance:
+    successCriteria:
+      minCoveragePercentage: 70
+      maxMissedOperationsInSpec: 0
+      enforce: true
