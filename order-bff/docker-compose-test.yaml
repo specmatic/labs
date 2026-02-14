@@ -11,6 +11,9 @@ services:
       - .:/usr/src/app
       - ../license.txt:/specmatic/specmatic-license.txt:ro
     environment:
+      ORDER_API_URL: http://mock:8090
+      KAFKA_BOOTSTRAP_SERVER_HOST: "mock"
+      KAFKA_BOOTSTRAP_SERVERS: "mock:9092"
       KAFKA_PROPERTIES: |
         advertised.listeners=PLAINTEXT://mock:9092
         listeners=PLAINTEXT://0.0.0.0:9092

@@ -30,7 +30,7 @@ Each lab is organized in a separate directory with its own README file containin
   - Inline Examples as mock data 
   - External examples as mock data
 - Examples
-  - [Generate, Validate and Fix examples](fix-examples/README.md)
+  - [Generate, Validate and Fix examples](external-examples/README.md)
   - [Partial examples](partial-examples/README.md)
   - [Domain-aware requests using Dictionary](dictionary/README.md)
   - [Before/After and Examples Matcher](before-after-and-examples-matcher/README.md)

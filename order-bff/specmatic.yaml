@@ -4,7 +4,7 @@ components:
   sources:
     localSpecs:
       filesystem:
-        directory: specs
+        directory: .
 
 systemUnderTest:
   service:
@@ -13,7 +13,7 @@ systemUnderTest:
           source:
             $ref: "#/components/sources/localSpecs"
           specs:
-            - product_search_bff_v6.yaml
+            - ./specs/product_search_bff_v6.yaml
     runOptions:
       openapi:
         type: test
@@ -35,33 +35,34 @@ dependencies:
               source:
                 $ref: "#/components/sources/localSpecs"
               specs:
-                - api_order_v5.yaml
+                - ./specs/api_order_v5.yaml
         runOptions:
           openapi:
             type: mock
-            baseUrl: http://mock:8090
+            baseUrl: "${ORDER_API_URL:http://localhost:8090}"
         data:
           examples:
             - directories:
                 - ./examples/domain_service
-          adapters:
-            post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh
     - service:
         definitions:
           - definition:
               source:
                 $ref: "#/components/sources/localSpecs"
               specs:
-                - kafka.yaml
+                - ./specs/kafka.yaml
         runOptions:
           asyncapi:
             type: mock
             inMemoryBroker:
-              host: mock
+              host: "${KAFKA_BOOTSTRAP_SERVER_HOST:localhost}"
               port: 9092
             servers:
-              - host: mock:9092
+              - host: "${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}"
                 protocol: kafka
+  data:
+    adapters:
+      post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh
 
 specmatic:
   governance:
