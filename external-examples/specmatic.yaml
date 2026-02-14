@@ -21,7 +21,7 @@ systemUnderTest:
     data:
       examples:
         - directories:
-            - ./specs/simple-openapi-spec_examples
+            - ./examples
 
 specmatic:
   license:

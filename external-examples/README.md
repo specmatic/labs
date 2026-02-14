@@ -4,7 +4,7 @@ This lab demonstrates how to work with external examples for an OpenAPI spec in 
 
 ## Files in this lab
 - `specs/product_search_bff_v6.yaml` - OpenAPI spec for the BFF API. This is the main contract that we will be working with in this lab.
-- `specs/product_search_bff_v6_examples/*.json` - External examples for the BFF API. These examples have some issues we'll fix them
+- `examples/*.json` - External examples for the BFF API. These examples have some issues we'll fix them
 - `specmatic.yaml` - Specmatic config file that defines the Spec and it's example files.
 
 ## Validate the Examples
