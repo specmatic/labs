@@ -1,0 +1,53 @@
+version: 3
+systemUnderTest:
+  service:
+    $ref: "#/components/services/orderAsyncService"
+    runOptions:
+      $ref: "#/components/runOptions/orderAsyncServiceTest"
+    data:
+      examples:
+        - directories:
+            - "${EX_DIR:examples}"
+
+dependencies:
+  services:
+    - service:
+        $ref: "#/components/services/taxService"
+        runOptions:
+          $ref: "#/components/runOptions/taxServiceMock"
+        data:
+          examples:
+            - directories:
+                - "${EX_DIR:examples}"
+
+components:
+  sources:
+    specmaticOrderContracts:
+      filesystem:
+        directory: .
+  services:
+    orderAsyncService:
+      definitions:
+        - definition:
+            source:
+              $ref: "#/components/sources/specmaticOrderContracts"
+            specs:
+              - specs/async-order-service.yaml
+    taxService:
+      definitions:
+        - definition:
+            source:
+              $ref: "#/components/sources/specmaticOrderContracts"
+            specs:
+              - specs/tax-service.yaml
+  runOptions:
+    orderAsyncServiceTest:
+      asyncapi:
+        type: test
+        servers:
+          - host: "${KAFKA_BROKER_HOST:localhost:9092}"
+            protocol: kafka
+    taxServiceMock:
+      openapi:
+        type: mock
+        baseUrl: "${TAX_SERVICE_URL:http://0.0.0.0:8090}"

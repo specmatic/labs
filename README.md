@@ -34,11 +34,11 @@ Each lab is organized in a separate directory with its own README file containin
   - [Partial examples](partial-examples/README.md)
   - [Domain-aware requests using Dictionary](dictionary/README.md)
   - [Response Templating via Direct substitution and Data lookup](response-templating/README.md)
-  - [Before/After and Examples Matcher](before-after-and-examples-matcher/README.md)
 - Specmatic Features
   - [Filters](filters/README.md)
   - [Running Contract Tests and Mocks in CI](ci/README.md)
 - More types of Testing
+  - [Async Event Flow](async-event-flow/README.md)
   - [Schema Resiliency Testing](schema-resiliency-testing/README.md)
   - [API Resiliency Testing](api-resiliency-testing/README.md)
   - [API Security Schemes](api-security-schemes/README.md)

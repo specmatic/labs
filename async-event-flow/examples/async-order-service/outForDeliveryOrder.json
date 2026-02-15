@@ -1,0 +1,48 @@
+{
+  "id": "order-out-for-delivery",
+  "name": "ORDER_OUT_FOR_DELIVERY",
+  "receive": {
+    "topic": "out-for-delivery-orders",
+    "payload": {
+      "orderId": 456,
+      "deliveryAddress": "1234 Elm Street, Springfield",
+      "deliveryDate": "2025-04-14"
+    }
+  },
+  "after": [
+    {
+      "type": "http",
+      "wait": "PT2S",
+      "http-request": {
+        "baseUrl": "http://localhost:8080",
+        "path": "/orders/456?status=SHIPPED",
+        "method": "GET"
+      },
+      "http-response": {
+        "status": 200,
+        "body": {
+          "id": "$match(exact: 456)",
+          "orderItems": [],
+          "lastUpdatedDate": "$match(dataType: datetime)",
+          "status": "$match(exact: SHIPPED)"
+        }
+      },
+      "timeout": "PT10S"
+    },
+    {
+      "type": "http",
+      "http-request": {
+        "baseUrl": "http://localhost:8090",
+        "path": "/_specmatic/verify?exampleId=tax-invoice-for-order-456",
+        "method": "GET"
+      },
+      "http-response": {
+        "status": 200,
+        "body": {
+          "tax-invoice-for-order-456": "$match(exact: 1)"
+        }
+      },
+      "timeout": "PT20S"
+    }
+  ]
+}

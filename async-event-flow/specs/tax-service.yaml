@@ -1,0 +1,51 @@
+openapi: 3.0.3
+info:
+  title: Tax Service API
+  version: 1.0.0
+
+paths:
+  /tax/invoices:
+    post:
+      operationId: raiseTaxInvoice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TaxInvoiceRequest'
+      responses:
+        '201':
+          description: Tax invoice raised
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxInvoiceResponse'
+
+components:
+  schemas:
+    TaxInvoiceRequest:
+      type: object
+      required:
+        - orderId
+        - invoiceDate
+      properties:
+        orderId:
+          type: integer
+        invoiceDate:
+          type: string
+          format: date
+    TaxInvoiceResponse:
+      type: object
+      required:
+        - invoiceId
+        - status
+        - orderId
+      properties:
+        invoiceId:
+          type: string
+        status:
+          type: string
+          enum:
+            - SHIPPED
+        orderId:
+          type: integer

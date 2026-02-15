@@ -1,0 +1,38 @@
+{
+  "id": "new-order",
+  "name": "NEW_ORDER",
+  "receive": {
+    "topic": "new-orders",
+    "payload": {
+      "id": 10,
+      "orderItems": [
+        {
+          "id": 1,
+          "name": "Macbook",
+          "quantity": 1,
+          "price": 2000
+        },
+        {
+          "id": 2,
+          "name": "Iphone",
+          "quantity": 1,
+          "price": 1000
+        }
+      ]
+    },
+    "headers": {
+      "orderCorrelationId": "12345"
+    }
+  },
+  "send": {
+    "topic": "wip-orders",
+    "payload": {
+      "id": 10,
+      "totalAmount": 3000,
+      "status": "INITIATED"
+    },
+    "headers": {
+      "orderCorrelationId": "12345"
+    }
+  }
+}

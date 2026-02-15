@@ -1,0 +1,87 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    id 'org.springframework.boot' version '3.5.10'
+    id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.jetbrains.kotlin.jvm' version '2.3.10'
+    id 'org.jetbrains.kotlin.plugin.spring' version '2.3.10'
+    id "org.jetbrains.kotlin.plugin.serialization" version "2.3.10"
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+ext['kafka.version'] = '3.9.1'
+
+dependencies {
+    implementation ('org.springframework.boot:spring-boot-starter') {
+        exclude group: 'ch.qos.logback', module: 'logback-classic'
+    }
+    implementation ('org.springframework.kafka:spring-kafka:3.3.12') {
+        exclude group: 'org.lz4', module: 'lz4-java'
+    }
+    implementation('org.springframework.boot:spring-boot-starter-web') {
+        exclude group: 'ch.qos.logback', module: 'logback-classic'
+    }
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation('org.springframework.boot:spring-boot-starter-webflux') {
+        exclude group: 'ch.qos.logback', module: 'logback-classic'
+    }
+    implementation 'org.jetbrains.kotlin:kotlin-reflect'
+    implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:1.10.0"
+
+    testImplementation("org.assertj:assertj-core:3.27.7")
+    testImplementation 'org.junit.jupiter:junit-jupiter:6.0.3'
+    testImplementation("io.specmatic.enterprise:executable:$specmaticEnterpriseVersion")
+    testImplementation("org.springframework.kafka:spring-kafka-test:3.3.12") {
+        exclude group: 'org.lz4', module: 'lz4-java'
+    }
+    testImplementation("org.springframework.boot:spring-boot-starter-test:3.5.10")
+    testImplementation "org.testcontainers:junit-jupiter:1.21.4"
+}
+
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        freeCompilerArgs += '-Xjsr305=strict'
+        jvmTarget = '17'
+    }
+}
+
+test {
+    useJUnitPlatform()
+    environment "PUBSUB_EMULATOR_HOST", "localhost:8085"
+    testLogging.showStandardStreams = true
+    testLogging {
+        showStandardStreams = true
+        events "passed", "skipped", "failed"
+        afterSuite { desc, result ->
+            if (desc.parent == null) {
+                println()
+                println("-------------------------")
+                println("Total tests run: ${result.testCount}")
+                println("Tests passed: ${result.successfulTestCount}")
+                println("Tests failed: ${result.failedTestCount}")
+                println("Tests skipped: ${result.skippedTestCount}")
+                println("-------------------------")
+                println()
+            }
+        }
+    }
+}
+
+tasks.named("jar") {
+    enabled = false
+}
+
+tasks.named("bootJar") {
+    archiveFileName = "app.jar"
+}
+
+compileKotlin {
+}

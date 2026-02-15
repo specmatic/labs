@@ -1,0 +1,65 @@
+
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+    - uses: actions/checkout@v6
+    - name: Set up JDK 17
+      uses: actions/setup-java@v5
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v5
+
+    - name: Save Specmatic license
+      if: github.ref == 'refs/heads/main'
+      run: |
+        mkdir -p ~/.specmatic
+        echo "${{ secrets.SPECMATIC_LICENSE_KEY }}" > ~/.specmatic/specmatic-license.txt
+
+    - name: Build with Gradle Wrapper
+      run: ./gradlew build
+
+    - name: Upload CTRF Report
+      uses: actions/upload-artifact@v6
+      if: always() # Run even if tests fail
+      with:
+        name: ctrf-report
+        path: build/reports/specmatic/async/test/ctrf/*.json
+        retention-days: 5
+    
+    # Display CTRF test results
+    - name: Publish Test Results
+      uses: ctrf-io/github-test-reporter@v1
+      if: always() # Run even if tests fail
+      with:
+        report-path: './build/reports/specmatic/async/test/ctrf/*.json'
+
+    - name: Run Specmatic Insights Build Reporter
+      if: github.ref == 'refs/heads/main'
+      run: |
+        docker run \
+          -v ${{ github.workspace }}:/usr/src/app \
+          -v ~/.specmatic:/root/.specmatic \
+          specmatic/enterprise \
+          send-report \
+          --metadata build_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
+          --branch-name ${{ github.ref_name }} \
+          --repo-name ${{ github.event.repository.name }} \
+          --repo-id ${{ github.repository_id }} \
+          --repo-url ${{ github.event.repository.html_url }}

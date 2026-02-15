@@ -1,0 +1,35 @@
+{
+  "id": "accept-order",
+  "name": "ACCEPT_ORDER",
+  "before": [
+    {
+      "type": "http",
+      "wait": "PT1S",
+      "http-request": {
+        "baseUrl": "http://localhost:8080",
+        "path": "/orders",
+        "method": "PUT",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "id": 123,
+          "status": "ACCEPTED",
+          "timestamp": "2025-04-12T14:30:00Z"
+        }
+      },
+      "http-response": {
+        "status": 200
+      },
+      "timeout": "PT30S"
+    }
+  ],
+  "send": {
+    "topic": "accepted-orders",
+    "payload": {
+      "id": 123,
+      "status": "ACCEPTED",
+      "timestamp": "2025-04-12T14:30:00Z"
+    }
+  }
+}
