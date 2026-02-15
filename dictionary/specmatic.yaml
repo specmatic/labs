@@ -17,7 +17,7 @@ systemUnderTest:
     runOptions:
       openapi:
         type: test
-        baseUrl: "{APP_URL:http://localhost:8080}"
+        baseUrl: "${APP_URL:http://localhost:8080}"
         filter: "PATH!='/health,/monitor/{id},/swagger'"
     data:
       examples:
@@ -36,7 +36,7 @@ dependencies:
         runOptions:
           openapi:
             type: mock
-            baseUrl: "{APP_URL:http://localhost:8080}"
+            baseUrl: "${APP_URL:http://localhost:8080}"
 
 specmatic:
   settings:

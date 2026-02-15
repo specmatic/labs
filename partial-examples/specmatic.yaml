@@ -17,7 +17,7 @@ systemUnderTest:
     runOptions:
       openapi:
         type: test
-        baseUrl: "{APP_URL:http://localhost:8080}"
+        baseUrl: "${APP_URL:http://localhost:8080}"
     data:
       examples:
         - directories:
@@ -35,7 +35,7 @@ dependencies:
         runOptions:
           openapi:
             type: mock
-            baseUrl: "{APP_URL:http://localhost:8080}"
+            baseUrl: "${APP_URL:http://localhost:8080}"
 
 specmatic:
   settings:

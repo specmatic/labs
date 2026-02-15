@@ -17,9 +17,9 @@ systemUnderTest:
     runOptions:
       openapi:
         type: test
-        baseUrl: "{APP_URL:http://order-bff:8080}"
+        baseUrl: "${APP_URL:http://order-bff:8080}"
         filter: "PATH!='/health,/monitor/{id},/swagger'"
-        actuatorUrl: "{APP_URL:http://order-bff:8080}/actuator/mappings"
+        actuatorUrl: "${APP_URL:http://order-bff:8080}/actuator/mappings"
     data:
       examples:
         - directories:
