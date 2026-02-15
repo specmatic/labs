@@ -1,0 +1,47 @@
+version: 3
+
+components:
+  sources:
+    localSpecs:
+      filesystem:
+        directory: specs
+
+systemUnderTest:
+  service:
+    definitions:
+      - definition:
+          source:
+            $ref: "#/components/sources/localSpecs"
+          specs:
+            - simple-openapi-spec.yaml
+    runOptions:
+      openapi:
+        type: test
+        baseUrl: "${APP_URL:http://localhost:8080}"
+        filter: "PATH!='/health,/monitor/{id},/swagger' && TAGS!='WIP' && STATUS!='202,429'"
+    data:
+      examples:
+        - directories:
+            - ./examples/test
+
+dependencies:
+  services:
+    - service:
+        definitions:
+          - definition:
+              source:
+                $ref: "#/components/sources/localSpecs"
+              specs:
+                - simple-openapi-spec.yaml
+        runOptions:
+          openapi:
+            type: mock
+            baseUrl: "${APP_URL:http://localhost:8080}"
+        data:
+          examples:
+            - directories:
+                - ./examples/mock
+
+specmatic:
+  license:
+    path: /specmatic/specmatic-license.txt
