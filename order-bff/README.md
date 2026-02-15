@@ -1,17 +1,35 @@
 # Sample Contract Testing and API Mocking Demo
 
 ## Background
-In this sample project, we will use [Specmatic](https://specmatic.io) to contract test the BFF (Backend for Frontend) in isolation. BFF is dependent on Domain API and Kafka. Using this sample project we'll demonstrate both OpenAPI and AsyncAPI support in Specmatic.
+In this sample project, we will use [Specmatic](https://specmatic.io) to contract test the BFF (Backend for Frontend) in isolation. 
+BFF is dependent on Domain API and Kafka. Using this sample project we'll demonstrate both OpenAPI and AsyncAPI support in Specmatic.
 
 Following are the specifications used in this project:
 
-* [BFF's OpenAPI spec](https://github.com/specmatic/specmatic-order-contracts/blob/main/io/specmatic/examples/store/openapi/product_search_bff_v4.yaml) is used for running contract tests against the BFF.
-* [Domain API's OpenAPI spec](https://github.com/specmatic/specmatic-order-contracts/blob/main/io/specmatic/examples/store/openapi/api_order_v3.yaml) is used for stubbing the Domain API.
-* [AsyncAPI spec](https://github.com/specmatic/specmatic-order-contracts/blob/main/io/specmatic/examples/store/asyncapi/kafka.yaml) of Kafka that defines the topics and message schema and is used for mocking interactions with Kafka.
+* [BFF's OpenAPI spec](specs/product_search_bff_v6.yaml) is used for running contract tests against the BFF.
+* [Domain API's OpenAPI spec](specs/api_order_v5.yaml) is used for stubbing the Domain API.
+* [AsyncAPI spec](specs/kafka.yaml) of Kafka that defines the topics and message schema and is used for mocking interactions with Kafka.
 
-![HTML client talks to BFF API which in-turn talks to backend API](assets/specmatic-order-bff-architecture.gif)
+### Application Architecture
+![HTML client talks to BFF API which in-turn talks to backend API](assets/application-architcture.gif)
+
+### Contract Testing Setup
+![Contract testing setup with Specmatic](assets/specmatic-contract-test-setup.gif)
 
 ## Run Contract Tests
+
+### 1. Using Specmatic Studio (Recommended for Local Development)
+
+```shell
+docker compose up
+```
+This will start the Specmatic Studio and the System Under Test (SUT) [BFF in this case] in Docker containers. 
+Once the containers are up and running, open [Specmatic Studio](http://localhost:9000/_specmatic/studio) in your browser. 
+In Studio, on the left sidebar, open the specmatic.yaml file and click on the "Run Suite" button to start all the dependencies as mocks and then execute the contract tests against the SUT.
+
+When the tests complete, you should see the following in the status header indicating that the contract tests run successfully:
+
+![Test results in Specmatic Studio](assets/studio-bff-test-results.png)
 
 ```shell
 docker compose -f docker-compose-test.yaml up
@@ -21,4 +39,4 @@ In the logs, you should see the following lines indicating that the contract tes
 
 **Tests run: 227, Successes: 223, Failures: 0, Errors: 4**
 
-Also look at the report in `build/reports/specmatic/html/index.html` to see the details of the tests that were run.
+Also look at the [detailed contract report](build/reports/specmatic/test/html/index.html) to see the details of the tests that were run.
