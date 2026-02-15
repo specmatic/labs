@@ -1,0 +1,37 @@
+ProductBase:
+  name:
+  - Harry Potter
+  type:
+  - book
+  inventory:
+  - 100
+PARAMETERS:
+  HEADER:
+    pageSize:
+    - 10
+  QUERY:
+    type:
+    - book
+    from-date:
+    - '2026-02-15'
+    to-date:
+    - '2026-02-15'
+Product:
+  id:
+  - 1
+  name:
+  - Harry Potter
+  type:
+  - book
+  inventory:
+  - 100
+  createdOn:
+  - '2026-02-15'
+OrderBase:
+  productid:
+  - 1
+  count:
+  - 100
+Id:
+  id:
+  - 101
