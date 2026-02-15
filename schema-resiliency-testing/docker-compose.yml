@@ -1,0 +1,32 @@
+services:
+  mock:
+    container_name: mock
+    image: specmatic/enterprise:latest
+    volumes:
+      - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt
+    command: ["mock"]
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "bash -lc 'exec 3<>/dev/tcp/127.0.0.1/8080'"
+        ]
+      interval: 2s
+      timeout: 1s
+      retries: 30
+      start_period: 2s
+
+  test:
+    container_name: test
+    image: specmatic/enterprise:latest
+    volumes:
+      - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt
+    network_mode: "service:mock"
+    depends_on:
+      mock:
+        condition: service_healthy
+    command: ["test"]

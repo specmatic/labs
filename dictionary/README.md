@@ -5,7 +5,7 @@ This lab demonstrates how to use Specmatic's Dictionary feature to generate doma
 ## Files in this lab
 - `specs/simple-openapi-spec.yaml` - OpenAPI spec for the BFF API. This is the main contract that we will be working with in this lab.
 - `examples/*.json` - External examples for the BFF API. These examples have some issues we'll fix them
-- `specmatic.yaml` - Specmatic config file that defines the Spec and it's example files.
+- `specmatic.yaml` - Specmatic config file that defines the Spec, and it's example files.
 
 ## Run loop test using Docker
 ```shell
