@@ -1,0 +1,45 @@
+version: 3
+
+components:
+  sources:
+    localSpecs:
+      filesystem:
+        directory: specs
+
+systemUnderTest:
+  service:
+    definitions:
+      - definition:
+          source:
+            $ref: "#/components/sources/localSpecs"
+          specs:
+            - simple-openapi-spec.yaml
+    runOptions:
+      openapi:
+        type: test
+        baseUrl: "{APP_URL:http://localhost:8080}"
+    data:
+      examples:
+        - directories:
+            - ./examples
+
+dependencies:
+  services:
+    - service:
+        definitions:
+          - definition:
+              source:
+                $ref: "#/components/sources/localSpecs"
+              specs:
+                - simple-openapi-spec.yaml
+        runOptions:
+          openapi:
+            type: mock
+            baseUrl: "{APP_URL:http://localhost:8080}"
+
+specmatic:
+  settings:
+    test:
+      strictMode: true
+  license:
+    path: /specmatic/specmatic-license.txt
