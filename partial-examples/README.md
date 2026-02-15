@@ -10,7 +10,7 @@ This lab demonstrates how to work with partial examples for an OpenAPI spec.
 ## Validate the Examples
 ```shell
 docker run --rm \
-  -v "$PWD":/usr/src/app \
+  -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
   specmatic/enterprise:latest \
   validate
@@ -26,7 +26,7 @@ docker run --rm \
 ```shell
 docker run --rm \
   --name studio \
-  -v "$PWD":/usr/src/app \
+  -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
   -p 9000:9000 \
   -p 9001:9001 \
@@ -41,7 +41,7 @@ Click on each failed example to see the validation errors. We'll use partial exa
 ## Re-validate the Examples after fixing in Studio using Partial Examples
 ```shell
 docker run --rm \
-  -v "$PWD":/usr/src/app \
+  -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
   specmatic/enterprise:latest \
   validate

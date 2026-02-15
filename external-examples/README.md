@@ -10,7 +10,7 @@ This lab demonstrates how to work with external examples for an OpenAPI spec in 
 ## Validate the Examples
 ```shell
 docker run --rm \
-  -v "$PWD":/usr/src/app \
+  -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
   specmatic/enterprise:latest \
   validate
@@ -26,7 +26,7 @@ docker run --rm \
 ```shell
 docker run --rm \
   --name studio \
-  -v "$PWD":/usr/src/app \
+  -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
   -p 9000:9000 \
   -p 9001:9001 \
@@ -40,7 +40,7 @@ Click on each failed example to see the validation errors and fix them. You can 
 ## Re-validate the Examples after fixing in Studio
 ```shell
 docker run --rm \
-  -v "$PWD":/usr/src/app \
+  -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
   specmatic/enterprise:latest \
   validate
@@ -58,7 +58,7 @@ Using Studio generate examples for both the POST /products 201 and POST /orders 
 ## Re-validate the Examples after Generating Missing Examples in Studio
 ```shell
 docker run --rm \
-  -v "$PWD":/usr/src/app \
+  -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
   specmatic/enterprise:latest \
   validate

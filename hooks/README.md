@@ -17,7 +17,7 @@ The objective of this lab is to understand how you can uses Specmatic hook adapt
 ```bash
 docker run --rm \
   --name studio \
-  -v "$PWD":/usr/src/app \
+  -v .:/usr/src/app \
   -v "$HOME/.specmatic":/root/.specmatic \
   -p 9000:9000 \
   -p 9001:9001 \

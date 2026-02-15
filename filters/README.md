@@ -10,7 +10,7 @@ This lab demonstrates how to use Filters to skipping running certain tests and w
 ```shell
 docker run --rm \
   --name studio \
-  -v "$PWD":/usr/src/app \
+  -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
   -p 9000:9000 \
   -p 9001:9001 \
