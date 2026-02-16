@@ -13,7 +13,7 @@ git clone https://github.com/specmatic/labs
 ```
 
 ## Lab Structure 
-Each lab is organized in a separate directory with its own README file containing instructions and code examples. 
+This is a mono-repo. Each lab is self-contained and organized in a separate directory with its own README file containing instructions and code examples. 
 
 ## 3-Day Workshop Schedule 
 - Overview
@@ -36,9 +36,9 @@ Each lab is organized in a separate directory with its own README file containin
   - [Response Templating via Direct substitution and Data lookup](response-templating/README.md)
 - Specmatic Features
   - [Filters](filters/README.md)
-  - [Running Contract Tests and Mocks in CI](ci/README.md)
-- More types of Testing
   - [Async Event Flow](async-event-flow/README.md)
+  - [Running Contract Tests and Mocks in CI](async-event-flow/README.md)
+- More types of Testing
   - [Schema Resiliency Testing](schema-resiliency-testing/README.md)
   - [API Resiliency Testing](api-resiliency-testing/README.md)
   - [API Security Schemes](api-security-schemes/README.md)
