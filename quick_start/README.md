@@ -7,11 +7,13 @@
       * [Start the Mock Server](#start-the-mock-server)
       * [Run Contract Tests](#run-contract-tests)
     * [Using Specmatic Enterprise Version](#using-specmatic-enterprise-version)
-      * [Start the Mock Server](#start-the-mock-server-1)
-      * [Creating a simple config file (Specmatic.yaml)](#creating-a-simple-config-file-specmaticyaml)
-      * [Start the Mock Server using Specmatic Config](#start-the-mock-server-using-specmatic-config)
-      * [Update Config for running Contract Test](#update-config-for-running-contract-test)
-      * [Run Contract Tests](#run-contract-tests-1)
+      * [CLI](#cli)
+        * [Start the Mock Server](#start-the-mock-server-1)
+        * [Creating a simple config file (Specmatic.yaml)](#creating-a-simple-config-file-specmaticyaml)
+        * [Start the Mock Server using Specmatic Config](#start-the-mock-server-using-specmatic-config)
+        * [Update Config for running Contract Test](#update-config-for-running-contract-test)
+        * [Run Contract Tests](#run-contract-tests-1)
+      * [Studio](#studio)
 <!-- TOC -->
 
 ## OpenAPI for HTTP REST
@@ -172,10 +174,40 @@ Specmatic Studio is running on http://localhost:9000/_specmatic/studio, press Ct
 
 Open [Specmatic Studio](http://localhost:9000/_specmatic/studio)
 
-Open the [specmatic.yaml](specmatic.yaml) file from the left sidebar, and click on the "Run Suite" button to run the tests against the mock.
+In Studio, open the [service.yaml](specs/service.yaml) file from the left sidebar.
+
+Go to the Mock tab and click on the "Run" button to start the mock server on port 8080
+
+Then go to the Test tab, and click on the "Run" button to run the tests against the mock server.
 
 You should see
 
 ```terminaloutput
 Tests run: 1, Successes: 1, Failures: 0, Errors: 0
 ```
+
+## AsyncAPI for Events
+
+AsyncAPI is only supported in Enterprise version of Specmatic.
+
+### Studio
+
+In Studio, open the [async.yaml](specs/async.yaml) file from the left sidebar.
+
+Go to the Mock tab, enter 9002 port and click on the "Run" button to start the Kafka mock server on port 9002
+
+Then go to the Test tab, and click on the "Run" button to run the tests against the mock server.
+
+You should see
+
+```terminaloutput
+Tests run: 1, Successes: 1, Failures: 0, Errors: 0
+```
+## Update Specmatic Config with AsyncAPI
+
+In the `Active Tabs` on your right hand side, click on the `Export as config` to update the specmatic.yaml with AsyncAPI related changes.
+
+Stop all the mocks and reload Studio.
+
+## Running Everything 
+In Studio, open the [specmatic.yaml](specmatic.yaml) file from the left sidebar, and click on the "Run Suite" button to run OpenAPI and AsyncAPI tests against their respective mock.
