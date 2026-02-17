@@ -22,14 +22,15 @@ docker run --rm \
 [FAIL] Examples: 1 passed and 3 failed out of 4 total
 ```
 
+Let's fix the failed examples in Studio and re-validate them to see the changes reflected in the validation results.
+
 ## Start Studio using Docker
 ```shell
 docker run --rm \
   --name studio \
+  --network host \
   -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  -p 9000:9000 \
-  -p 9001:9001 \
   specmatic/enterprise:latest \
   studio
 ```
@@ -53,7 +54,7 @@ docker run --rm \
 ```
 
 ## Generate Missing Examples for both 201 Response
-Using Studio generate examples for both the POST /products 201 and POST /orders 201 endpoint. 
+Using Studio generate examples for both the `POST /products 201` and `POST /orders 201` endpoint. 
 
 ## Re-validate the Examples after Generating Missing Examples in Studio
 ```shell
