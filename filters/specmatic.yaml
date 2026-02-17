@@ -1,41 +1,38 @@
 version: 3
+systemUnderTest:
+  service:
+    definitions:
+    - definition:
+        source:
+          $ref: "#/components/sources/localSpecs"
+        specs:
+        - simple-openapi-spec.yaml
+    runOptions:
+      openapi:
+        type: test
+        baseUrl: http://localhost:8080
+    settings:
+      schemaResiliencyTests: all
+dependencies:
+  services:
+  - service:
+      definitions:
+      - definition:
+          source:
+            $ref: "#/components/sources/localSpecs"
+          specs:
+          - simple-openapi-spec.yaml
+      runOptions:
+        openapi:
+          type: mock
+          host: 0.0.0.0
+          port: 8080
+specmatic:
+  license:
+    path: /specmatic/specmatic-license.txt
 
 components:
   sources:
     localSpecs:
       filesystem:
         directory: specs
-
-systemUnderTest:
-  service:
-    definitions:
-      - definition:
-          source:
-            $ref: "#/components/sources/localSpecs"
-          specs:
-            - simple-openapi-spec.yaml
-    runOptions:
-      openapi:
-        type: test
-        baseUrl: "${APP_URL:http://localhost:8080}"
-
-dependencies:
-  services:
-    - service:
-        definitions:
-          - definition:
-              source:
-                $ref: "#/components/sources/localSpecs"
-              specs:
-                - simple-openapi-spec.yaml
-        runOptions:
-          openapi:
-            type: mock
-            baseUrl: "${APP_URL:http://localhost:8080}"
-
-specmatic:
-  settings:
-    test:
-      schemaResiliencyTests: all
-  license:
-    path: /specmatic/specmatic-license.txt

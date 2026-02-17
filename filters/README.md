@@ -10,10 +10,9 @@ This lab demonstrates how to use Filters to skipping running certain tests and w
 ```shell
 docker run --rm \
   --name studio \
+  --network host \
   -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  -p 9000:9000 \
-  -p 9001:9001 \
   specmatic/enterprise:latest \
   studio
 ```
@@ -58,6 +57,8 @@ In the Test tab,
 8. You will also see that the coverage now shows 100% as all the tests that were not covered are now skipped.
 
 Now if we want to preserve these filters for future test runs, we need to update the `specmatic.yaml` file to include the filters.
+
+From the `Active Tabs` section in the right sidebar, click on the `Export as Config` to export the current filters as config. This will update the `specmatic.yaml` file to exclude the end points we filtered out.
 
 Look at the [Supported Filters & Operators](https://docs.specmatic.io/contract_driven_development/contract_testing#supported-filters--operators) and update the `specmatic.yaml` file to include the filters that you want to apply for future test runs. 
 
