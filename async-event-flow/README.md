@@ -13,7 +13,7 @@ This project includes a consumer (`OrderService`) which implements following beh
 * on receiving an update (via RESTful API call) from the `WarehouseService`, the `OrderService` updates the order status to `accepted` and publishes a message on `accepted-orders` topic. Thereby it demonstrates the event notification pattern.
 * on receiving a message on the `out-for-delivery-orders` topic from the `Shipping App`, the `OrderService` updates the order status to `shipped` and triggers the `TaxService` to generate a tax invoice. Thereby it demonstrates the fire-and-forget pattern.
 
-![Order Appplication Workflow](/assets/order-application-workflow.gif)
+![Order Appplication Workflow](assets/order-application-workflow.gif)
 
 ## How to Test these event flows?
 
@@ -52,7 +52,7 @@ Use `after` when correctness depends on side effects beyond one output topic (DB
 
 Together, `receive`/`send` plus `before`/`after` lets you express full event behavior as contract-driven scenarios, without writing custom test harness code.
 
-![Event flow Verification](/assets/async-interaction-validation.gif)
+![Event flow Verification](assets/async-interaction-validation.gif)
 
 ## Pre-requisites
 * Gradle
