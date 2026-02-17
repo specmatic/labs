@@ -26,10 +26,9 @@ docker run --rm \
 ```shell
 docker run --rm \
   --name studio \
+  --network host \
   -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  -p 9000:9000 \
-  -p 9001:9001 \
   specmatic/enterprise:latest \
   studio
 ```
@@ -64,7 +63,13 @@ Then go to the Test tab, set url as `http://localhost:8080` and click on the "Ru
 
 You should see 7 tests passing and 0 tests failing.
 
+### Why 7 tests?
+The OpenAPI spec has 3 examples then why are we getting 7 tests?
+
 ### Loop Test using CLI
+
+Stop Studio and run the following command to start the mock server and run the tests against it using CLI.
+
 ```shell
 docker compose up
 ```
@@ -72,4 +77,8 @@ This will start the mock server and run the tests against it. You should see
 
 ```terminaloutput
 Tests run: 7, Successes: 7, Failures: 0, Errors: 0
+```
+
+```shell
+docker compose down
 ```
