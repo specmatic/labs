@@ -75,21 +75,24 @@ Together, `receive`/`send` plus `before`/`after` lets you express full event beh
 You will now see a detailed HTML report in `build/reports/index.html` with the messages that were sent and received as part of the contract tests.
 
 ## Run the contract tests using Specmatic Studio
-
-1. Start the Kafka, Service and Studio.
+1. Build the application using Gradle
+```shell
+./gradlew bootJar
+```
+2. Start the Kafka, Service and Studio.
 ```shell
 docker compose up
 ```
    
-2. Open the [specmatic.yaml](specmatic.yaml) file from the left sidebar, and click on the "Run Suite" button to run the tests against the service.
+3. Open the [specmatic.yaml](specmatic.yaml) file from the left sidebar, and click on the "Run Suite" button to run the tests against the service.
 
 You should see 
 
 ```terminaloutput
-Tests run: 4, Successes: 4, Failures: 0, Errors: 0
+Tests run: 6, Successes: 6, Failures: 0, Errors: 0
 ```
 
-3. Bring down the Kafka broker after the tests are done.
+4. Bring down the Kafka broker after the tests are done.
 ```shell
 docker compose down
 ```
