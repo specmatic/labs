@@ -13,7 +13,7 @@
   "http-response": {
     "status": 201,
     "body": {
-      "id": "$match(exact:101)"
+      "id": "$match(exact:1)"
     },
     "status-text": "Created",
     "headers": {
