@@ -14,6 +14,10 @@
         * [Update Config for running Contract Test](#update-config-for-running-contract-test)
         * [Run Contract Tests](#run-contract-tests-1)
       * [Studio](#studio)
+  * [AsyncAPI for Events](#asyncapi-for-events)
+    * [Studio](#studio-1)
+  * [Update Specmatic Config with AsyncAPI](#update-specmatic-config-with-asyncapi)
+  * [Running Everything](#running-everything)
 <!-- TOC -->
 
 ## OpenAPI for HTTP REST
@@ -32,6 +36,14 @@ docker run --rm --network host -v .:/usr/src/app specmatic/specmatic mock ./spec
 docker run --rm --network host -v .:/usr/src/app specmatic/specmatic test ./specs/service.yaml --testBaseURL=http://localhost:9000
 ```
 
+You should see:
+
+```terminaloutput
+Tests run: 1, Successes: 1, Failures: 0, Errors: 0
+```
+
+Stop the Mock Server before moving to the next section.
+
 ### Using Specmatic Enterprise Version
 
 #### CLI
@@ -42,16 +54,23 @@ docker run --rm --network host -v .:/usr/src/app specmatic/specmatic test ./spec
 docker run --rm --network host -v .:/usr/src/app specmatic/enterprise mock ./specs/service.yaml
 ```
 
-You would see the following error:
-```terminaloutput
-Specmatic Enterprise v1.x.x
-Specmatic Core v2.x.x
+#### Run Contract Tests
 
-Loading config file ./specmatic.yaml
-ContractException(errorMessage=Could not find the Specmatic configuration at path /usr/src/app/specmatic.yaml, breadCrumb=, exceptionCause=null, scenario=null, isCycle=false, ruleViolationReport=null)
+```shell
+docker run --rm --network host -v .:/usr/src/app specmatic/enterprise test ./specs/service.yaml --testBaseURL=http://localhost:9000
 ```
 
-##### Creating a simple config file (Specmatic.yaml)
+You should see the same output as the open source version:
+
+```terminaloutput
+Tests run: 1, Successes: 1, Failures: 0, Errors: 0
+```
+
+Stop the Mock Server before moving to the next section.
+
+#### Creating a simple config file (Specmatic.yaml)
+To avoid passing the same arguments in the command line every time, we can create a simple config file called `specmatic.yaml` to specify these details and more.
+
 Create a file called `specmatic.yaml` under cli_quick_start folder with the following content:
 ```yaml
 version: 3
@@ -108,14 +127,14 @@ systemUnderTest:
 ##### Run Contract Tests
 
 ```shell
-docker run --rm --network host -v .:/usr/src/app specmatic/specmatic test
+docker run --rm --network host -v .:/usr/src/app specmatic/enterprise test
 ```
 
 You should see:
 
 ```terminaloutput
-Loading configuration from ./specmatic.yaml
-Specmatic Version: v2.x.x
+Specmatic Enterprise v1.x.x
+Specmatic Core v2.x.x
 
 Loading config file ./specmatic.yaml
 API Specification Summary: /usr/src/app/specs/service.yaml
@@ -124,7 +143,7 @@ API Specification Summary: /usr/src/app/specs/service.yaml
 
 Endpoints API and SwaggerUI URL were not exposed by the application, so cannot calculate actual coverage
 
-Using Specmatic Open Source license initialized from jar:file:/usr/local/share/specmatic/specmatic.jar!/default-oss-license.txt
+Using Specmatic Open Source license initialized from jar:file:/usr/local/share/enterprise/enterprise.jar!/specmatic-default-trial-license.txt
 
 --------------------
   Request to http://host.docker.internal:8080 at 2026-2-17 5:25:41.768
@@ -151,13 +170,17 @@ Using Specmatic Open Source license initialized from jar:file:/usr/local/share/s
     }
 
  Scenario: GET /pets/(petid:number) -> 200 with the request from the example 'SCOOBY_200_OK' has SUCCEEDED
+ 
+Tests run: 1, Successes: 1, Failures: 0, Errors: 0 
 ```
 
 Note: You don't need to pass `./specs/service.yaml --testBaseURL=http://localhost:9000` in the CLI argument anymore as it is already present in the config
 
+Stop the Mock Server and delete the [specmatic.yaml](specmatic.yaml) before moving to the next section.
+
 #### Studio
 
-Start Studio (remember to stop the running mock server first to avoid port conflict issue.)
+Start Studio
 
 ```shell
 docker run --rm --network host -v .:/usr/src/app specmatic/enterprise studio
@@ -176,11 +199,24 @@ Open [Specmatic Studio](http://localhost:9000/_specmatic/studio)
 
 In Studio, open the [service.yaml](specs/service.yaml) file from the left sidebar.
 
-Go to the Mock tab and click on the "Run" button to start the mock server on port 8080
+Go to the Mock tab, enter port `8080` and click on the "Run" button to start the mock server on port 8080
 
-Then go to the Test tab, and click on the "Run" button to run the tests against the mock server.
+Then go to the Test tab, make sure the URL in the text box shows `http://localhost:8080` and click on the "Run" button to run the tests against the mock server.
 
 You should see
+
+```terminaloutput
+Tests run: 1, Successes: 1, Failures: 0, Errors: 0
+```
+
+### Export Specmatic Config from Studio
+In the `Active Tabs` on your right hand side, click on the `Export as config` to export the `specmatic.yaml` with OpenAPI related changes.
+
+Now stop the mock server and open the new generated `specmatic.yaml` file.
+
+Now you should be able to run both the mock server and contract testing by simply clicking the "Run Suite" button.
+
+You should see the same output as before when you run the tests:
 
 ```terminaloutput
 Tests run: 1, Successes: 1, Failures: 0, Errors: 0
@@ -194,20 +230,23 @@ AsyncAPI is only supported in Enterprise version of Specmatic.
 
 In Studio, open the [async.yaml](specs/async.yaml) file from the left sidebar.
 
-Go to the Mock tab, enter 9002 port and click on the "Run" button to start the Kafka mock server on port 9002
+Go to the Mock tab, enter 9092 port and click on the "Run" button to start the Kafka mock server on port 9092
 
 Then go to the Test tab, and click on the "Run" button to run the tests against the mock server.
 
 You should see
 
 ```terminaloutput
-Tests run: 1, Successes: 1, Failures: 0, Errors: 0
+Tests run: 2, Successes: 2, Failures: 0, Errors: 0
 ```
+
 ## Update Specmatic Config with AsyncAPI
 
 In the `Active Tabs` on your right hand side, click on the `Export as config` to update the specmatic.yaml with AsyncAPI related changes.
 
-Stop all the mocks and reload Studio.
+Stop all the mocks.
 
-## Running Everything 
-In Studio, open the [specmatic.yaml](specmatic.yaml) file from the left sidebar, and click on the "Run Suite" button to run OpenAPI and AsyncAPI tests against their respective mock.
+## Running Everything one shot
+In Studio, open the updated [specmatic.yaml](specmatic.yaml) file from the left sidebar, and click on the "Run Suite" button to run OpenAPI and AsyncAPI tests against their respective mock.
+
+You can go to each of the Tests from the `Active Tabs` and see the results of both OpenAPI and AsyncAPI tests.

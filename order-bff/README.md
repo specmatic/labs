@@ -32,11 +32,20 @@ When the tests complete, you should see the following in the status header indic
 ![Test results in Specmatic Studio](assets/studio-bff-test-results.png)
 
 ```shell
+docker compose down
+```
+
+### 2. Using Docker (Recommended for CI)
+```shell
 docker compose -f docker-compose-test.yaml up
 ```
 
 In the logs, you should see the following lines indicating that the contract tests run successfully:
 
 **Tests run: 227, Successes: 223, Failures: 0, Errors: 4**
+
+```shell
+docker compose -f docker-compose-test.yaml down
+```
 
 Also look at the [detailed contract report](build/reports/specmatic/test/html/index.html) to see the details of the tests that were run.
