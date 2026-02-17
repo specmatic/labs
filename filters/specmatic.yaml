@@ -30,7 +30,6 @@ dependencies:
 specmatic:
   license:
     path: /specmatic/specmatic-license.txt
-
 components:
   sources:
     localSpecs:
