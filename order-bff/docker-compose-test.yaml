@@ -20,7 +20,7 @@ services:
         listener.security.protocol.map=PLAINTEXT:PLAINTEXT
         inter.broker.listener.name=PLAINTEXT
     healthcheck:
-      test: ["CMD-SHELL", "curl -sS http://mock:8090 >/dev/null"]
+      test: ["CMD-SHELL", "curl -fsS http://mock:8090/actuator/health >/dev/null"]
       interval: 2s
       timeout: 2s
       retries: 10
