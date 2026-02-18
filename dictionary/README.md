@@ -44,7 +44,7 @@ docker run --rm -v .:/usr/src/app specmatic/enterprise examples dictionary --exa
 This command will read the examples from the `examples` directory, extract the values for the fields defined in the OpenAPI spec, and generate a dictionary file `specs/dictionary.yaml` that contains the placeholder values for those fields. We can then use this dictionary file in our mock to ensure that only allowed values are being returned by the mock, which will fix the failed tests.
 
 ### How to pass the Dictionary file to the mock
-In the `specmatic.yaml` file, we can specify the dictionary file to be used by the mock by adding the following lines under the `dependencies` section:
+In the `specmatic.yaml` file, we can specify the dictionary file to be used by the mock by adding the following lines under the `dependencies/services/service` section:
 ```yaml
   data: 
     dictionary: 
