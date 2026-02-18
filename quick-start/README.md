@@ -71,7 +71,7 @@ Stop the Mock Server before moving to the next section.
 #### Creating a simple config file (Specmatic.yaml)
 To avoid passing the same arguments in the command line every time, we can create a simple config file called `specmatic.yaml` to specify these details and more.
 
-Create a file called `specmatic.yaml` under cli_quick_start folder with the following content:
+Create a file called `specmatic.yaml` under quick-start folder with the following content:
 ```yaml
 version: 3
 
