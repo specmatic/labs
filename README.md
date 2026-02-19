@@ -37,6 +37,7 @@ This is a mono-repo. Each lab is self-contained and organized in a separate dire
 - Specmatic Features
   - [Filters](filters/README.md)
   - [Request/Response Adapters](hooks/README.md)
+  - [Overlays](overlays/README.md)
   - [Async Event Flow](async-event-flow/README.md)
   - [Running Contract Tests and Mocks in CI](async-event-flow/README.md)
 - More types of Testing

@@ -1,0 +1,9 @@
+.git
+.github
+.idea
+target
+build
+assets
+README.md
+License.md
+docker-compose*.yaml

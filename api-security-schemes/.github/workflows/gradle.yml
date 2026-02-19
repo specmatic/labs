@@ -1,0 +1,54 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  repository_dispatch:
+    types: contracts changed
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        java: [17]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: gradle
+
+      - name: Save Specmatic license
+        run: |
+          mkdir -p ~/.specmatic
+          echo "${{ secrets.SPECMATIC_LICENSE_KEY }}" > ~/.specmatic/specmatic-license.txt
+
+      - name: Build with Gradle
+        run: ./gradlew --no-daemon clean test bootJar jacocoTestReport
+
+      - name: Run Specmatic Insights Build Reporter
+        run: |
+          docker run \
+            -v ${{ github.workspace }}:/usr/src/app \
+            -v ~/.specmatic:/root/.specmatic \
+            specmatic/specmatic \
+            send-report \
+            --metadata build_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
+            --branch-name ${{ github.ref_name }} \
+            --repo-name ${{ github.event.repository.name }} \
+            --repo-id ${{ github.repository_id }} \
+            --repo-url ${{ github.event.repository.html_url }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: jacoco coverage report
+          path: build/reports/jacoco/test/html

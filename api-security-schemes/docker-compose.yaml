@@ -1,0 +1,18 @@
+version: '3'
+
+volumes:
+  mysql_data:
+    driver: local
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.5
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
+    command: -v start-dev --import-realm
+    environment:
+      KEYCLOAK_IMPORT: "/opt/keycloak/data/import/specmatic-realm.json"
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - 8083:8080

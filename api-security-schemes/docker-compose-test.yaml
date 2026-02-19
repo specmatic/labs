@@ -1,0 +1,74 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:22.0.5
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_IMPORT: /opt/keycloak/data/import/specmatic-realm.json
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro
+    ports:
+      - "8083:8080"
+
+  order-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      keycloak:
+        condition: service_started
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/specmatic
+    ports:
+      - "8080:8080"
+    restart: on-failure
+
+  specmatic-test:
+    image: specmatic/specmatic:latest
+    depends_on:
+      order-api:
+        condition: service_started
+    working_dir: /usr/src/app
+    environment:
+      APP_BASE_URL: http://order-api:8080
+    volumes:
+      - .:/usr/src/app
+    entrypoint: ["/bin/bash"]
+    command:
+      - -ec
+      - |
+        set -euo pipefail
+
+        bash scripts/wait_for_http.sh \
+          "http://keycloak:8080/realms/specmatic/.well-known/openid-configuration" \
+          "Keycloak" \
+          90 \
+          2
+        bash scripts/wait_for_http.sh \
+          "http://order-api:8080/actuator/mappings" \
+          "Order API" \
+          90 \
+          2 \
+          "200,401"
+
+        TOKEN_URL="http://keycloak:8080/realms/specmatic/protocol/openid-connect/token"
+        
+        echo "Fetching OAuth token from Keycloak..."
+        OAUTH_TOKEN="$$(curl -fsS -X POST "$${TOKEN_URL}" \
+          -H "Content-Type: application/x-www-form-urlencoded" \
+          --data-urlencode "grant_type=password" \
+          --data-urlencode "client_id=order-api" \
+          --data-urlencode "username=user1" \
+          --data-urlencode "password=password" \
+          --data-urlencode "scope=profile email" \
+          | jq -r ".access_token")"
+
+        if [ -z "$${OAUTH_TOKEN}" ] || [ "$${OAUTH_TOKEN}" = "null" ]; then
+          echo "Failed to fetch access token from Keycloak"
+          exit 1
+        fi
+
+        export OAUTH_TOKEN
+        specmatic test

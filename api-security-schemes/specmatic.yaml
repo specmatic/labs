@@ -1,0 +1,62 @@
+version: 3
+systemUnderTest:
+  service:
+    $ref: "#/components/services/orderService"
+    runOptions:
+      $ref: "#/components/runOptions/orderServiceTest"
+    settings:
+      schemaResiliencyTests: all
+specmatic:
+  governance:
+    successCriteria:
+      minCoveragePercentage: 70
+      maxMissedOperationsInSpec: 4
+      enforce: true
+components:
+  sources:
+    localContracts:
+      filesystem:
+        directory: .
+  services:
+    orderService:
+      description: Order Service with Multiple Auth Schemes
+      definitions:
+        - definition:
+            source:
+              $ref: "#/components/sources/localContracts"
+            specs:
+              - spec:
+                  id: orderPostOAuthSpec
+                  path: ./spec/api_order_post_oauth.yaml
+              - spec:
+                  id: orderGetBasicAuthSpec
+                  path: ./spec/api_order_get_basic.yaml
+              - spec:
+                  id: orderDeleteApiKeySpec
+                  path: ./spec/api_order_delete_apikey.yaml
+  runOptions:
+    orderServiceTest:
+      openapi:
+        type: test
+        filter: "PATH!='/internal/metrics'"
+        baseUrl: ${APP_BASE_URL:http://localhost:8080}
+        actuatorUrl: http://localhost:8080/actuator/mappings
+        specs:
+          - spec:
+              id: orderPostOAuthSpec
+              securitySchemes:
+                oAuth2AuthCode:
+                  type: oauth2
+                  token: ${OAUTH_TOKEN:OAUTH1234}
+          - spec:
+              id: orderGetBasicAuthSpec
+              securitySchemes:
+                basicAuth:
+                  type: basicAuth
+                  token: ${BASIC_AUTH_TOKEN:dXNlcjpwYXNzd29yZA==}
+          - spec:
+              id: orderDeleteApiKeySpec
+              securitySchemes:
+                apiKeyAuth:
+                  type: apiKey
+                  token: ${API_KEY:APIKEY1234}

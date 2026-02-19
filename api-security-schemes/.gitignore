@@ -1,0 +1,10 @@
+target/*
+build/*
+.DS_Store
+lib/*
+*.iml
+*.idea
+.gradle
+
+.vscode/*
+.specmatic

@@ -1,0 +1,79 @@
+openapi: 3.0.1
+info:
+  title: Order API - DELETE Operations (API Key)
+  version: "2.0"
+servers:
+  - url: "http://localhost:3000"
+paths:
+  "/products/{id}":
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+        examples:
+          DELETE_PRODUCT:
+            value: 20
+    delete:
+      summary: Delete a product
+      operationId: delete-products-id
+      responses:
+        "200":
+          description: Deletion successful
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                DELETE_PRODUCT:
+                  value: "success"
+        "400":
+          $ref: "./common_responses.yaml#/components/responses/BadRequest"
+  "/orders/{id}":
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    delete:
+      summary: Cancel an order
+      operationId: delete-orders-id
+      responses:
+        "200":
+          description: Cancel successful
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                DELETE_ORDER:
+                  value: "success"
+        "400":
+          $ref: "./common_responses.yaml#/components/responses/BadRequest"
+components:
+  schemas:
+    ErrorResponseBody:
+      properties:
+        id:
+          type: number
+        timestamp:
+          type: string
+        status:
+          type: number
+        error:
+          type: string
+        message:
+          type: string
+
+  securitySchemes:
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API Key based authentication
+
+security:
+  - apiKeyAuth: []
+

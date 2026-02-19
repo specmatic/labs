@@ -1,0 +1,151 @@
+openapi: 3.0.1
+info:
+  title: Order API - POST Operations (OAuth2)
+  version: "2.0"
+servers:
+  - url: "http://localhost:3000"
+paths:
+  "/products/{id}":
+    parameters:
+      - schema:
+          type: number
+        name: id
+        in: path
+        required: true
+        examples:
+          UPDATE_DETAILS:
+            value: 10
+    post:
+      summary: Update product details
+      operationId: post-products-id
+      responses:
+        "200":
+          description: Update successful
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                UPDATE_DETAILS:
+                  value: "success"
+        "400":
+          $ref: "./common_responses.yaml#/components/responses/BadRequest"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./common.yaml#/components/schemas/Product"
+            examples:
+              UPDATE_DETAILS:
+                value:
+                  name: "XYZ Fone"
+                  type: "gadget"
+                  inventory: 10
+                  id: 10
+  /products:
+    post:
+      summary: POST /products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "common.yaml#/components/schemas/ProductDetails"
+      responses:
+        "200":
+          description: POST /products
+          content:
+            application/json:
+              schema:
+                $ref: "common.yaml#/components/schemas/ProductId"
+        "400":
+          $ref: "./common_responses.yaml#/components/responses/BadRequest"
+  /orders:
+    post:
+      summary: POST /orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "common.yaml#/components/schemas/OrderDetails"
+            examples:
+              CREATE_ORDER:
+                value:
+                  productid: 10
+                  count: 2
+                  status: pending
+      responses:
+        "200":
+          description: POST /orders
+          content:
+            application/json:
+              schema:
+                $ref: "common.yaml#/components/schemas/OrderId"
+              examples:
+                CREATE_ORDER:
+                  value:
+                    id: 10
+        "400":
+          $ref: "./common_responses.yaml#/components/responses/BadRequest"
+  "/orders/{id}":
+    parameters:
+      - schema:
+          type: integer
+        name: id
+        in: path
+        required: true
+    post:
+      summary: Update order details
+      operationId: post-orders-id
+      responses:
+        "200":
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: string
+              examples:
+                UPDATE_ORDER:
+                  value: "success"
+        "400":
+          $ref: "./common_responses.yaml#/components/responses/BadRequest"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "./common.yaml#/components/schemas/Order"
+            examples:
+              UPDATE_ORDER:
+                value:
+                  productid: 10
+                  id: 10
+                  count: 1
+                  status: pending
+components:
+  schemas:
+    ErrorResponseBody:
+      properties:
+        id:
+          type: number
+        timestamp:
+          type: string
+        status:
+          type: number
+        error:
+          type: string
+        message:
+          type: string
+
+  securitySchemes:
+    oAuth2AuthCode:
+      type: oauth2
+      description: keycloak based oauth security example
+      flows:
+        authorizationCode:
+          authorizationUrl: http://localhost:8083/realms/specmatic/protocol/openid-connect/auth
+          tokenUrl: http://localhost:8083/realms/specmatic/protocol/openid-connect/token
+          scopes:
+            email: email
+
+security:
+  - oAuth2AuthCode: []
+
