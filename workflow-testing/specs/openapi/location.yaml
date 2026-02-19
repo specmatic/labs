@@ -1,0 +1,103 @@
+openapi: 3.0.3
+
+info:
+  title: User Location API
+  version: 1.0.0
+  description: A simple service to retrieve generic location information for a specific user.
+  contact:
+    name: Specmatic
+    email: specmatic@devs.io
+
+servers:
+  - url: http://host.docker.internal:3000
+    description: Local development server
+  - url: http://localhost:3000
+    description: Local development server
+
+tags:
+  - name: Location
+
+paths:
+  /location:
+    get:
+      operationId: getUserLocation
+      description: Retrieves location details for a specific user identified by their UUID.
+      tags:
+      - Location
+      parameters:
+      - name: userEmail
+        in: query
+        description: The unique identifier of the user.
+        required: true
+        schema:
+          type: string
+          format: email
+          example: specmatic@devs.io
+        examples:
+          location_GET_200_1:
+            value: bom@specmatic.io
+          location_GET_200_2:
+            value: hyd@specmatic.io
+      responses:
+        '200':
+          description: Successful retrieval of location data.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LocationResponse'
+              examples:
+                location_GET_200_2:
+                  $ref: '#/components/examples/location_GET_200_2_response'
+                location_GET_200_1:
+                  $ref: '#/components/examples/location_GET_200_1_response'
+        '400':
+          description: Invalid request. usually due to a malformed UUID or missing
+            parameters.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: User not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    LocationResponse:
+      type: object
+      required:
+        - userId
+        - locationCode
+      properties:
+        userId:
+          type: string
+          format: integer
+        locationCode:
+          type: string
+          example: "IND-HYD"
+          description: Use this code to query available products.
+
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          example: INVALID_UUID
+        message:
+          type: string
+          example: The provided userId is not a valid UUID.
+  examples:
+    location_GET_200_2_response:
+      value:
+        userId: naresh-jain
+        locationCode: HYD-IN
+    location_GET_200_1_response:
+      value:
+        userId: john-doe
+        locationCode: BOM-IN

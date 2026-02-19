@@ -1,0 +1,88 @@
+openapi: 3.0.3
+
+info:
+  title: Product Service API
+  version: 1.0.0
+  description: A service to retrieve products available in specific geographic locations.
+  contact:
+    name: Specmatic
+    email: specmatic@devs.io
+
+servers:
+  - url: http://host.docker.internal:3001
+    description: Local development server
+  - url: http://localhost:3001
+    description: Local development server
+
+tags:
+  - name: Products
+
+paths:
+  /products:
+    get:
+      summary: Get products by location
+      description: Retrieves a list of products available in the specified city and country.
+      operationId: getProducts
+      tags:
+        - Products
+      parameters:
+        - name: locationCode
+          in: query
+          description: The location code for the city and country.
+          required: true
+          schema:
+            type: string
+            example: "IND-HYD"
+      responses:
+        "200":
+          description: Successful retrieval of products. Returns an empty array if no products found.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+                description: List of available products. Empty if no products found.
+        "400":
+          description: Invalid request. Usually due to missing or malformed query parameters.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+components:
+  schemas:
+    Product:
+      type: object
+      required:
+        - productId
+        - name
+        - price
+        - inventory
+      properties:
+        productId:
+          type: integer
+          description: Unique identifier for the product
+        name:
+          type: string
+          example: "Wireless Headphones"
+        price:
+          type: number
+          format: double
+          example: 199.99
+        inventory:
+          type: integer
+          example: 10
+
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          example: "INVALID_PARAMETER"
+        message:
+          type: string
+          example: "The city parameter cannot be empty"

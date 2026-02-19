@@ -1,0 +1,16 @@
+[project]
+name = "arazzo-paris-demo"
+version = "0.1.0"
+description = "Sample Microservice architecture to demonstrate Arazzo Specification"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]>=0.122.0",
+    "kafka-python>=2.3.0",
+    "psycopg2-binary>=2.9.11",
+    "pydantic-settings>=2.12.0",
+    "sqlmodel>=0.0.27",
+]
+
+[tool.uv]
+package = false
