@@ -1,0 +1,52 @@
+SPECMATIC_CONSTANTS:
+  name:
+    - Idly Vada
+    - Garlic Nan
+    - Margarita Pizza
+  type:
+    - food
+ProductType:
+  type:
+    - $(type)
+Product:
+    id:
+        - 1
+        - 2
+        - 3
+    name: $(name)
+    type: $(type)
+    inventory:
+        - 5
+        - 10
+ProductBase:
+  name: $(name)
+  type: $(type)
+  inventory:
+    - 5
+    - 10
+OrderBase:
+  productid:
+    - 1
+  count:
+    - 10
+BadRequest:
+  timestamp:
+    - 2025-06-12T12:00:00.000+00:00
+  status:
+    - 400
+  path:
+    - /path
+PARAMETERS:
+  HEADER:
+    pageSize:
+      - 10
+  QUERY:
+    type:
+      - food
+    orderId:
+      - 1
+Id:
+  id:
+    - 1
+    - 2
+    - 3

@@ -1,0 +1,68 @@
+services:
+  studio:
+    image: specmatic/enterprise:latest
+    container_name: studio
+    restart: unless-stopped
+    command:
+      - studio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+      - "9090:9090"
+    volumes:
+      - ../license.txt:/root/specmatic-license.txt
+      - .:/usr/src/app
+    environment:
+      STUDIO_MAX_TEST_COUNT: 1000
+      SPECMATIC_LICENSE_PATH: /root/specmatic-license.txt
+      KAFKA_PROPERTIES: |
+        advertised.listeners=PLAINTEXT://studio:9092
+        listeners=PLAINTEXT://0.0.0.0:9092
+        listener.security.protocol.map=PLAINTEXT:PLAINTEXT
+        inter.broker.listener.name=PLAINTEXT
+
+  order-bff:
+    image: specmatic/specmatic-order-bff-java:latest
+    container_name: order-bff
+    ports:
+      - "8080:8080"
+    environment:
+      ORDER_API_URL: http://order-api:8090
+      KAFKA_BOOTSTRAP_SERVERS: "studio:9092"
+      CORS_ORIGINS: http://localhost:3000
+    depends_on:
+      order-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health >/dev/null"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+      start_period: 1s
+
+  order-api:
+    image: specmatic/specmatic-order-api-java:latest
+    container_name: order-api
+    environment:
+      INVENTORY_API_URL: http://inventory-api:8095/ws
+    depends_on:
+      inventory-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8090/products >/dev/null"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+      start_period: 1s
+
+  inventory-api:
+    image: specmatic/specmatic-inventory-api-wsdl-java:latest
+    container_name: inventory-api
+    ports:
+      - "8095:8095"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8095/health >/dev/null"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+      start_period: 1s

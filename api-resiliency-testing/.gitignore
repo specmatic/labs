@@ -1,0 +1,5 @@
+.idea/
+caches
+specs/build/
+specs/api_order_v4_examples/
+kafka-logs/
