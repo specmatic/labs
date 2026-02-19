@@ -15,7 +15,7 @@
     "status": 200,
     "body": {
       "id": "$match(exact:1)",
-      "name": "$match(exact:Harry Potter)",
+      "name": "$match(exact:Larry Potter)",
       "type": "$match(exact:book)",
       "inventory": "$match(exact:100)",
       "createdOn": "$match(exact:2026-02-15)"

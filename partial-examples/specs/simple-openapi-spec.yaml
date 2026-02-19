@@ -30,7 +30,7 @@ paths:
             schema:
               $ref: '#/components/schemas/ProductBase'
             examples:
-              SUCCESS:
+              SUCCESS_PRODUCT:
                 value:
                   name: iPhone
                   type: gadget
@@ -43,7 +43,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Id'
               examples:
-                SUCCESS:
+                SUCCESS_PRODUCT:
                   value:
                     id: 1
         '202':

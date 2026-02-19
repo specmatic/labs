@@ -30,7 +30,7 @@ paths:
             schema:
               $ref: '#/components/schemas/ProductBase'
             examples:
-              SUCCESS:
+              SUCCESS_PRODUCT:
                 value:
                   name: iPhone
                   type: gadget
@@ -43,7 +43,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Id'
               examples:
-                SUCCESS:
+                SUCCESS_PRODUCT:
                   value:
                     id: 1
         '202':
@@ -66,7 +66,7 @@ paths:
         in: query
         required: false
         examples:
-          SUCCESS:
+          SUCCESS_GET:
             value: gadget
       - name: pageSize
         in: header
@@ -74,7 +74,7 @@ paths:
           type: integer
         required: true
         examples:
-          SUCCESS:
+          SUCCESS_GET:
             value: 10
       - name: from-date
         in: query
@@ -84,7 +84,7 @@ paths:
         required: true
         description: Filter products created from this date
         examples:
-          SUCCESS:
+          SUCCESS_GET:
             value: "2025-01-01"
       - name: to-date
         in: query
@@ -94,7 +94,7 @@ paths:
         required: true
         description: Filter products created by this date
         examples:
-          SUCCESS:
+          SUCCESS_GET:
             value: "2025-11-28"
     get:
       description: Find available products
@@ -111,7 +111,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Product'
               examples:
-                SUCCESS:
+                SUCCESS_GET:
                   value:
                     - name: iPhone
                       id: 1
@@ -143,7 +143,7 @@ paths:
             schema:
               $ref: '#/components/schemas/OrderBase'
             examples:
-              SUCCESS:
+              SUCCESS_ORDER:
                 value:
                   productid: 1
                   count: 2
@@ -155,7 +155,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Id'
               examples:
-                SUCCESS:
+                SUCCESS_ORDER:
                   value:
                     id: 1
         '202':
@@ -184,7 +184,7 @@ paths:
           required: false
           description: ID of the order to retrieve. If not provided, returns all orders.
           examples:
-            SUCCESS:
+            SUCCESS_GET_ORDER:
               value: 100
       responses:
         '200':
@@ -196,7 +196,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Order'
               examples:
-                SUCCESS:
+                SUCCESS_GET_ORDER:
                   value:
                     - id: 1
                       productid: 1

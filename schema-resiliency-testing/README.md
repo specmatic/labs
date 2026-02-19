@@ -76,4 +76,4 @@ Tests run: 596, Successes: 596, Failures: 0, Errors: 0
 | string                              | number, boolean, null           | 4               |
 | 4 enum value                        | non-enum, number, boolean, null | 8               |
 | 1, (1 < random number < 9999), 9999 | 0, 10000, string, boolean, null | 8               |
-| 0.01, random number, null           | 0.00, string, boolean           | 7               |
+| 0.01, random number, null           | 0.00, string, boolean           | 6               |

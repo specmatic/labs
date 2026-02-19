@@ -27,7 +27,7 @@
   "send": {
     "topic": "wip-orders",
     "payload": {
-      "id": 10,
+      "id": "$match(exact:10)",
       "totalAmount": 3000,
       "status": "INITIATED"
     },
