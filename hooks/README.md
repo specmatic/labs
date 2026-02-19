@@ -1,4 +1,4 @@
-# Case Insensitive API Testing
+# Request/Response Adapters Lab
 
 A minimal lab that validates API compatibility between:
 
@@ -7,7 +7,7 @@ A minimal lab that validates API compatibility between:
 
 When `PascalCase` service is tested against `camelCase` service, the request and response field names need to be transformed from PascalCase to camelCase before hitting the `camelCase` service.
 
-The objective of this lab is to understand how you can uses Specmatic hook adapters to translate request/response field names between the two cases.
+The objective of this lab is to understand how you can use Specmatic adapters to translate request/response field names between the two cases.
 
 ## Run the test
 
@@ -17,10 +17,8 @@ The objective of this lab is to understand how you can uses Specmatic hook adapt
 ```bash
 docker run --rm \
   --name studio \
+  --network host \
   -v .:/usr/src/app \
-  -v "$HOME/.specmatic":/root/.specmatic \
-  -p 9000:9000 \
-  -p 9001:9001 \
   specmatic/enterprise:latest \
   studio
 ```
@@ -29,21 +27,9 @@ docker run --rm \
 
 Open the studio in your browser at `http://localhost:9000/_specmatic/studio`
 
-#### Step 3: Open `camelCase.yaml` in the studio
+#### Step 3: Run Test Suite
 
-Click on the `camelCase.yaml` link in the studio to open the contract in the studio.
-
-#### Step 4: Start the mock
-
-Click the `Mock` tab  and then click on the `Run` button to start the mock.
-
-#### Step 5: Open `pascalCase.yaml` in the studio
-
-Click on the `pascalCase.yaml` link in the studio to open the contract in the studio.
-
-#### Step 6: Start the test
-
-Click the `Test` tab  and then click on the `Run` button to start the test.
+Click on the `specmatic.yaml` file in Studio and then click on the `Run Suite` button to run the test suite. 
 
 You should see 1 test fail because of the mismatch in the case of the field names.
 
@@ -56,7 +42,9 @@ You should see 1 test fail because of the mismatch in the case of the field name
 
 ## Goal of this lab
 
-Your goal is to make the test pass by using Specmatic hook adapters to translate request/response field names between the two cases.
+Your goal is to make the test pass by using Specmatic adapters to translate request/response field names between the two cases.
+
+Learn more about request/response adapters here: https://docs.specmatic.io/features/hooks/processor_hooks
 
 ### Verify you've met the goal
 
