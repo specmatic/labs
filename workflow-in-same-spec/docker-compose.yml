@@ -1,0 +1,27 @@
+services:
+  mock:
+    image: specmatic/enterprise
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+    command: ["mock"]
+    environment:
+      TASKS_BASE_URL: http://0.0.0.0:9000
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/actuator/health"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+      start_period: 2s
+
+  test:
+    image: specmatic/enterprise
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+    command: ["test"]
+    environment:
+      TASKS_BASE_URL: http://mock:9000
+    depends_on:
+      mock:
+        condition: service_healthy

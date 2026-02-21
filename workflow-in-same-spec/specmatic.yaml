@@ -1,0 +1,53 @@
+version: 3
+
+systemUnderTest:
+  service:
+    definitions:
+      - definition:
+          source:
+            filesystem:
+              directory: ./specs
+          specs:
+            - spec:
+                path: tasks.yaml
+    data:
+      examples:
+        - directories:
+            - ./examples
+    runOptions:
+      openapi:
+        type: test
+        baseUrl: "${TASKS_BASE_URL:http://127.0.0.1:9000}"
+        workflow:
+          ids:
+            "POST /tasks -> 200":
+              extract: "BODY.tasks.[0].id"
+            "PUT /tasks/(task_id:string) -> 200":
+              use: "PATH.task_id"
+            "DELETE /tasks/(task_id:string) -> 204":
+              use: "PATH.task_id"
+
+dependencies:
+  services:
+    - service:
+        definitions:
+          - definition:
+              source:
+                filesystem:
+                  directory: ./specs
+              specs:
+                - spec:
+                    path: tasks.yaml
+        data:
+          examples:
+            - directories:
+                - ./examples
+        runOptions:
+          openapi:
+            type: mock
+            baseUrl: "${TASKS_BASE_URL:http://127.0.0.1:9000}"
+
+specmatic:
+  settings:
+    general:
+      ignoreInlineExamples: true

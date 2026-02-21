@@ -1,0 +1,22 @@
+{
+  "name": "cancel tasks",
+  "http-request": {
+    "method": "POST",
+    "path": "/tasks/cancel",
+    "headers": {
+      "x-request-id": "66666666-6666-4666-8666-666666666666",
+      "Authorization": "Bearer test-oauth-token",
+      "x-user-id-type": "application",
+      "Content-Type": "application/json"
+    },
+    "body": {
+      "applicationNumber": "APP-1001"
+    }
+  },
+  "http-response": {
+    "status": 200,
+    "body": {
+      "status": "CANCELLED"
+    }
+  }
+}

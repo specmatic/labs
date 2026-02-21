@@ -1,0 +1,34 @@
+{
+  "name": "verify tasks text json",
+  "http-request": {
+    "method": "POST",
+    "path": "/tasks/verify",
+    "headers": {
+      "x-request-id": "75555555-5555-4555-8555-555555555555",
+      "Authorization": "Bearer test-oauth-token",
+      "x-user-id-type": "application",
+      "Content-Type": "text/json"
+    },
+    "body": {
+      "applicationNumber": "APP-1001"
+    }
+  },
+  "http-response": {
+    "status": 200,
+    "body": {
+      "applicationNumber": "APP-1001",
+      "tasks": [
+        {
+          "id": "wf-verify-visible-502",
+          "type": "MANUAL_REVIEW",
+          "category": "VERIFICATION",
+          "subCategory": "IDENTITY",
+          "state": "COMPLETED",
+          "outcome": "APPROVED",
+          "createdDate": "2026-02-20T00:00:00Z"
+        }
+      ],
+      "workflowState": "VERIFIED"
+    }
+  }
+}

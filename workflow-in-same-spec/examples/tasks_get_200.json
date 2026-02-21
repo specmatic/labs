@@ -1,0 +1,32 @@
+{
+  "name": "get task list",
+  "http-request": {
+    "method": "GET",
+    "path": "/tasks",
+    "headers": {
+      "x-request-id": "22222222-2222-4222-8222-222222222222",
+      "Authorization": "Bearer test-oauth-token",
+      "x-user-id-type": "application"
+    },
+    "query": {
+      "applicationNumber": "APP-1001"
+    }
+  },
+  "http-response": {
+    "status": 200,
+    "body": {
+      "applicationNumber": "APP-1001",
+      "tasks": [
+        {
+          "id": "wf-get-visible-401",
+          "type": "MANUAL_REVIEW",
+          "category": "VERIFICATION",
+          "subCategory": "IDENTITY",
+          "state": "OPEN",
+          "createdDate": "2026-02-20T00:00:00Z"
+        }
+      ],
+      "workflowState": "IN_PROGRESS"
+    }
+  }
+}
