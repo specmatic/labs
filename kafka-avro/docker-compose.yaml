@@ -1,0 +1,130 @@
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    networks:
+      - avro-app-network
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - /var/lib/zookeeper
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/2181'"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  broker:
+    image: confluentinc/cp-kafka:latest
+    hostname: broker
+    container_name: broker
+    networks:
+      - avro-app-network
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: CONTROLLER://:9091,EXTERNAL://0.0.0.0:9092,INTERNAL://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: EXTERNAL://localhost:9092,INTERNAL://broker:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,EXTERNAL:SASL_PLAINTEXT,INTERNAL:SASL_PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9091
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3
+      CLUSTER_ID: v1-12345678-1234-1234-1234-123456789abc
+      KAFKA_SASL_ENABLED_MECHANISMS: PLAIN
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+      KAFKA_OPTS: -Djava.security.auth.login.config=/etc/kafka/jaas.conf
+    ports:
+      - "9092:9092"
+    volumes:
+      - ./docker-config/jaas.conf:/etc/kafka/jaas.conf
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/9093'"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  kafka-init:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      broker:
+        condition: service_healthy
+    networks:
+      - avro-app-network
+    volumes:
+      - ./docker-config/create-topics.sh:/create-topics.sh
+    entrypoint: [ "sh", "/create-topics.sh" ]
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server broker:9093 --command-config /tmp/client.properties --topic new-orders --describe > /dev/null 2>&1 && kafka-topics --bootstrap-server broker:9093 --command-config /tmp/client.properties --topic wip-orders --describe > /dev/null 2>&1"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.9.5
+    hostname: schema-registry
+    container_name: schema-registry
+    depends_on:
+      broker:
+        condition: service_healthy
+    networks:
+      - avro-app-network
+    ports:
+      - "8085:8085"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: SASL_PLAINTEXT://broker:9093
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8085
+      SCHEMA_REGISTRY_AUTO_REGISTER_SCHEMAS: true
+      SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: SASL_PLAINTEXT
+      SCHEMA_REGISTRY_KAFKASTORE_SASL_MECHANISM: PLAIN
+      SCHEMA_REGISTRY_KAFKASTORE_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username="test" password="test-secret";
+      SCHEMA_REGISTRY_AUTHENTICATION_METHOD: BASIC
+      SCHEMA_REGISTRY_AUTHENTICATION_ROLES: admin,developer,user
+      SCHEMA_REGISTRY_AUTHENTICATION_REALM: SchemaRegistry-Props
+      SCHEMA_REGISTRY_OPTS: -Djava.security.auth.login.config=/etc/schema-registry/schema-registry-jaas.conf
+    volumes:
+      - ./docker-config/schema-registry-jaas.conf:/etc/schema-registry/schema-registry-jaas.conf
+      - ./docker-config/password.properties:/etc/schema-registry/password.properties
+    healthcheck:
+      test: ["CMD-SHELL", "curl -u admin:admin-secret -s http://localhost:8085/subjects > /dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  register-schemas:
+    image: curlimages/curl:8.18.0
+    depends_on:
+      schema-registry:
+        condition: service_healthy
+    networks:
+      - avro-app-network
+    user: root
+    entrypoint: sh
+    command:
+      - -c
+      - |
+        apk add --no-cache jq && \
+        chmod +x /usr/src/app/schemas/register-schemas.sh && \
+        sh -c /usr/src/app/schemas/register-schemas.sh
+    volumes:
+      - ./src/test/avro:/usr/src/app/schemas
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f -u admin:admin-secret -s http://schema-registry:8085/subjects/new-orders-value/versions/latest > /dev/null && curl -f -u admin:admin-secret -s http://schema-registry:8085/subjects/wip-orders-value/versions/latest > /dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+networks:
+  avro-app-network:
+    name: avro-app-network
+    driver: bridge

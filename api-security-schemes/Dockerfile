@@ -6,10 +6,10 @@ COPY gradle gradle
 RUN chmod +x gradlew
 
 # Resolve dependencies in a dedicated layer for better build cache reuse.
-RUN ./gradlew -q --no-daemon dependencies
+RUN ./gradlew -i --no-daemon dependencies
 
 COPY src src
-RUN ./gradlew -q --no-daemon clean bootJar -x test
+RUN ./gradlew -i --no-daemon clean bootJar -x test
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app

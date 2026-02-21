@@ -1,0 +1,24 @@
+{
+  "name": "PLACE_MACBOOK_ORDER",
+  "receive": {
+    "topic": "new-orders",
+    "payload": {
+      "id": 2,
+      "orderItems": [
+        {
+          "id": 1,
+          "name": "Macbook",
+          "quantity": 50,
+          "price": 6000.00
+        }
+      ]
+    }
+  },
+  "send": {
+    "topic": "wip-orders",
+    "payload": {
+      "id": 2,
+      "status": "PROCESSING"
+    }
+  }
+}
