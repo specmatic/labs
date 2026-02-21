@@ -1,4 +1,4 @@
-name: arazzo-paris-demo
+name: workflow-demo
 services:
   # ---------------------------------------------------------------------------
   # Shared Infrastructure (Kafka + Database)

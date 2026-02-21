@@ -1,0 +1,877 @@
+
+openapi: 3.0.4
+info:
+  title: Customer Offer Consumer Finance Credit Cards Tasks
+  description: 'This service sequences and orchestrates various tasks such as Customer, Fraud, Manual Credit Decision and Verification tasks involved in verification of credit card applications. This helps with streamlining verification and reduces rework. Api is predominantly used by Customer Offer Consumer Finance Credit Cards Applications api when an application requires manual verification.It is also used by CommSee Workbench to display verification tasks and action them.'
+  contact:
+    name: Consumer Finance - Credit Cards
+    url: https://abc.com
+    email: RBSCCCrewFulfilmentModernisation@cba.com.au
+  license:
+    name: Copyright 2026 Commonwealth Bank of Australia. All Rights Reserved.
+    url: https://www.commbank.com.au/
+  version: v1
+servers:
+  - url: https://abc.com
+    description: dev environment
+  - url: https://abc.com
+    description: test2 environment
+  - url: https://abc.com
+    description: test5 environment
+  - url: https://abc.com
+    description: nft environment
+  - url: https://abc.com
+    description: staging environment
+  - url: https://abc.com
+    description: production environment
+paths:
+  /tasks:
+    post:
+      tags:
+        - create-tasks
+      summary: Endpoint to create tasks
+      description: Creates a list of tasks for a given credit card application
+      operationId: createTasks
+      parameters:
+        - name: requestHeaders
+          in: header
+          description: Request headers
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/requestHeaders'
+          explode: true
+          style: simple
+        - name: x-request-id
+          in: header
+          required: true
+          schema:
+            maxLength: 36
+            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            type: string
+            description: Must be in UUID v4 format.
+            format: uuid
+        - name: x-staff-id
+          in: header
+          schema:
+            maxLength: 10
+            pattern: '^[0-9]{1,10}$'
+            type: string
+            format: string
+        - name: x-user-id
+          in: header
+          schema:
+            maxLength: 10
+            pattern: '^[0-9]{1,10}$'
+            type: string
+            format: string
+        - name: x-user-id-type
+          in: header
+          schema:
+            $ref: '#/components/schemas/xUserIdType'
+      requestBody:
+        description: Task creation request
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/createTasksRequest'
+              description: Request model for Task creation
+          text/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/createTasksRequest'
+              description: Request model for Task creation
+          application/*+json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/createTasksRequest'
+              description: Request model for Task creation
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createTasksResponse'
+        '500':
+          description: Internal Server Error
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+    get:
+      tags:
+        - get-tasks
+      summary: Endpoint to get tasks
+      description: Retrieves a list of tasks of a given credit card application
+      operationId: getTasks
+      parameters:
+        - $ref: '#/components/parameters/applicationNumberQuery'
+        - $ref: '#/components/parameters/xRequestIdHeader'
+        - $ref: '#/components/parameters/xStaffIdHeader'
+        - $ref: '#/components/parameters/xUserIdHeader'
+        - $ref: '#/components/parameters/xUserIdTypeHeader'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/getTasksResponse'
+        '500':
+          description: Internal Server Error
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+  '/tasks/{task_id}':
+    put:
+      tags:
+        - update-task
+      summary: Endpoint to update a task
+      description: Updates a task for a given credit card application
+      operationId: updateTask
+      parameters:
+        - name: task_id
+          in: path
+          description: Task Id
+          required: true
+          schema:
+            type: string
+        - name: requestHeaders
+          in: header
+          description: Request Headers
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/requestHeaders'
+          explode: true
+          style: simple
+        - name: x-request-id
+          in: header
+          required: true
+          schema:
+            maxLength: 36
+            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            type: string
+            description: Must be in UUID v4 format.
+            format: uuid
+        - name: x-staff-id
+          in: header
+          schema:
+            maxLength: 10
+            pattern: '^[0-9]{1,10}$'
+            type: string
+            format: string
+        - name: x-user-id
+          in: header
+          schema:
+            maxLength: 10
+            pattern: '^[0-9]{1,10}$'
+            type: string
+            format: string
+        - name: x-user-id-type
+          in: header
+          schema:
+            $ref: '#/components/schemas/xUserIdType'
+      requestBody:
+        description: Update task request
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/updateTaskRequest'
+              description: Request model for updating task
+          text/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/updateTaskRequest'
+              description: Request model for updating task
+          application/*+json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/updateTaskRequest'
+              description: Request model for updating task
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/taskResponse'
+        '500':
+          description: Internal Server Error
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+    delete:
+      tags:
+        - delete-task
+      summary: Endpoint to delete a task from an application
+      description: Deletes an existing task for a given an application id.
+      operationId: deleteTask
+      parameters:
+        - name: task_id
+          in: path
+          description: Task Id
+          required: true
+          schema:
+            type: string
+        - name: applicationNumber
+          in: query
+          description: Application number
+          required: true
+          schema:
+            type: string
+        - name: requestHeaders
+          in: header
+          description: Request Headers
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/requestHeaders'
+          explode: true
+          style: simple
+        - name: x-request-id
+          in: header
+          required: true
+          schema:
+            maxLength: 36
+            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            type: string
+            description: Must be in UUID v4 format.
+            format: uuid
+        - name: x-staff-id
+          in: header
+          schema:
+            maxLength: 10
+            pattern: '^[0-9]{1,10}$'
+            type: string
+            format: string
+        - name: x-user-id
+          in: header
+          schema:
+            maxLength: 10
+            pattern: '^[0-9]{1,10}$'
+            type: string
+            format: string
+        - name: x-user-id-type
+          in: header
+          schema:
+            $ref: '#/components/schemas/xUserIdType'
+      responses:
+        '204':
+          description: No Content
+        '500':
+          description: Internal Server Error
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+  /tasks/verify:
+    post:
+      tags:
+        - complete-verification
+      summary: Endpoint to verify tasks in an application
+      description: Completes verification step for a credit card application. Notifies Pega to close Case in their system
+      operationId: completeVerification
+      parameters:
+        - name: requestHeaders
+          in: header
+          description: Request Headers
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/requestHeaders'
+          explode: true
+          style: simple
+        - name: x-request-id
+          in: header
+          required: true
+          schema:
+            maxLength: 36
+            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            type: string
+            description: Must be in UUID v4 format.
+            format: uuid
+        - name: x-staff-id
+          in: header
+          schema:
+            maxLength: 10
+            pattern: '^[0-9]{1,10}$'
+            type: string
+            format: string
+        - name: x-user-id
+          in: header
+          schema:
+            maxLength: 10
+            pattern: '^[0-9]{1,10}$'
+            type: string
+            format: string
+        - name: x-user-id-type
+          in: header
+          schema:
+            $ref: '#/components/schemas/xUserIdType'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/verifyTasksRequest'
+              description: Request model for verifying tasks
+          text/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/verifyTasksRequest'
+              description: Request model for verifying tasks
+          application/*+json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/verifyTasksRequest'
+              description: Request model for verifying tasks
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/verifyTasksResponse'
+        '500':
+          description: Internal Server Error
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+  /tasks/cancel:
+    post:
+      tags:
+        - cancel-tasks
+      summary: Endpoint to cancel tasks in an application
+      description: Cancels tasks for a credit card application
+      operationId: cancelTasks
+      parameters:
+        - name: requestHeaders
+          in: header
+          description: Request Headers
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/requestHeaders'
+          explode: true
+          style: simple
+        - name: x-request-id
+          in: header
+          required: true
+          schema:
+            maxLength: 36
+            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            type: string
+            description: Must be in UUID v4 format.
+            format: uuid
+        - name: x-staff-id
+          in: header
+          schema:
+            maxLength: 10
+            pattern: '^[0-9]{1,10}$'
+            type: string
+            format: string
+        - name: x-user-id
+          in: header
+          schema:
+            maxLength: 10
+            pattern: '^[0-9]{1,10}$'
+            type: string
+            format: string
+        - name: x-user-id-type
+          in: header
+          schema:
+            $ref: '#/components/schemas/xUserIdType'
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/cancelTasksRequest'
+              description: Request model for cancelling tasks
+          text/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/cancelTasksRequest'
+              description: Request model for cancelling tasks
+          application/*+json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/cancelTasksRequest'
+              description: Request model for cancelling tasks
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/cancelTasksSuccessResponse'
+        '500':
+          description: Internal Server Error
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+components:
+  schemas:
+    additionalDocumentsDetails:
+      type: object
+      properties:
+        documentTypeIds:
+          type: array
+          items:
+            type: string
+          description: List of DocumentTypeIds
+        reason:
+          type: string
+          description: Free text for reason
+      additionalProperties: { }
+      description: Additional Documents Details
+    cancelTasksRequest:
+      required:
+        - applicationNumber
+      type: object
+      properties:
+        applicationNumber:
+          minLength: 1
+          type: string
+          description: Application Number
+      additionalProperties: { }
+      description: Request model for cancelling tasks
+    cancelTasksSuccessResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status field
+          nullable: true
+      additionalProperties: { }
+      description: Cancel tasks success response model
+    createTask:
+      required:
+        - category
+        - type
+      type: object
+      properties:
+        type:
+          minLength: 1
+          type: string
+          description: Type of the task -- May be one of the values from Enum CustomerOffer.ConsumerFinance.CreditCards.Tasks.Core.Entities.TaskReferenceData.Type
+        category:
+          minLength: 1
+          type: string
+          description: Category of the task - May be one of the values from Enum CustomerOffer.ConsumerFinance.CreditCards.Tasks.Core.Entities.TaskReferenceData.Category
+        subCategory:
+          type: string
+          description: SubCategory of the task -  May be one of the values from Enum CustomerOffer.ConsumerFinance.CreditCards.Tasks.Core.Entities.TaskReferenceData.SubCategory
+          nullable: true
+        additionalSubCategory:
+          type: string
+          description: Additional Subcategories for Verification Subcategories
+          nullable: true
+        linkedApplicationEntityId:
+          type: string
+          description: Linked Application Entity Id of the task
+          nullable: true
+        hold:
+          allOf:
+            - $ref: '#/components/schemas/createTaskFraudHold'
+          description: Fraud hold details - Fraud type tasks only
+          nullable: true
+        outcome:
+          type: string
+          description: Task outcome for Verification tasks created by CCVT agent
+          nullable: true
+        liabilityDeletionReason:
+          type: string
+          description: Liability deletion reason
+          nullable: true
+        suppressCustomerTask:
+          type: boolean
+          description: Flag to indicate if customer task creation not required for a verification task
+      additionalProperties: { }
+      description: Model for Task data type
+    createTaskFraudHold:
+      type: object
+      properties:
+        durationInMinutes:
+          type: integer
+          description: Duration of hold in Minutes
+          format: int32
+        autoCloseAction:
+          type: string
+          description: Action to be performed after lapsing DurationInMinutes
+          nullable: true
+      additionalProperties: { }
+      description: Fraud hold details
+    createTaskResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the task
+        type:
+          type: string
+          description: Type of the task
+        category:
+          type: string
+          description: Category of the task
+        subCategory:
+          type: string
+          description: Subcategory of the task
+          nullable: true
+        additionalSubCategory:
+          type: string
+          description: Additional Subcategory for Verification Tasks with Income Category and GrossSalary Subcategory
+          nullable: true
+        linkedApplicationEntityId:
+          type: string
+          description: Linked entity Id within the application
+          nullable: true
+        state:
+          type: string
+          description: State of the task
+        hold:
+          allOf:
+            - $ref: '#/components/schemas/createTaskFraudHold'
+          description: Fraud hold details
+          nullable: true
+      additionalProperties: { }
+      description: DTO for create task response
+    createTasksRequest:
+      required:
+        - applicationNumber
+        - tasks
+      type: object
+      properties:
+        applicationNumber:
+          minLength: 1
+          type: string
+          description: Application Number
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/createTask'
+          description: List of tasks to be created
+      additionalProperties: { }
+      description: Request model for Task creation
+    createTasksResponse:
+      type: object
+      properties:
+        applicationNumber:
+          type: string
+          description: Application Number
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/createTaskResponse'
+          description: Associated tasks with the application Id
+      additionalProperties: { }
+      description: Response model for Create task
+    fraudHold:
+      type: object
+      properties:
+        durationInMinutes:
+          type: integer
+          description: Duration of hold in Minutes
+          format: int32
+        autoCloseAction:
+          type: string
+          description: Action to be performed after lapsing DurationInMinutes
+          nullable: true
+      additionalProperties: { }
+      description: Fraud hold details
+    getTasksResponse:
+      type: object
+      properties:
+        applicationNumber:
+          type: string
+          description: Application Number
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/taskResponse'
+          description: Associated tasks with the application Id
+        workflowState:
+          type: string
+          description: WorkflowState of the Application
+      additionalProperties: { }
+      description: Response model for Get Task
+    problemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+      additionalProperties: { }
+    requestHeaders:
+      type: object
+      properties:
+        requestId:
+          type: string
+        userId:
+          type: string
+        userIdType:
+          type: string
+        staffId:
+          type: string
+          nullable: true
+      additionalProperties: { }
+    taskResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Id of the task
+        type:
+          type: string
+          description: Type of the task
+        category:
+          type: string
+          description: Category of the task
+        subCategory:
+          type: string
+          description: SubCategory of the task
+          nullable: true
+        additionalSubCategory:
+          type: string
+          description: Additional Subcategory for Verification Tasks with Income Category and GrossSalary Subcategory
+          nullable: true
+        linkedApplicationEntityId:
+          type: string
+          description: Linked entity Id within the application
+          nullable: true
+        hold:
+          allOf:
+            - $ref: '#/components/schemas/fraudHold'
+          description: Fraud hold details
+          nullable: true
+        state:
+          type: string
+          description: State of the task
+        outcome:
+          type: string
+          description: Outcome of the task
+          nullable: true
+        createdDate:
+          type: string
+          description: Date when task was created
+        updatedDate:
+          type: string
+          description: Date when task was updated
+          nullable: true
+        additionalDocumentsDetails:
+          allOf:
+            - $ref: '#/components/schemas/additionalDocumentsDetails'
+          description: Additional Documents Details
+          nullable: true
+      additionalProperties: { }
+      description: Model for Task data type in Get Task response
+    updateTaskRequest:
+      required:
+        - applicationNumber
+        - outcome
+      type: object
+      properties:
+        applicationNumber:
+          minLength: 1
+          type: string
+          description: Application Number
+        outcome:
+          minLength: 1
+          type: string
+          description: Outcome of the task
+        additionalDocumentsDetails:
+          allOf:
+            - $ref: '#/components/schemas/additionalDocumentsDetails'
+          description: Additional Document Details
+          nullable: true
+      additionalProperties: { }
+      description: Request model for updating task
+    verifyTasksRequest:
+      required:
+        - applicationNumber
+      type: object
+      properties:
+        applicationNumber:
+          minLength: 1
+          type: string
+          description: Application Number
+      additionalProperties: { }
+      description: Request model for verifying tasks
+    verifyTasksResponse:
+      type: object
+      properties:
+        applicationNumber:
+          type: string
+          description: Application Number
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/taskResponse'
+          description: /// Associated tasks with the application Id
+        workflowState:
+          type: string
+          description: Workflow State
+      additionalProperties: { }
+      description: Response model for Verify task
+    xUserIdType:
+      maxLength: 11
+      pattern: ^application|cif$
+      enum:
+        - application
+        - cif
+      type: string
+      additionalProperties: { }
+      format: string
+  parameters:
+    applicationNumberQuery:
+      name: applicationNumber
+      in: query
+      description: Application number
+      schema:
+        type: string
+    xRequestIdHeader:
+      name: x-request-id
+      in: header
+      required: true
+      schema:
+        maxLength: 36
+        pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+        type: string
+        description: Must be in UUID v4 format.
+        format: uuid
+    xStaffIdHeader:
+      name: x-staff-id
+      in: header
+      schema:
+        maxLength: 10
+        pattern: '^[0-9]{1,10}$'
+        type: string
+        format: string
+    xUserIdHeader:
+      name: x-user-id
+      in: header
+      schema:
+        maxLength: 10
+        pattern: '^[0-9]{1,10}$'
+        type: string
+        format: string
+    xUserIdTypeHeader:
+      name: x-user-id-type
+      in: header
+      schema:
+        $ref: '#/components/schemas/xUserIdType'
+  securitySchemes:
+    OAuth2:
+      type: oauth2
+      description: OAuth2 Client Credentials Grant Authorization
+      flows:
+        clientCredentials:
+          tokenUrl: https://test01.idp.test.aws.groupapi.cba/tls/as/token.oauth2
+          scopes:
+            customer-offer-cf.cc-tasks.create: customer-offer-cf.cc-tasks.create
+            customer-offer-cf.cc-tasks.update: customer-offer-cf.cc-tasks.update
+            customer-offer-cf.cc-tasks.read: customer-offer-cf.cc-tasks.read
+            customer-offer-cf.cc-tasks.cancel: customer-offer-cf.cc-tasks.cancel
+security:
+  - OAuth2: [ ]
+tags:
+  - name: create-tasks
+    description: Creates a list of tasks for a given credit card application
+  - name: get-tasks
+    description: Retrieves a list of tasks of a given credit card application
+  - name: update-task
+    description: Updates a task for a given credit card application
+  - name: complete-verification
+    description: Complete verification for a given credit card application.
+  - name: cancel-tasks
+    description: Cancels tasks for a given credit card application.
+  - name: delete-task
+    description: Deletes an existing task for a given an application id.
