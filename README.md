@@ -44,7 +44,7 @@ This is a mono-repo. Each lab is self-contained and organized in a separate dire
   - [Schema Resiliency Testing](schema-resiliency-testing/README.md)
   - [API Resiliency Testing](api-resiliency-testing/README.md)
   - [API Security Schemes](api-security-schemes/README.md)
-  - [API Workflow Testing](workflow-testing/README.md)
+  - [API Workflow Testing](arazzo-workflow-testing/README.md)
 
 ## Additional Resources 
 For more information on Specmatic and its features, please refer to the official documentation: [Specmatic Documentation](https://docs.specmatic.in)
