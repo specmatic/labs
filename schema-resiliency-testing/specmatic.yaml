@@ -41,7 +41,7 @@ dependencies:
 specmatic:
   settings:
     test:
-      schemaResiliencyTests: all
+      schemaResiliencyTests: none
     mock:
       generative: true
   license:

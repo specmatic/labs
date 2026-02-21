@@ -62,6 +62,11 @@ By setting the level to `all` you should see
 Tests run: 596, Successes: 596, Failures: 0, Errors: 0
 ```
 
+### Out of License Limit
+You might see issues because of the license limit of 500 tests. Without enterprise license, you won't face this issue. However, this brings up an interesting topic: how do I can control or reduce the number of generated tests?
+
+Check out the documentation on [maxTestRequestCombinations](https://docs.specmatic.io/contract_driven_development/contract_testing#limiting-the-count-of-tests)
+
 ### Computation - How did Specmatic generate 148 tests?
 
 | Fields    | Data Types | Required | Nullable | Constraints | Values                    |

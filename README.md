@@ -36,7 +36,7 @@ This is a mono-repo. Each lab is self-contained and organized in a separate dire
   - [Response Templating via Direct substitution and Data lookup](response-templating/README.md)
 - Specmatic Features
   - [Filters](filters/README.md)
-  - [Request/Response Adapters](hooks/README.md)
+  - [Request/Response Adapters](data-adapters/README.md)
   - [Overlays](overlays/README.md)
   - [Workflow within the Same Spec](workflow-in-same-spec/README.md)
   - [Async Event Flow](async-event-flow/README.md)
