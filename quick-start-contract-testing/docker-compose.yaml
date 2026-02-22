@@ -1,0 +1,24 @@
+services:
+  petstore:
+    container_name: quick-start-petstore
+    build:
+      context: ./service
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health').read()"]
+      interval: 2s
+      timeout: 1s
+      retries: 30
+      start_period: 2s
+
+  contract-test:
+    container_name: quick-start-contract-test
+    image: specmatic/enterprise:latest
+    volumes:
+      - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    depends_on:
+      petstore:
+        condition: service_healthy
+    command: ["test", "./specs/service.yaml", "--testBaseURL=http://petstore:8080"]

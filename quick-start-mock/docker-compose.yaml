@@ -1,0 +1,21 @@
+services:
+  consumer:
+    container_name: quick-start-mock-consumer
+    image: python:3.12-alpine
+    working_dir: /app
+    volumes:
+      - ./ui:/app:ro
+    command: ["python", "-m", "http.server", "8081", "--bind", "0.0.0.0"]
+    ports:
+      - "8081:8081"
+
+  mock:
+    container_name: quick-start-mock-server
+    image: specmatic/enterprise:latest
+    profiles: ["mock"]
+    volumes:
+      - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    command: ["mock", "./specs/service.yaml", "--port", "9100"]
+    ports:
+      - "9100:9100"

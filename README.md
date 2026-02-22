@@ -22,13 +22,14 @@ This is a mono-repo. Each lab is self-contained and organized in a separate dire
   - Various Types of Contract Testing (CDCT, PDCT & API Design First)
   - Specification (OpenAPI, AsyncAPI, ProtoBuf, GraphQL SDL, WSDL, Arazzo)
   - Contract Driven Development (CDD) in Action Demo - Using [Order-BFF](order-bff/README.md) as an example
-- [Contract Testing](quick-start/README.md)
+- [Contract Testing](quick-start-contract-testing/README.md)
   - API Contract Test
   - Using Inline examples as test data
   - Using External examples as test data
-- Intelligent service virtualization
+- [Intelligent service virtualization](quick-start-mock/README.md)
   - Inline Examples as mock data 
   - External examples as mock data
+- [AsyncAPI Contract Testing](quick-start-async-contract-testing/README.md)
 - Examples
   - [Generate, Validate and Fix examples](external-examples/README.md)
   - [Partial examples](partial-examples/README.md)
