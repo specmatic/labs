@@ -35,7 +35,7 @@ Expected result:
 Stop and clean up:
 
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ## Part B: Fix the provider
@@ -69,7 +69,7 @@ Tests run: 1, Successes: 1, Failures: 0, Errors: 0
 Stop and clean up:
 
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ## Optional: Run in Studio
@@ -84,7 +84,7 @@ Open [Studio](http://127.0.0.1:9000/_specmatic/studio), open `specmatic.yaml`, a
 When done:
 
 ```shell
-docker compose --profile studio down
+docker compose --profile studio down -v
 ```
 
 ## What you learned

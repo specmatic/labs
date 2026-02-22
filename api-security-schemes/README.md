@@ -137,7 +137,7 @@ Generated test reports:
 Cleanup after run:
 
 ```shell
-docker compose down
+docker compose down -v
 ```
 You should see different authentication headers set based on the HTTP method:
 

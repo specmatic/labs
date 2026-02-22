@@ -38,3 +38,8 @@ This launches the following services:
 | **Warehouse API** | 3003 | Manages inventory operations   |
 | **Kafka**         | 9092 | Internal broker port           |
 | **Postgres**      | 5432 | Shared database                |
+
+Clean up when done:
+```shell
+docker compose down -v
+```

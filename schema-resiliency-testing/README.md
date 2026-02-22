@@ -50,7 +50,7 @@ Tests run: 6, Successes: 6, Failures: 0, Errors: 0
 
 Clean up
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ## Goal of this lab
@@ -65,7 +65,7 @@ Tests run: 42, Successes: 42, Failures: 0, Errors: 0
 
 Clean up
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ### Positive and Negative Tests (ALL)
@@ -77,7 +77,7 @@ Tests run: 596, Successes: 596, Failures: 0, Errors: 0
 
 Clean up
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ### Out of License Limit

@@ -59,7 +59,7 @@ Tests run: 4, Successes: 1, Failures: 3, Errors: 0
 ```
 Clean up
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ## Goal of this lab

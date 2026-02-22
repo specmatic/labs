@@ -31,7 +31,7 @@ We will fix this by configuring dictionary-driven mock generation, not by editin
 
 Clean up before the next step:
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ## 2. Learner task: configure dictionary-based mock data
@@ -61,7 +61,7 @@ Tests run: 3, Successes: 3, Failures: 0, Errors: 0
 
 Clean up:
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ## Pass Criteria

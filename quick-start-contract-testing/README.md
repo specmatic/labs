@@ -34,7 +34,7 @@ Expected result:
 Stop and clean up:
 
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ## Part B: Fix the service
@@ -59,7 +59,7 @@ Tests run: 1, Successes: 1, Failures: 0, Errors: 0
 Stop and clean up:
 
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ## Run the same test in Studio
@@ -98,7 +98,7 @@ Stop Studio by pressing `Ctrl+C` in the terminal where you started it.
 Stop service:
 
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ## What you learned

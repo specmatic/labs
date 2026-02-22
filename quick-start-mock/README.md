@@ -53,7 +53,7 @@ Try changing **Pet ID** to different values (for example `2`, `101`, `abc`) and 
 ## Part C: Stop mock and observe fallback
 
 ```shell
-docker compose --profile mock down
+docker compose --profile mock down -v
 ```
 
 Click **Load Pet** again in the consumer app.
@@ -94,7 +94,7 @@ This gives you a clean visual trace of what the consumer sent and what the contr
 ## Cleanup
 Stop Studio by pressing `Cltr+c` and the mock server:
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ## What you learned

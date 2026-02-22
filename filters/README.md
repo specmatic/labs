@@ -47,7 +47,7 @@ Tests run: 224, Successes: 21, Failures: 201, Errors: 2
 
 Clean up
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ## Goal of this lab
@@ -81,5 +81,5 @@ Tests run: 21, Successes: 21, Failures: 0, Errors: 0
 ```
 Clean up
 ```shell
-docker compose down
+docker compose down -v
 ```

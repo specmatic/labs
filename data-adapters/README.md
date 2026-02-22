@@ -43,6 +43,11 @@ docker compose up test --abort-on-container-exit
 ```
 You should see 1 test fail because of the mismatch in the case of the field names.
 
+Clean up:
+```bash
+docker compose down -v
+```
+
 ## Goal of this lab
 
 Your goal is to make the test pass by using Specmatic adapters to translate request/response field names between the two cases.

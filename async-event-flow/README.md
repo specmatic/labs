@@ -73,5 +73,5 @@ Tests run: 6, Successes: 6, Failures: 0, Errors: 0
 
 3. Bring down the Kafka broker after the tests are done.
 ```shell
-docker compose down
+docker compose down -v
 ```

@@ -34,7 +34,7 @@ Expected outcome:
 Stop and clean up:
 
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ## Goal of this lab
@@ -89,7 +89,7 @@ You should see one successful test and no failures.
 Stop and clean up:
 
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ## What you learned

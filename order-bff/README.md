@@ -35,7 +35,7 @@ When the tests complete, you should see the following in the status header indic
 ![Test results in Specmatic Studio](assets/studio-bff-test-results.png)
 
 ```shell
-docker compose --profile studio down
+docker compose --profile studio down -v
 ```
 
 ### 2. Using Docker (Recommended for CI)
@@ -48,7 +48,7 @@ In the logs, you should see the following lines indicating that the contract tes
 **Tests run: 227, Successes: 223, Failures: 0, Errors: 4**
 
 ```shell
-docker compose --profile test down
+docker compose --profile test down -v
 ```
 
 Also look at the [detailed contract report](build/reports/specmatic/test/html/index.html) to see the details of the tests that were run.

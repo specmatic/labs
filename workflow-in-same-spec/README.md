@@ -12,6 +12,12 @@ This lab demonstrates how you can use a built-in feature in Specmatic to define 
 ```bash
 docker compose up test --abort-on-container-exit
 ```
+
+Clean up:
+```bash
+docker compose down -v
+```
+
 ## How does this work?
 Open the [specmatic.yaml](specmatic.yaml) file and check the `workflow` section under `systemUnderTest/service/runOptions/openapi`
 

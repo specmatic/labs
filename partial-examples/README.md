@@ -93,7 +93,7 @@ Tests run: 7, Successes: 7, Failures: 0, Errors: 0
 ```
 
 ```shell
-docker compose down
+docker compose down -v
 ```
 
 ## Pass Criteria
