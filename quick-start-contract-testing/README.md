@@ -119,7 +119,7 @@ docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license
 Open [Specmatic Studio](http://127.0.0.1:9000/_specmatic/studio), then:
 1. From the left panel, open `specs/service.yaml`.
 2. Go to the **Test** tab.
-3. Set URL to `http://127.0.0.1:8080`.
+3. Set URL to `http://host.docker.internal:8080`.
 4. Click **Run**.
 
 You should observe the same fail-then-pass behavior based on whether `petType` is fixed to `type`.
