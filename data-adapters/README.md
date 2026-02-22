@@ -39,7 +39,7 @@ You should see 1 test fail because of the mismatch in the case of the field name
 ### 2. Via Docker Compose:
 
 ```bash
-docker compose up
+docker compose up test --abort-on-container-exit
 ```
 You should see 1 test fail because of the mismatch in the case of the field names.
 

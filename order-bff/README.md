@@ -40,7 +40,7 @@ docker compose --profile studio down
 
 ### 2. Using Docker (Recommended for CI)
 ```shell
-docker compose --profile test up --abort-on-container-exit
+docker compose --profile test up test --abort-on-container-exit
 ```
 
 In the logs, you should see the following lines indicating that the contract tests run successfully:

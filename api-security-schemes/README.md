@@ -122,7 +122,7 @@ This mode runs all required components using containers:
 From the project root, run:
 
 ```shell
-docker compose -f docker-compose.yaml up specmatic-test
+docker compose up specmatic-test --abort-on-container-exit
 ```
 
 Expected result:
@@ -137,7 +137,7 @@ Generated test reports:
 Cleanup after run:
 
 ```shell
-docker compose -f docker-compose.yaml down
+docker compose down
 ```
 You should see different authentication headers set based on the HTTP method:
 

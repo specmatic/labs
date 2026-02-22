@@ -10,7 +10,7 @@ This lab demonstrates how you can use a built-in feature in Specmatic to define 
 ## Run mock + test with Docker Compose
 
 ```bash
-docker compose up --abort-on-container-exit --exit-code-from test
+docker compose up test --abort-on-container-exit
 ```
 ## How does this work?
 Open the [specmatic.yaml](specmatic.yaml) file and check the `workflow` section under `systemUnderTest/service/runOptions/openapi`

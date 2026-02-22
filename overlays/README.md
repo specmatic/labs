@@ -24,7 +24,7 @@ Because of this path mismatch, contract tests fail. Your goal is to use a Specma
 From this folder, run:
 
 ```shell
-docker compose up
+docker compose up test --abort-on-container-exit
 ```
 
 Expected outcome:
@@ -78,7 +78,7 @@ It should be under `systemUnderTest.service.runOptions.openapi.specs[].spec`.
 ## Re-run tests (expected to pass)
 
 ```shell
-docker compose up
+docker compose up test --abort-on-container-exit
 ```
 
 Expected outcome:
