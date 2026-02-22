@@ -37,7 +37,7 @@ services:
     network_mode: host
 
   sut:
-    image: specmatic/specmatic-kafka-sample-asyncapi3
+    image: specmaticdemo/specmatic-kafka-sample-asyncapi3
     container_name: order-service-sut
     depends_on:
       kafka-init:

@@ -21,7 +21,7 @@ services:
         inter.broker.listener.name=PLAINTEXT
 
   order-bff:
-    image: specmatic/specmatic-order-bff-java:latest
+    image: specmaticdemo/specmatic-order-bff-java:latest
     container_name: order-bff
     ports:
       - "8080:8080"

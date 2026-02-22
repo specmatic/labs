@@ -22,7 +22,7 @@ services:
         inter.broker.listener.name=PLAINTEXT
 
   order-bff:
-    image: specmatic/specmatic-order-bff-java:latest
+    image: specmaticdemo/specmatic-order-bff-java:latest
     container_name: order-bff
     ports:
       - "8080:8080"
@@ -41,7 +41,7 @@ services:
       start_period: 1s
 
   order-api:
-    image: specmatic/specmatic-order-api-java:latest
+    image: specmaticdemo/specmatic-order-api-java:latest
     container_name: order-api
     environment:
       INVENTORY_API_URL: http://inventory-api:8095/ws

@@ -12,7 +12,7 @@ services:
       - "8083:8080"
 
   order-api:
-    image: specmatic/specmatic-order-api-java-with-oauth
+    image: specmaticdemo/specmatic-order-api-java-with-oauth
     depends_on:
       keycloak:
         condition: service_started
