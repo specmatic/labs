@@ -37,10 +37,7 @@ services:
     network_mode: host
 
   sut:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: order-service-sut:latest
+    image: specmatic/specmatic-kafka-sample-asyncapi3
     container_name: order-service-sut
     depends_on:
       kafka-init:
