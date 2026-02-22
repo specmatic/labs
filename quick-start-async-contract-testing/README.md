@@ -1,95 +1,118 @@
 # Quick Start Async: Contract Testing Against a Real Event Processor
 
-This lab demonstrates AsyncAPI contract testing against a real provider service.
+This lab shows why async contract testing matters in real teams: producers and consumers often deploy independently, and schema drift in event payloads can break workflows silently. Here, the AsyncAPI contract is the shared source of truth, and Specmatic catches drift before release.
 
-## Goal
-Make async contract tests pass by fixing the provider implementation.
+## Objective
+Run an async contract test against a real Kafka-based provider, observe the intentional failure, fix the provider implementation, and verify a passing run.
 
-## Time required to complete this lab:
-10-15 minutes.
+## Time required to complete this lab
+10-15 minutes (first run can take longer if Docker images are not cached locally).
 
 ## Prerequisites
-- Docker is installed and running.
+- Docker Desktop (or Docker Engine + Compose v2) is installed and running.
 - You are in `labs/quick-start-async-contract-testing`.
-- Ports `9092` and `9000` available
-
+- Port `9092` is free (required for Kafka in this lab).
+- Port `9000` is free (required for Studio).
 
 ## Files in this lab
 - `specs/async.yaml` - AsyncAPI contract (source of truth for this lab)
-- `service/processor.py` - Tiny Python event processor implementation (intentional mismatch)
-- `specmatic.yaml` - Specmatic test configuration for AsyncAPI
-- `docker-compose.yaml` - Kafka broker, provider, and contract test runner
+- `service/processor.py` - Provider implementation with one intentional mismatch
+- `specmatic.yaml` - Specmatic async test configuration
+- `docker-compose.yaml` - Kafka, provider service, test runner, and optional Studio
+- `create-topics.sh` - Kafka topic bootstrap script used by `kafka-init`
 
-## Exercise Rule
-Do not edit `specs/async.yaml` in this lab.
+## Learner task
+Fix the provider so the emitted response event matches the contract's allowed `status` values.
 
-## Part A: Run async contract test (expected to fail)
+## Lab Rules
+- Do not edit: `specs/async.yaml`, `specmatic.yaml`, `docker-compose.yaml`.
+- Edit only: `service/processor.py`.
+- If your baseline run unexpectedly passes, reset `service/processor.py` so `process_message` returns `"status": "STARTED"` before continuing.
+
+## Architecture mental model (before you run)
+- Consumer under test: Specmatic test runner (`contract-test` service).
+- Provider under test: Python processor (`provider` service).
+- Flow:
+  1. Specmatic publishes an event/message to Kafka topic `new-orders`.
+  2. Provider consumes that event, transforms payload, and emits to `wip-orders`.
+  3. Specmatic validates emitted payload and headers against `specs/async.yaml`.
+
+## Intentional failure (baseline run)
 From this folder, run:
 
 ```shell
 docker compose up contract-test --build --abort-on-container-exit
 ```
 
-Expected result:
+Expected failure signal:
 - Contract test fails due to a mismatch in the provider's response event payload.
-- Look for the mismatch on `status` in the output event.
+- Failure points to `status`, where actual is `"STARTED"` and expected is one of the enum values in the contract (including `"INITIATED"`).
 
-Stop and clean up:
+Then clean up:
 
 ```shell
 docker compose down -v
 ```
 
-## Part B: Fix the provider
-Open [service/processor.py](service/processor.py) and find the response payload in `process_message`.
+## Fix path
+Open `service/processor.py` and update `process_message`:
 
-It currently sets:
-
-```python
-"status": "STARTED"
-```
-
-Update it to:
+From:
 
 ```python
-"status": "INITIATED"
+"status": "STARTED",
 ```
 
-## Part C: Re-run tests (expected to pass)
-Run again:
+To:
+
+```python
+"status": "INITIATED",
+```
+
+## Pass criteria
+Re-run:
 
 ```shell
 docker compose up contract-test --build --abort-on-container-exit
 ```
 
-Expected result:
+Expected pass signal:
 
 ```terminaloutput
 Tests run: 1, Successes: 1, Failures: 0, Errors: 0
 ```
 
-Stop and clean up:
+Then clean up:
 
 ```shell
 docker compose down -v
 ```
 
-## Optional: Run in Studio
+## Run the same suite in Studio
 Start Studio:
 
 ```shell
 docker compose --profile studio up studio --build
 ```
 
-Open [Studio](http://127.0.0.1:9000/_specmatic/studio), open `specmatic.yaml`, and click **Run Suite**.
+Open [Studio](http://127.0.0.1:9000/_specmatic/studio, load `specmatic.yaml`, and click **Run Suite**.
 
-When done:
+Stop Studio stack:
 
 ```shell
 docker compose --profile studio down -v
 ```
 
+## Troubleshooting (common beginner blockers)
+- `port is already allocated`:
+  - Free `9092` and `9000`, then retry.
+- `kafka-init` fails with shell/script errors on Windows:
+  - Ensure shell scripts are checked out with LF line endings (`create-topics.sh` must not contain CRLF).
+- Test exits before provider is ready:
+  - Re-run once; services are health-gated, but first image pull/startup can be slow.
+
 ## What you learned
 - Async contract testing validates event-driven behavior against AsyncAPI contracts.
-- The contract stays stable while providers evolve to conform.
+- Contract failures provide precise mismatch diagnostics (rule code + field path).
+- Keeping the contract stable while fixing provider behavior is a practical producer-side workflow.
 - Specmatic gives actionable mismatch feedback for event payloads and headers.
