@@ -3,11 +3,6 @@
 ## Objective
 Make a PascalCase contract test pass against a camelCase mock service by transforming request and response field names using Specmatic data adapters.
 
-- a **PascalCase** service (`pascalCase.yaml`) - expects all the API request and response field names to be in PascalCase
-- a **camelCase** service (`camelCase.yaml`) - expects all the API request and response field names to be in camelCase
-
-When `PascalCase` service is tested against `camelCase` service, the request and response field names need to be transformed from PascalCase to camelCase before hitting the `camelCase` service.
-
 ## Time required to complete this lab:
 10-15 minutes.
 
@@ -43,6 +38,25 @@ Tests run: 1, Successes: 0, Failures: 1, Errors: 0
 ```
 
 You will see request mismatch errors because `RequestQuery` / `RequestKey` are sent to a mock that expects `requestQuery` / `requestKey`.
+
+## How the loop test works
+This lab runs a consumer-test against a mocked provider:
+
+- Consumer side (`test` service):
+  - Uses `pascalCase.yaml`
+  - Sends requests with PascalCase fields
+  - Expects responses with PascalCase fields
+- Provider side (`mock` service):
+  - Uses `camelCase.yaml`
+  - Accepts and returns camelCase fields
+
+Why it fails first:
+- Consumer and provider use different field naming conventions.
+- Without adapters, the request/response shapes do not match.
+
+What you are fixing:
+- Transform request fields before they hit the mock.
+- Transform response fields before assertion in the test runner.
 
 Clean up:
 ```bash
