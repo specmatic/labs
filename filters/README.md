@@ -1,15 +1,44 @@
 # Studio Lab: Test Filters
 
-This lab demonstrates how to use Filters to skipping running certain tests and what is the implication of the same on the coverage report.
+## Objective
+Use Specmatic test filters to temporarily exclude selected failing scenarios and understand the impact on test results and coverage.
 
 ## Time required to complete this lab:
 10-15 minutes.
 
-## Files in this lab
-- `specs/simple-openapi-spec.yaml` - OpenAPI spec for the BFF API. This is the main contract that we will be working with in this lab.
-- `specmatic.yaml` - Specmatic config file that defines the Spec, and it's example files.
+## Prerequisites
+- Docker is installed and running.
+- You are in `labs/filters`.
 
-## Start Studio using Docker
+## Files in this lab
+- `specs/simple-openapi-spec.yaml`: OpenAPI contract.
+- `specmatic.yaml`: Specmatic configuration where filters can be persisted.
+
+## Reference
+- [Supported filters and operators](https://docs.specmatic.io/contract_driven_development/contract_testing#supported-filters--operators)
+
+## Lab Rules
+- Do not edit `specs/simple-openapi-spec.yaml`.
+- Focus on filter actions first; config export/update comes later.
+
+## 1. Baseline run (intentional failure)
+Run:
+```shell
+docker compose up test --abort-on-container-exit
+```
+
+Expected baseline output:
+```terminaloutput
+Tests run: 224, Successes: 21, Failures: 201, Errors: 2
+```
+
+Clean up:
+```shell
+docker compose down -v
+```
+
+## 2. Start Studio
+Run:
 ```shell
 docker run --rm \
   --name studio \
@@ -20,66 +49,61 @@ docker run --rm \
   studio
 ```
 
-## Loop Test
+Open Studio at `http://127.0.0.1:9000/_specmatic/studio`.
 
-### 1. Loop Test in Studio
+## 3. Apply filters in Studio (guided)
 In Studio, open the [simple-openapi-spec.yaml](specs/simple-openapi-spec.yaml) file from the left sidebar, and you will see that 3 examples are valid.
 
 Go to the Mock tab and click on the "Run" button to start the mock server on port 8080
 
-Then go to the Test tab, set url as `http://localhost:8080` and click on the "Run" button to run the tests against the mock server.
+Then go to the Test tab, set url as `http://localhost:8080`
 
-You should see 
+### Task A: Exclude failing scenarios
+1. Run tests once to view failures.
+2. Click `Failed: 201` to show only failed tests.
+3. Select all listed failed tests.
+4. Click `Exclude`.
+5. Click `Total` to return to the full list and confirm excluded tests appear greyed out.
 
-```terminaloutput
-Tests run: 224, Successes: 21, Failures: 201, Errors: 2
-```
+Checkpoint after Task A:
+- Re-run tests from Studio.
+- Expected direction: failures drop sharply and most remaining executed tests are successful.
 
-### 2. Loop Test using CLI
+### Task B: Exclude uncovered 429 response scenarios
+1. In results/coverage view, find entries marked `Not Covered` for `429`.
+2. Exclude those scenarios.
+3. Re-run tests.
+
+Checkpoint after Task B:
+- Expected final Studio result should align with CLI expectation below.
+
+## 4. Persist filters to config
+In Studio:
+1. Open `Active Tabs` from the right sidebar.
+2. Click `Export as Config`.
+3. Confirm `specmatic.yaml` now contains the generated filter expression(s).
+
+## 5. Verify from CLI (with persisted filters)
+Run:
 ```shell
 docker compose up test --abort-on-container-exit
 ```
-This will start the mock server and run the tests against it. You should see the same results in the terminal output as you did in Studio:
 
-```terminaloutput
-Tests run: 224, Successes: 21, Failures: 201, Errors: 2
-```
-
-Clean up
-```shell
-docker compose down -v
-```
-
-## Goal of this lab
-The goal of this lab is to use filters to temporarily skip all the failing tests.
-
-### Use filters in Studio
-In the Test tab, 
-1. Filter all the failing tests by clicking on the `Failed: 201` button. This will show you only the failing tests in the test results.
-2. Now, select the checkboxes next to the failing tests and click on the "Exclude" button to exclude them from the test run.
-3. Now, click on the `Total: 225` button to show all the tests again. You will see that the 201 failing tests are gray out. Which means that they are excluded from the test run. 
-4. Now, click on the "Run" button again to run the tests against the mock server. You should see that only the 21 successful tests are run and all the failing tests are skipped.
-5. Now, you should see total 22 tests ran (21 successful + 1 skipped) and 0 failures in the test results.
-6. Now, let's exclude the 429 response code which is showing as remark `Not Covered`
-7. Now, run the tests against. You should see that only the 21 successful tests are run and all the failing and skipped tests are not executed.
-8. You will also see that the coverage now shows 100% as all the tests that were not covered are now skipped.
-
-Now if we want to preserve these filters for future test runs, we need to update the `specmatic.yaml` file to include the filters.
-
-From the `Active Tabs` section in the right sidebar, click on the `Export as Config` to export the current filters as config. This will update the `specmatic.yaml` file to exclude the end points we filtered out.
-
-Look at the [Supported Filters & Operators](https://docs.specmatic.io/contract_driven_development/contract_testing#supported-filters--operators) and update the `specmatic.yaml` file to include the filters that you want to apply for future test runs. 
-
-Now run:
-```shell
-docker compose up test --abort-on-container-exit
-```
-You should see
-
+Expected output:
 ```terminaloutput
 Tests run: 21, Successes: 21, Failures: 0, Errors: 0
 ```
-Clean up
+
+Clean up:
 ```shell
 docker compose down -v
 ```
+
+## Pass Criteria
+- Baseline run shows `224` tests with many failures.
+- After applying and exporting filters, CLI run shows:
+  - `Tests run: 21, Successes: 21, Failures: 0, Errors: 0`
+
+## Why this lab matters
+- Filters help teams focus on critical scenarios while they triage known failures.
+- Coverage can look better after exclusions, so filters should be used intentionally and reviewed regularly.
