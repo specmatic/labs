@@ -37,12 +37,17 @@ Tests run: 224, Successes: 21, Failures: 201, Errors: 2
 
 ### 2. Loop Test using CLI
 ```shell
-docker compose up
+docker compose up test --abort-on-container-exit
 ```
 This will start the mock server and run the tests against it. You should see the same results in the terminal output as you did in Studio:
 
 ```terminaloutput
 Tests run: 224, Successes: 21, Failures: 201, Errors: 2
+```
+
+Clean up
+```shell
+docker compose down
 ```
 
 ## Goal of this lab
@@ -67,10 +72,14 @@ Look at the [Supported Filters & Operators](https://docs.specmatic.io/contract_d
 
 Now run:
 ```shell
-docker compose up
+docker compose up test --abort-on-container-exit
 ```
 You should see
 
 ```terminaloutput
 Tests run: 21, Successes: 21, Failures: 0, Errors: 0
+```
+Clean up
+```shell
+docker compose down
 ```

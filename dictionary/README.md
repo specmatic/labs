@@ -17,7 +17,7 @@ Understand how you can use Specmatic Dictionary feature to generate deterministi
 
 ## 1. Run loop test using Docker (intentional failure)
 ```shell
-docker compose up
+docker compose up test --abort-on-container-exit
 ```
 
 Expected output:
@@ -51,7 +51,7 @@ data:
 
 ## 3. Re-run loop test after configuring dictionary
 ```shell
-docker compose up
+docker compose up test --abort-on-container-exit
 ```
 
 Expected output:

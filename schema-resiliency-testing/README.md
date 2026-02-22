@@ -40,12 +40,17 @@ Tests run: 6, Successes: 6, Failures: 0, Errors: 0
 
 ### 2. Loop Test using CLI
 ```shell
-docker compose up
+docker compose up test --abort-on-container-exit
 ```
 This will start the mock server and run the tests against it. You should see the same results in the terminal output as you did in Studio:
 
 ```terminaloutput
 Tests run: 6, Successes: 6, Failures: 0, Errors: 0
+```
+
+Clean up
+```shell
+docker compose down
 ```
 
 ## Goal of this lab
@@ -58,11 +63,21 @@ By setting the level to `positiveOnly` you should see
 Tests run: 42, Successes: 42, Failures: 0, Errors: 0
 ```
 
+Clean up
+```shell
+docker compose down
+```
+
 ### Positive and Negative Tests (ALL)
 By setting the level to `all` you should see
 
 ```terminaloutput
 Tests run: 596, Successes: 596, Failures: 0, Errors: 0
+```
+
+Clean up
+```shell
+docker compose down
 ```
 
 ### Out of License Limit

@@ -84,7 +84,7 @@ Specmatic runs tests from both sources, so total generated tests are higher than
 Stop Studio and run the following command to start the mock server and run the tests against it using CLI.
 
 ```shell
-docker compose up
+docker compose up test --abort-on-container-exit
 ```
 This starts the mock server and runs the tests against it. You should see:
 
