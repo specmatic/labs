@@ -49,27 +49,17 @@ actions:
         get:
           summary: Get user by id
           parameters:
-            - name: id
-              in: path
-              required: true
-              schema:
-                type: integer
+            - $ref: "#/components/parameters/UserIdPathParam"
           responses:
             "200":
-              description: User found
-              content:
-                application/json:
-                  schema:
-                    $ref: "#/components/schemas/User"
-                  examples:
-                    USER_200:
-                      value:
-                        id: 10
-                        name: Jane Doe
+              $ref: "#/components/responses/User200"
 
   - target: "$.paths['/api/users/{id}']"
     remove: true
 ```
+
+Note:
+- Reusing `components.parameters` and `components.responses` helps avoid repeating the same parameter and response payload details.
 
 ## Step 2: Enable overlay in Specmatic config
 Open `specmatic.yaml` and uncomment:
@@ -78,7 +68,7 @@ Open `specmatic.yaml` and uncomment:
 overlayFilePath: ./overlays/path-prefix.overlay.yaml
 ```
 
-It should be under `systemUnderTest.service.runOptions.openapi`.
+It should be under `systemUnderTest.service.runOptions.openapi.specs[].spec`.
 
 ## Re-run tests (expected to pass)
 

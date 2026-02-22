@@ -8,13 +8,18 @@ systemUnderTest:
             filesystem:
               directory: ./specs
           specs:
-            - my-service.yaml
+          - spec:
+              id: my-service
+              path: my-service.yaml
     runOptions:
       openapi:
         type: test
-        baseUrl: http://myservice:8080
-        # Step 2 of the lab: uncomment this line after updating the overlay file.
-        # overlayFilePath: ./overlays/path-prefix.overlay.yaml
+        specs:
+        - spec:
+            id: my-service
+            baseUrl: http://myservice:8080
+#            uncomment the below line to add a path prefix to all paths in the spec. This is useful when the service is running behind an API gateway that adds a path prefix.
+#            overlayFilePath: ./overlays/path-prefix.overlay.yaml
 
 specmatic:
   license:

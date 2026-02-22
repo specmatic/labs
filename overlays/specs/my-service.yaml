@@ -7,19 +7,25 @@ paths:
     get:
       summary: Get user by id
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
+        - $ref: "#/components/parameters/UserIdPathParam"
       responses:
         "200":
-          description: User found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
+          $ref: "#/components/responses/User200"
 components:
+  parameters:
+    UserIdPathParam:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+  responses:
+    User200:
+      description: User found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/User"
   schemas:
     User:
       type: object
