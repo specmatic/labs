@@ -12,6 +12,10 @@ The objective of this lab is to understand how you can use Specmatic adapters to
 ## Time required to complete this lab:
 10-15 minutes.
 
+## Prerequisites
+- Docker is installed and running.
+- You are in `labs/data-adapters`.
+
 ## Run the test
 
 ### 1. Via Studio:

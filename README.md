@@ -4,10 +4,10 @@ Contains all the Labs used during the Specmatic hands-on Workshop
 ## Time required to complete this lab:
 10-15 minutes.
 
-## Prerequisites 
-- Java 17 or higher 
+## Prerequisites
 - Docker Engine installed and running on your machine
 - An IDE (IntelliJ, VS Code, etc.) 
+
 
 ## Getting Started
 Clone the repository to your local machine: 

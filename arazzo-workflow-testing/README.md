@@ -7,6 +7,10 @@ Want to test the functionality of an entire business workflow of your microservi
 ## Time required to complete this lab:
 10-15 minutes.
 
+## Prerequisites
+- Docker is installed and running.
+- You are in `labs/arazzo-workflow-testing`.
+
 ## Sequency Diagram
 
 ![Sequency Diagram](./assets/flow.svg)

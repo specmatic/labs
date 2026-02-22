@@ -18,6 +18,10 @@ This project includes a consumer (`OrderService`) which implements following beh
 ## Time required to complete this lab:
 10-15 minutes.
 
+## Prerequisites
+- Docker is installed and running.
+- You are in `labs/async-event-flow`.
+
 ## How to Test these event flows?
 
 Specmatic solves event-flow testing by combining:

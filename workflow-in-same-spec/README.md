@@ -7,6 +7,10 @@ This lab demonstrates how you can use a built-in feature in Specmatic to define 
 ## Time required to complete this lab:
 10-15 minutes.
 
+## Prerequisites
+- Docker is installed and running.
+- You are in `labs/workflow-in-same-spec`.
+
 ## Run mock + test with Docker Compose
 
 ```bash

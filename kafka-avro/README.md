@@ -13,6 +13,10 @@ The diagram covers an order processing flow between `checkout-service` and `orde
 ## Time required to complete this lab:
 10-15 minutes.
 
+## Prerequisites
+- Docker is installed and running.
+- You are in `labs/kafka-avro`.
+
 ## Referencing your existing Avro files your schema registry in AsyncAPI spec
 
 The AsyncAPI specification that this application is based on **reuses the Avro schemas by referencing them instead of redefining them again**. 

@@ -12,6 +12,10 @@ Because of this path mismatch, contract tests fail. Your goal is to use a Specma
 ## Time required to complete this lab:
 10-15 minutes.
 
+## Prerequisites
+- Docker is installed and running.
+- You are in `labs/overlays`.
+
 ## Files in this lab
 - `specs/my-service.yaml` - Service contract (older path: `/api/users/{id}`)
 - `provider/server.py` - Tiny real HTTP service that only exposes `/api/v1/users/{id}`

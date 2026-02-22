@@ -11,6 +11,10 @@ This project demonstrates how to leverage OpenAPI specifications as a Contract T
 ## Time required to complete this lab:
 10-15 minutes.
 
+## Prerequisites
+- Docker is installed and running.
+- You are in `labs/api-security-schemes`.
+
 ## Security Scheme Configuration
 
 The application implements three different security schemes:

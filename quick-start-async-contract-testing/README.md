@@ -9,8 +9,10 @@ Make async contract tests pass by fixing the provider implementation.
 10-15 minutes.
 
 ## Prerequisites
-- Docker Engine running
+- Docker is installed and running.
+- You are in `labs/quick-start-async-contract-testing`.
 - Ports `9092` and `9000` available
+
 
 ## Files in this lab
 - `specs/async.yaml` - AsyncAPI contract (source of truth for this lab)

@@ -6,6 +6,10 @@ Here we'll send contract-invalid requests and ensure the API handles it graceful
 ## Time required to complete this lab:
 10-15 minutes.
 
+## Prerequisites
+- Docker is installed and running.
+- You are in `labs/schema-resiliency-testing`.
+
 ## Files in this lab
 - `specs/simple-openapi-spec.yaml` - OpenAPI spec for the BFF API. This is the main contract that we will be working with in this lab.
 - `examples/*.json` - External examples for the BFF API. These examples have some issues we'll fix them

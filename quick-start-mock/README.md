@@ -11,8 +11,10 @@ Run a simple consumer app that calls `GET /pets/1`.
 10-15 minutes.
 
 ## Prerequisites
-- Docker Engine running
+- Docker is installed and running.
+- You are in `labs/quick-start-mock`.
 - Ports `8081`, `9000`, and `9100` available
+
 
 ## Files in this lab
 - `specs/service.yaml` - OpenAPI contract for the pet API

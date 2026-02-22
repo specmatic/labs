@@ -9,8 +9,10 @@ Your goal is to make the contract test pass by fixing the service implementation
 10-15 minutes.
 
 ## Prerequisites
-- Docker Engine running
+- Docker is installed and running.
+- You are in `labs/quick-start-contract-testing`.
 - Port `8080` available
+
 
 ## Files in this lab
 - `specs/service.yaml` - OpenAPI contract (source of truth for this lab)

@@ -19,6 +19,10 @@ Following are the specifications used in this project:
 ## Time required to complete this lab:
 10-15 minutes.
 
+## Prerequisites
+- Docker is installed and running.
+- You are in `labs/order-bff`.
+
 ## Run Contract Tests
 
 ### 1. Using Specmatic Studio (Recommended for Local Development)
