@@ -104,22 +104,21 @@ In another terminal, start Studio:
 
 ```shell
 docker run --rm \
+  --network host \
   -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  -p 9000:9000 \
-  -p 9001:9001 \
   specmatic/enterprise:latest \
   studio
 ```
 Windows (PowerShell/CMD) single-line:
 ```shell
-docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro -p 9000:9000 -p 9001:9001 specmatic/enterprise:latest studio
+docker run --rm --network host -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest studio
 ```
 
 Open [Specmatic Studio](http://127.0.0.1:9000/_specmatic/studio), then:
 1. From the left panel, open `specs/service.yaml`.
 2. Go to the **Test** tab.
-3. Set URL to `http://host.docker.internal:8080`.
+3. Set URL to `http://127.0.0.1:8080`.
 4. Click **Run**.
 
 You should observe the same fail-then-pass behavior based on whether `petType` is fixed to `type`.
