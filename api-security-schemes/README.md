@@ -26,7 +26,7 @@ The system under test here is a service that implements the OpenAPI specificatio
 
 ## Running the application:
 In this mode, we'll run Keycloak locally which we will leverage as our OAuth authorization server for POST endpoints.  
-We use a Spring Security Configuration (refer ```src/main/java/com/store/config/SecurityConfig.kt```) which implements:
+We use a Spring Security Configuration which implements:
 - **POST endpoints**: Secured with OAuth2, requiring a token with the 'email' scope in the Authorization header
 - **GET endpoints**: Secured with Basic Authentication, requiring username/password credentials
 - **DELETE endpoints**: Secured with API Key authentication, requiring a valid API key in the X-API-Key header
@@ -34,12 +34,7 @@ We use a Spring Security Configuration (refer ```src/main/java/com/store/config/
 The application validates OAuth2 tokens by calling the ```spring.security.oauth2.resourceserver.jwt.issuer-uri``` url defined in the ```application.properties``` file.
 
 ## Running contract tests:
-Within the context of contract tests, certain concerns such as authentication and authorization are orthogonal because the priority is to verify if the application is adhering to the specification itself.
-However, we do want to make sure that security schemes defined in the specification are also validated at least to the extent that appropriate fields such as headers are populated.
-
-Including other aspects such as having to run a keycloak server locally or pointing to a remote server, impedes the ability to isolate our System Under Test and thereby getting quick feedback.
-
-So in test mode, application uses a dummy security configuration ((refer ```src/test/java/com/store/config/DummySecurityConfig.kt```)) which validates the presence of authentication headers without actually validating the credentials.
+Within the context of contract tests, we do want to make sure that security schemes defined in the specification are validated.
 
 Specmatic will use the Order API's OpenAPI specifications, read the security schemes, and generate appropriate authentication headers while making requests.
 
@@ -124,7 +119,7 @@ This mode runs all required components using containers:
 From the project root, run:
 
 ```shell
-docker compose -f docker-compose-test.yaml up --build specmatic-test
+docker compose -f docker-compose.yaml up specmatic-test
 ```
 
 Expected result:
@@ -139,7 +134,7 @@ Generated test reports:
 Cleanup after run:
 
 ```shell
-docker compose -f docker-compose-test.yaml down
+docker compose -f docker-compose.yaml down
 ```
 You should see different authentication headers set based on the HTTP method:
 
