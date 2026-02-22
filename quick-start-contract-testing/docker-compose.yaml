@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:8080"
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health').read()"]
+      test: ["CMD", "python", "-c", "import urllib.request; req=urllib.request.Request('http://localhost:8080/', method='HEAD'); urllib.request.urlopen(req)"]
       interval: 2s
       timeout: 1s
       retries: 30

@@ -18,11 +18,7 @@ Run a simple consumer app that calls `GET /pets/1`.
 
 ## Part A: Start only the consumer (service unavailable)
 ```shell
-docker compose up consumer
-```
-You should see the following on the terminal:
-```terminaloutput
-Attaching to quick-start-mock-consumer
+docker compose up consumer --build
 ```
 
 Open [http://127.0.0.1:8081](http://127.0.0.1:8081).

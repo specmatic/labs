@@ -8,6 +8,12 @@ services:
     command: ["python", "-m", "http.server", "8081", "--bind", "0.0.0.0"]
     ports:
       - "8081:8081"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; req=urllib.request.Request('http://127.0.0.1:8081/', method='HEAD'); urllib.request.urlopen(req, timeout=2)\""]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+      start_period: 1s
 
   mock:
     container_name: quick-start-mock-server
@@ -19,3 +25,9 @@ services:
     command: ["mock", "./specs/service.yaml", "--port", "9100"]
     ports:
       - "9100:9100"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9100/actuator/health >/dev/null"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+      start_period: 2s

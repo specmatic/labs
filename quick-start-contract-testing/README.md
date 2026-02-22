@@ -90,7 +90,9 @@ Open [Specmatic Studio](http://localhost:9000/_specmatic/studio), then:
 
 You should see the same failure before the fix and success after the fix.
 
-Stop service and Studio when done.
+Stop Studio by pressing `Ctrl+C` in the terminal where you started it.
+
+Stop service:
 
 ```shell
 docker compose down

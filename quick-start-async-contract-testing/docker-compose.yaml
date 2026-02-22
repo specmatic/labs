@@ -45,6 +45,12 @@ services:
         condition: service_completed_successfully
     environment:
       KAFKA_BOOTSTRAP_SERVER: kafka:9092
+    healthcheck:
+      test: ["CMD-SHELL", "grep -aq 'python' /proc/1/cmdline"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+      start_period: 2s
 
   contract-test:
     container_name: quick-start-async-contract-test
@@ -56,7 +62,7 @@ services:
       kafka-init:
         condition: service_completed_successfully
       provider:
-        condition: service_started
+        condition: service_healthy
     entrypoint: ["sh", "-lc"]
     command: ["sleep 6 && specmatic test"]
 
@@ -71,7 +77,7 @@ services:
       kafka-init:
         condition: service_completed_successfully
       provider:
-        condition: service_started
+        condition: service_healthy
     command: ["studio"]
     ports:
       - "9000:9000"
