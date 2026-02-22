@@ -13,7 +13,7 @@ systemUnderTest:
       asyncapi:
         type: test
         servers:
-          - host: broker:9092
+          - host: kafka:9092
             protocol: kafka
 
 specmatic:

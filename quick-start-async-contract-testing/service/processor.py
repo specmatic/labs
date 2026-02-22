@@ -5,7 +5,7 @@ import time
 from kafka import KafkaConsumer, KafkaProducer
 
 
-BOOTSTRAP_SERVER = os.getenv("KAFKA_BOOTSTRAP_SERVER", "broker:9092")
+BOOTSTRAP_SERVER = os.getenv("KAFKA_BOOTSTRAP_SERVER", "kafka:9092")
 INPUT_TOPIC = "new-orders"
 OUTPUT_TOPIC = "wip-orders"
 GROUP_ID = "quick-start-async-processor"

@@ -4,7 +4,7 @@ info:
   version: 1.0.0
 servers:
   kafka-server:
-    host: 'broker:9092'
+    host: 'kafka:9092'
     protocol: kafka
 channels:
   NewOrderPlaced:
