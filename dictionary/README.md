@@ -67,3 +67,6 @@ docker compose down -v
 ## Pass Criteria
 - Baseline run fails with `Tests run: 3, Successes: 0, Failures: 3, Errors: 0`.
 - After dictionary configuration, run passes with `Tests run: 3, Successes: 3, Failures: 0, Errors: 0`.
+
+## Additional Resources
+- [Specmatic Dictionary Documentation](https://docs.specmatic.io/features/dictionary)
