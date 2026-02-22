@@ -1,21 +1,37 @@
 # Studio Lab: Validate, Fix, and Generate External Examples
 
-## Objective
-Use Specmatic Studio to validate external examples, fix contract mismatches, and generate missing examples for `201` responses.
+Teams often keep executable examples outside the OpenAPI file so domain teams can update test cases without editing the contract itself. This lab shows how Specmatic validates those external examples and catches drift early.
 
-## Time required to complete this lab:
+## Objective
+Use Specmatic Studio (and `validate`) to:
+1. Reproduce failing external examples.
+2. Fix invalid examples.
+3. Add missing `201` examples for create APIs.
+4. Re-run validation to a clean pass.
+
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
 - Docker is installed and running.
 - You are in `labs/external-examples`.
+- Port `9000` is free (for Studio).
 
 ## Files in this lab
 - `specs/simple-openapi-spec.yaml`: OpenAPI contract for the BFF API.
-- `examples/*.json`: External examples used for validation.
-- `specmatic.yaml`: Specmatic configuration that points to the contract and example directory.
+- `examples/*.json`: External examples validated against the contract.
+- `specmatic.yaml`: Specmatic config (contract + examples directory).
 
-### 1. Run validation and observe the intended failure
+## Learner task
+Bring external examples to a fully valid state and ensure all required create-scenario examples are present.
+
+## Lab Rules
+- Do not edit `specs/simple-openapi-spec.yaml`.
+- Edit only files under `examples/`.
+
+## 1. Intentional failure (baseline run)
+Run:
+
 ```shell
 docker run --rm \
   -v .:/usr/src/app \
@@ -36,7 +52,8 @@ Use Studio to easily fix these spec invalid examples.
 ```shell
 docker run --rm \
   --name studio \
-  --network host \
+  -p 9000:9000 \
+  -p 9001:9001 \
   -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
   specmatic/enterprise:latest \
@@ -78,7 +95,9 @@ Expected final output:
 ```
 
 ## Pass Criteria
-- Validation reports `6 passed and 0 failed out of 6 total` for external examples.
+- `validate` reports `6 passed and 0 failed out of 6 total`.
+- Overall validation result is `PASSED`.
 
 ## Reference
-- External examples docs: [https://docs.specmatic.io/features/external_examples](https://docs.specmatic.io/features/external_examples)
+- External examples: https://docs.specmatic.io/features/external_examples
+- Specmatic Studio: https://docs.specmatic.io/documentation/specmatic_studio
