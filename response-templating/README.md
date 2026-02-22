@@ -67,6 +67,10 @@ docker run --rm \
   specmatic/enterprise:latest \
   studio
 ```
+Windows (PowerShell/CMD) single-line:
+```shell
+docker run --rm --name studio -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro -p 9000:9000 -p 9001:9001 specmatic/enterprise:latest studio
+```
 Open Studio at `http://127.0.0.1:9000/_specmatic/studio`.
 
 ## 3. Task A: Fix order response using Direct Substitution

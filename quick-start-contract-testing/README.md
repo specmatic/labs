@@ -111,6 +111,10 @@ docker run --rm \
   specmatic/enterprise:latest \
   studio
 ```
+Windows (PowerShell/CMD) single-line:
+```shell
+docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro -p 9000:9000 -p 9001:9001 specmatic/enterprise:latest studio
+```
 
 Open [Specmatic Studio](http://127.0.0.1:9000/_specmatic/studio), then:
 1. From the left panel, open `specs/service.yaml`.

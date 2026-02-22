@@ -50,6 +50,10 @@ docker run --rm \
   specmatic/enterprise:latest \
   studio
 ```
+Windows (PowerShell/CMD) single-line:
+```shell
+docker run --rm --name studio -p 9000:9000 -p 9001:9001 -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest studio
+```
 
 Open Studio at `http://127.0.0.1:9000/_specmatic/studio`.
 
