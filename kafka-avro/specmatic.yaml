@@ -32,3 +32,5 @@ specmatic:
     report:
       formats:
         - ctrf
+  license:
+    path: /specmatic/specmatic-license.txt

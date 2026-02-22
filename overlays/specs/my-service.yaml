@@ -1,0 +1,33 @@
+openapi: 3.0.1
+info:
+  title: User API
+  version: "1.0.0"
+paths:
+  /api/users/{id}:
+    get:
+      summary: Get user by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+components:
+  schemas:
+    User:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string

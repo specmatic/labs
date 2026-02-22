@@ -1,0 +1,5 @@
+overlay: 1.0.0
+info:
+  title: Add /api/v1 prefix for deployed provider compatibility
+  version: "1.0"
+actions: []
