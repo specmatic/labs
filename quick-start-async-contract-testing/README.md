@@ -22,7 +22,7 @@ Do not edit `specs/async.yaml` in this lab.
 From this folder, run:
 
 ```shell
-docker compose up --build
+docker compose up contract-test --build --abort-on-container-exit
 ```
 
 Expected result:
@@ -54,7 +54,7 @@ Update it to:
 Run again:
 
 ```shell
-docker compose up --build
+docker compose up contract-test --build --abort-on-container-exit
 ```
 
 Expected result:

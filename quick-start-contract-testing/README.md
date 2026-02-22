@@ -21,7 +21,7 @@ Do not edit `specs/service.yaml` in this lab.
 From this folder, run:
 
 ```shell
-docker compose up --build
+docker compose up contract-test --build --abort-on-container-exit
 ```
 
 Expected result:
@@ -44,7 +44,7 @@ Update it to return `type` so the response matches `specs/service.yaml`.
 Run again:
 
 ```shell
-docker compose up --build
+docker compose up contract-test --build --abort-on-container-exit
 ```
 
 Expected result:
