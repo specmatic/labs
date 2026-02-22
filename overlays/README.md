@@ -5,6 +5,8 @@ This lab demonstrates a common real-world issue:
 - The consumer expects `GET /api/users/{id}`
 - The deployed provider exposes `GET /api/v1/users/{id}`
 
+**Note**: if this `/v1 prefix` was right at the beginning of the path, it would be easier to fix by just changing the `basePath` in `specmatic.yaml`. But in this case, the version prefix is in the middle of the path, which makes it more difficult to fix without modifying the original spec.
+
 Because of this path mismatch, contract tests fail. Your goal is to use a Specmatic overlay to patch the consumer contract at test time, without modifying the original spec.
 
 ## Files in this lab
