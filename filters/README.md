@@ -9,6 +9,7 @@ Use Specmatic test filters to temporarily exclude selected failing scenarios and
 ## Prerequisites
 - Docker is installed and running.
 - You are in `labs/filters`.
+- Ports `9000` and `9001` are available for Studio.
 
 ## Files in this lab
 - `specs/simple-openapi-spec.yaml`: OpenAPI contract.
@@ -42,7 +43,8 @@ Run:
 ```shell
 docker run --rm \
   --name studio \
-  --network host \
+  -p 9000:9000 \
+  -p 9001:9001 \
   -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
   specmatic/enterprise:latest \

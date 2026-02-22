@@ -12,7 +12,7 @@ Run an async contract test against a real Kafka-based provider, observe the inte
 - Docker Desktop (or Docker Engine + Compose v2) is installed and running.
 - You are in `labs/quick-start-async-contract-testing`.
 - Port `9092` is free (required for Kafka in this lab).
-- Port `9000` is free (required for Studio).
+- Ports `9000` and `9001` are free (required for Studio).
 
 ## Files in this lab
 - `specs/async.yaml` - AsyncAPI contract (source of truth for this lab)
@@ -95,7 +95,7 @@ Start Studio:
 docker compose --profile studio up studio --build
 ```
 
-Open [Studio](http://127.0.0.1:9000/_specmatic/studio, load `specmatic.yaml`, and click **Run Suite**.
+Open [Studio](http://127.0.0.1:9000/_specmatic/studio), load `specmatic.yaml`, and click **Run Suite**.
 
 Stop Studio stack:
 
@@ -105,7 +105,7 @@ docker compose --profile studio down -v
 
 ## Troubleshooting (common beginner blockers)
 - `port is already allocated`:
-  - Free `9092` and `9000`, then retry.
+  - Free `9092`, `9000`, and `9001`, then retry.
 - `kafka-init` fails with shell/script errors on Windows:
   - Ensure shell scripts are checked out with LF line endings (`create-topics.sh` must not contain CRLF).
 - Test exits before provider is ready:

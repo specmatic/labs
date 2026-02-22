@@ -12,7 +12,7 @@ In real projects, consumer teams are often blocked because a dependency is late,
 ## Prerequisites
 - Docker is installed and running.
 - You are in `labs/quick-start-mock`.
-- Ports `8081`, `9000`, and `9100` are available.
+- Ports `8081`, `9000`, `9001`, and `9100` are available.
 
 ## Files in this lab
 - `specs/service.yaml` - OpenAPI contract for the pet API.

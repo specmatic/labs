@@ -9,6 +9,7 @@ Use Specmatic Studio to repair incomplete external examples using partial exampl
 ## Prerequisites
 - Docker is installed and running.
 - You are in `labs/partial-examples`.
+- Ports `9000` and `9001` are available for Studio.
 
 ## Files in this lab
 - `specs/simple-openapi-spec.yaml`: OpenAPI contract for the BFF API.
@@ -35,7 +36,8 @@ docker run --rm \
 ```shell
 docker run --rm \
   --name studio \
-  --network host \
+  -p 9000:9000 \
+  -p 9001:9001 \
   -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
   specmatic/enterprise:latest \

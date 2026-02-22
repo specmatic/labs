@@ -15,7 +15,7 @@ Use Specmatic Studio (and `validate`) to:
 ## Prerequisites
 - Docker is installed and running.
 - You are in `labs/external-examples`.
-- Port `9000` is free (for Studio).
+- Ports `9000` and `9001` are free (for Studio).
 
 ## Files in this lab
 - `specs/simple-openapi-spec.yaml`: OpenAPI contract for the BFF API.
