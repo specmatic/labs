@@ -12,6 +12,9 @@ Participants will:
 * Understand when to use substitution vs lookup, and how both improve contract-test realism with minimal example duplication.
 * By the end, participants will be able to design mocks that are deterministic, reusable, and closer to production-like behavior.
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Files in this lab
 - `specs/simple-openapi-spec.yaml` - OpenAPI spec for the BFF API. This is the main contract that we will be working with in this lab.
 - `examples/test/*.json` - External examples for the BFF API tests.

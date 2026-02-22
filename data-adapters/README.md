@@ -9,6 +9,9 @@ When `PascalCase` service is tested against `camelCase` service, the request and
 
 The objective of this lab is to understand how you can use Specmatic adapters to translate request/response field names between the two cases.
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Run the test
 
 ### 1. Via Studio:

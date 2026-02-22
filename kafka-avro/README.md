@@ -10,6 +10,9 @@ This project demonstrates **contract-driven development** using your Avro schema
 
 The diagram covers an order processing flow between `checkout-service` and `order-service` communicating through Kafka topics with Avro serialization for the payloads.
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Referencing your existing Avro files your schema registry in AsyncAPI spec
 
 The AsyncAPI specification that this application is based on **reuses the Avro schemas by referencing them instead of redefining them again**. 

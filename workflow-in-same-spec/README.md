@@ -4,6 +4,9 @@ What if you want to create a resource using POST first and then use the created 
 
 This lab demonstrates how you can use a built-in feature in Specmatic to define a lightweight workflow.
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Run mock + test with Docker Compose
 
 ```bash

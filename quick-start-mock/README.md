@@ -7,6 +7,9 @@ Run a simple consumer app that calls `GET /pets/1`.
 - First, see it fail when the service is unavailable.
 - Then start a Specmatic mock server from contract and see the consumer work immediately.
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Prerequisites
 - Docker Engine running
 - Ports `8081`, `9000`, and `9100` available

@@ -5,6 +5,9 @@ This lab helps you learn one thing quickly: run Specmatic contract tests against
 ## Goal
 Your goal is to make the contract test pass by fixing the service implementation.
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Prerequisites
 - Docker Engine running
 - Port `8080` available

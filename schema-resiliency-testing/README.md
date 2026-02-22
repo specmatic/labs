@@ -3,6 +3,9 @@
 This lab demonstrates how to use Specmatic's schema resiliency testing features to ensure your API operates as expected by HTTP standards. 
 Here we'll send contract-invalid requests and ensure the API handles it gracefully.
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Files in this lab
 - `specs/simple-openapi-spec.yaml` - OpenAPI spec for the BFF API. This is the main contract that we will be working with in this lab.
 - `examples/*.json` - External examples for the BFF API. These examples have some issues we'll fix them

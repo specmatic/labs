@@ -2,6 +2,9 @@
 
 This lab demonstrates how to use Filters to skipping running certain tests and what is the implication of the same on the coverage report.
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Files in this lab
 - `specs/simple-openapi-spec.yaml` - OpenAPI spec for the BFF API. This is the main contract that we will be working with in this lab.
 - `specmatic.yaml` - Specmatic config file that defines the Spec, and it's example files.

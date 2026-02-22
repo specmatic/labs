@@ -5,6 +5,9 @@ This lab demonstrates AsyncAPI contract testing against a real provider service.
 ## Goal
 Make async contract tests pass by fixing the provider implementation.
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Prerequisites
 - Docker Engine running
 - Ports `9092` and `9000` available

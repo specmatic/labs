@@ -9,6 +9,9 @@ This lab demonstrates a common real-world issue:
 
 Because of this path mismatch, contract tests fail. Your goal is to use a Specmatic overlay to patch the consumer contract at test time, without modifying the original spec.
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Files in this lab
 - `specs/my-service.yaml` - Service contract (older path: `/api/users/{id}`)
 - `provider/server.py` - Tiny real HTTP service that only exposes `/api/v1/users/{id}`

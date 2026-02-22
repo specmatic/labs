@@ -1,6 +1,9 @@
 # Specmatic Workshop Labs
 Contains all the Labs used during the Specmatic hands-on Workshop
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Prerequisites 
 - Java 17 or higher 
 - Docker Engine installed and running on your machine

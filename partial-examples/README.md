@@ -3,12 +3,12 @@
 ## Objective
 Use Specmatic Studio to repair incomplete external examples using partial examples, then verify behavior using validation and loop testing.
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Prerequisites
 - Docker is installed and running.
 - You are in `labs/partial-examples`.
-
-## Time
-10 minutes.
 
 ## Files in this lab
 - `specs/simple-openapi-spec.yaml`: OpenAPI contract for the BFF API.

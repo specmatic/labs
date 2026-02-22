@@ -8,6 +8,9 @@ Specs:
 
 This project demonstrates how to leverage OpenAPI specifications as a Contract Test with Specmatic when the specification includes multiple [security schemes](https://spec.openapis.org/oas/v3.0.1#security-scheme-object) to protect different endpoints based on HTTP methods.
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Security Scheme Configuration
 
 The application implements three different security schemes:

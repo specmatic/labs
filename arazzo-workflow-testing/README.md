@@ -4,6 +4,9 @@ Want to test the functionality of an entire business workflow of your microservi
 
 ![Order Appplication Workflow](assets/arazzo-workflow.gif)
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Sequency Diagram
 
 ![Sequency Diagram](./assets/flow.svg)
@@ -35,4 +38,3 @@ This launches the following services:
 | **Warehouse API** | 3003 | Manages inventory operations   |
 | **Kafka**         | 9092 | Internal broker port           |
 | **Postgres**      | 5432 | Shared database                |
-

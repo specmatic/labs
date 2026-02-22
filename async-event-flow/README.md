@@ -15,6 +15,9 @@ This project includes a consumer (`OrderService`) which implements following beh
 
 ![Order Appplication Workflow](assets/order-application-workflow.gif)
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## How to Test these event flows?
 
 Specmatic solves event-flow testing by combining:

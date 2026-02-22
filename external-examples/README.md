@@ -3,6 +3,9 @@
 ## Objective
 Use Specmatic Studio to validate external examples, fix contract mismatches, and generate missing examples for `201` responses.
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Prerequisites
 - Docker is installed and running.
 - You are in `labs/external-examples`.

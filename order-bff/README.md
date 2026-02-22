@@ -16,6 +16,9 @@ Following are the specifications used in this project:
 ### Contract Testing Setup
 ![Contract testing setup with Specmatic](assets/specmatic-contract-test-setup.gif)
 
+## Time required to complete this lab:
+10-15 minutes.
+
 ## Run Contract Tests
 
 ### 1. Using Specmatic Studio (Recommended for Local Development)
