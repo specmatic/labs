@@ -1,7 +1,8 @@
 services:
   studio:
     image: specmatic/enterprise:latest
-    container_name: studio
+    container_name: order-bff-studio
+    profiles: ["studio"]
     restart: unless-stopped
     ports:
       - "9000:9000"
@@ -12,6 +13,7 @@ services:
       - .:/usr/src/app
       - ../license.txt:/specmatic/specmatic-license.txt:ro
     environment:
+      APP_URL: http://order-bff-studio-sut:8080
       STUDIO_MAX_TEST_COUNT: 1000
       SPECMATIC_LICENSE_PATH: /specmatic/specmatic-license.txt
       KAFKA_PROPERTIES: |
@@ -19,19 +21,90 @@ services:
         listeners=PLAINTEXT://0.0.0.0:9092
         listener.security.protocol.map=PLAINTEXT:PLAINTEXT
         inter.broker.listener.name=PLAINTEXT
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9000/_specmatic/studio >/dev/null"]
+      interval: 2s
+      timeout: 2s
+      retries: 30
+      start_period: 3s
 
-  order-bff:
+  order-bff-studio-sut:
     image: specmaticdemo/specmatic-order-bff-java:latest
-    container_name: order-bff
+    container_name: order-bff-studio-sut
+    profiles: ["studio"]
     ports:
       - "8080:8080"
     environment:
       ORDER_API_URL: http://studio:8090
       KAFKA_BOOTSTRAP_SERVERS: "studio:9092"
       CORS_ORIGINS: http://localhost:3000
+    depends_on:
+      studio:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health >/dev/null"]
       interval: 2s
       timeout: 2s
       retries: 10
       start_period: 1s
+
+  mock:
+    image: specmatic/enterprise:latest
+    container_name: order-bff-test-mock
+    profiles: ["test"]
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+      - "9092:9092"
+    command: ["mock"]
+    volumes:
+      - .:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    environment:
+      ORDER_API_URL: http://mock:8090
+      KAFKA_BOOTSTRAP_SERVER_HOST: "mock"
+      KAFKA_BOOTSTRAP_SERVERS: "mock:9092"
+      KAFKA_PROPERTIES: |
+        advertised.listeners=PLAINTEXT://mock:9092
+        listeners=PLAINTEXT://0.0.0.0:9092
+        listener.security.protocol.map=PLAINTEXT:PLAINTEXT
+        inter.broker.listener.name=PLAINTEXT
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://mock:8090/actuator/health >/dev/null"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+      start_period: 1s
+
+  order-bff:
+    image: specmaticdemo/specmatic-order-bff-java:latest
+    container_name: order-bff-test-sut
+    profiles: ["test"]
+    ports:
+      - "8080:8080"
+    environment:
+      ORDER_API_URL: http://mock:8090
+      KAFKA_BOOTSTRAP_SERVERS: "mock:9092"
+    depends_on:
+      mock:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health >/dev/null"]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+      start_period: 1s
+
+  test:
+    image: specmatic/enterprise:latest
+    container_name: order-bff-contract-test
+    profiles: ["test"]
+    command: ["test"]
+    volumes:
+      - .:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    depends_on:
+      mock:
+        condition: service_healthy
+      order-bff:
+        condition: service_healthy
