@@ -56,7 +56,7 @@ services:
       start_period: 1s
 
   inventory-api:
-    image: specmatic/specmatic-inventory-api-wsdl-java:latest
+    image: specmaticdemo/specmatic-inventory-api-wsdl-java:latest
     container_name: inventory-api
     ports:
       - "8095:8095"
