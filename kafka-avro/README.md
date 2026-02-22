@@ -57,31 +57,12 @@ docker compose -f docker-compose-test.yaml pull
 2. Build and start dependencies + order-service. Once the order-service has started, run the contract tests using Specmatic:
 
 ```bash
-docker compose -f docker-compose-test.yaml up --build -d
+docker compose -f docker-compose-test.yaml up --build specmatic-test --abort-on-container-exit
 ```
 
 3. Stop the containers 
 ```bash
 docker compose -f docker-compose-test.yaml down -v --remove-orphans
-```
-
-### Run Contract Tests Programmatically
-```bash
-# 1. Pull dependencies
-docker compose pull
-
-# 2. Execute contract tests
-./gradlew clean test
-```
-
-You can also run the [contract test](src%2Ftest%2Fkotlin%2Fcom%2Fexample%2Forder%2FContractTest.kt) from your IDE (Please run `docker compose pull` before running tests). The contract test makes use of [testcontainers](https://testcontainers.com/) to set up test environment.
-
-#### Test Configuration
-We only need to set up below properties in the [contract test](src%2Ftest%2Fkotlin%2Fcom%2Fexample%2Forder%2FContractTest.kt).
-```properties
-SCHEMA_REGISTRY_URL=http://localhost:8085
-SCHEMA_REGISTRY_KIND=CONFLUENT
-AVAILABLE_SERVERS=localhost:9092
 ```
 
 ### What all are we testing with Specmatic Contract Test:
