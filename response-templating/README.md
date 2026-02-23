@@ -123,6 +123,26 @@ Clean up:
 docker compose down -v
 ```
 
+## Specmatic Types to OpenAPI Types Mapping
+| Specmatic type token | OpenAPI type       | OpenAPI format / note                            |
+|----------------------|--------------------|--------------------------------------------------|
+| (number)             | number             | no fixed format                                  |
+| (integer)            | integer            | no fixed format                                  |
+| (boolean)            | boolean            | none                                             |
+| (null)               | null (OAS 3.1)     | version-dependent                                |
+| (string)             | string             | none                                             |
+| (email)              | string             | email                                            |
+| (date)               | string             | date                                             |
+| (datetime)           | string             | date-time                                        |
+| (time)               | string             | time                                             |
+| (uuid)               | string             | uuid                                             |
+| (url)                | string             | uri                                              |
+| (url-http)           | string             | uri (used by Specmatic to match HTTP urls only)  |
+| (url-https)          | string             | uri (used by Specmatic to match HTTPS urls only) |
+| (url-path)           | string             | path-style URL constraint                        |
+| (anything)           | any                | unconstrained schema ({}-like)                   |
+| (anyvalue)           | any non-null value | unconstrained-ish, but intended as "any value"   |
+
 ## Pass Criteria
 - Baseline run fails with `1` success and `3` failures.
 - After Task A, run shows `2` successes and `2` failures.
