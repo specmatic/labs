@@ -126,6 +126,8 @@ docker run --rm --name studio -v .:/usr/src/app --network host specmatic/enterpr
 ```
 Open `http://127.0.0.1:9000/_specmatic/studio`, open `specmatic.yaml`, and click `Run Suite`.
 
+Go to the `Mock` tab and look at the request and response payloads. You should see how the data adapters have transformed the field names in both directions.
+
 ## Pass Criteria
 - Baseline run fails with `1` failed test.
 - After hooks are configured, run passes with `1` successful test.
