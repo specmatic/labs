@@ -128,6 +128,8 @@ Open `http://127.0.0.1:9000/_specmatic/studio`, open `specmatic.yaml`, and click
 
 Go to the `Mock` tab and look at the request and response payloads. You should see how the data adapters have transformed the field names in both directions.
 
+Shut down Studio by pressing `Ctrl+C` in the terminal.
+
 ## Pass Criteria
 - Baseline run fails with `1` failed test.
 - After hooks are configured, run passes with `1` successful test.
