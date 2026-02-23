@@ -30,7 +30,7 @@ docker compose up test --abort-on-container-exit
 
 Expected baseline output:
 ```terminaloutput
-Tests run: 224, Successes: 21, Failures: 201, Errors: 2
+Tests run: 134, Successes: 20, Failures: 112, Errors: 2
 ```
 
 Clean up:
@@ -75,18 +75,20 @@ Checkpoint after Task A:
 - Expected direction: failures drop sharply and most remaining executed tests are successful.
 
 ### Task B: Exclude uncovered 429 response scenarios
-1. In results/coverage view, find entries marked `Not Covered` for `429`.
+1. In results/coverage view, find entries for `429`.
 2. Exclude those scenarios.
 3. Re-run tests.
 
 Checkpoint after Task B:
-- Expected final Studio result should align with CLI expectation below.
+- You should see Successes: 21, Failures: 0, Errors: 0, Excluded 7 in Studio.
 
 ## 4. Persist filters to config
 In Studio:
 1. Open `Active Tabs` from the right sidebar.
 2. Click `Export as Config`.
 3. Confirm `specmatic.yaml` now contains the generated filter expression(s).
+
+Stop Studio by pressing `Ctrl+C` in the terminal where it's running.
 
 ## 5. Verify from CLI (with persisted filters)
 Run:
@@ -96,7 +98,7 @@ docker compose up test --abort-on-container-exit
 
 Expected output:
 ```terminaloutput
-Tests run: 21, Successes: 21, Failures: 0, Errors: 0
+Tests run: 20, Successes: 20, Failures: 0, Errors: 0
 ```
 
 Clean up:
@@ -107,7 +109,7 @@ docker compose down -v
 ## Pass Criteria
 - Baseline run shows `224` tests with many failures.
 - After applying and exporting filters, CLI run shows:
-  - `Tests run: 21, Successes: 21, Failures: 0, Errors: 0`
+  - `Tests run: 20, Successes: 20, Failures: 0, Errors: 0`
 
 ## Why this lab matters
 - Filters help teams focus on critical scenarios while they triage known failures.
