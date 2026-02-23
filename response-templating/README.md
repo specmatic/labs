@@ -126,11 +126,11 @@ docker compose down -v
 ## Specmatic Types to OpenAPI Types Mapping
 | Specmatic type token | OpenAPI type       | OpenAPI format / note                            |
 |----------------------|--------------------|--------------------------------------------------|
-| (number)             | number             | no fixed format                                  |
-| (integer)            | integer            | no fixed format                                  |
-| (boolean)            | boolean            | none                                             |
-| (null)               | null (OAS 3.1)     | version-dependent                                |
-| (string)             | string             | none                                             |
+| (number)             | number             | double or float                                  |
+| (integer)            | integer            |                                                  |
+| (boolean)            | boolean            |                                                  |
+| (null)               | null               | Only valid in OAS 3.1                            |
+| (string)             | string             |                                                  |
 | (email)              | string             | email                                            |
 | (date)               | string             | date                                             |
 | (datetime)           | string             | date-time                                        |
