@@ -19,16 +19,15 @@ Here we'll send contract-invalid requests and ensure the API handles it graceful
 ```shell
 docker run --rm \
   --name studio \
+  --network host \
   -v .:/usr/src/app \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  -p 9000:9000 \
-  -p 9001:9001 \
   specmatic/enterprise:latest \
   studio
 ```
 Windows (PowerShell/CMD) single-line:
 ```shell
-docker run --rm --name studio -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro -p 9000:9000 -p 9001:9001 specmatic/enterprise:latest studio
+docker run --rm --name studio -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro --network host specmatic/enterprise:latest studio
 ```
 
 ## Loop Test

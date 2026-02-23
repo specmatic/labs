@@ -115,15 +115,14 @@ Start Studio:
 ```bash
 docker run --rm \
   --name studio \
+  --network host \
   -v .:/usr/src/app \
-  -p 9000:9000 \
-  -p 9001:9001 \
   specmatic/enterprise:latest \
   studio
 ```
 Windows (PowerShell/CMD) single-line:
 ```shell
-docker run --rm --name studio -v .:/usr/src/app -p 9000:9000 -p 9001:9001 specmatic/enterprise:latest studio
+docker run --rm --name studio -v .:/usr/src/app --network host specmatic/enterprise:latest studio
 ```
 Open `http://127.0.0.1:9000/_specmatic/studio`, open `specmatic.yaml`, and click `Run Suite`.
 

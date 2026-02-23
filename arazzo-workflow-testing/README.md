@@ -29,7 +29,7 @@ docker compose up --build
 
 Start Studio
 ```shell
-docker run --rm -p 9000:9000 -p 9001:9001 -v ./specs:/usr/src/app specmatic/enterprise studio
+docker run --rm --network host -v ./specs:/usr/src/app specmatic/enterprise studio
 ```
 
 This launches the following services:
