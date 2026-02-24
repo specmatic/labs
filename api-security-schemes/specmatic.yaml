@@ -26,14 +26,8 @@ components:
               $ref: "#/components/sources/localContracts"
             specs:
               - spec:
-                  id: orderPostOAuthSpec
-                  path: ./spec/api_order_post_oauth.yaml
-              - spec:
-                  id: orderGetBasicAuthSpec
-                  path: ./spec/api_order_get_basic.yaml
-              - spec:
-                  id: orderDeleteApiKeySpec
-                  path: ./spec/api_order_delete_apikey.yaml
+                  id: orderApiSpec
+                  path: ./spec/order-api-with-auth.yaml
   runOptions:
     orderServiceTest:
       openapi:
@@ -43,20 +37,14 @@ components:
         actuatorUrl: http://localhost:8080/actuator/mappings
         specs:
           - spec:
-              id: orderPostOAuthSpec
+              id: orderApiSpec
               securitySchemes:
                 oAuth2AuthCode:
                   type: oauth2
                   token: ${OAUTH_TOKEN:OAUTH1234}
-          - spec:
-              id: orderGetBasicAuthSpec
-              securitySchemes:
                 basicAuth:
                   type: basicAuth
                   token: ${BASIC_AUTH_TOKEN:dXNlcjpwYXNzd29yZA==}
-          - spec:
-              id: orderDeleteApiKeySpec
-              securitySchemes:
                 apiKeyAuth:
                   type: apiKey
                   token: ${API_KEY:APIKEY1234}

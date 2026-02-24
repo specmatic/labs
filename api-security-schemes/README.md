@@ -1,11 +1,6 @@
 # Specmatic Sample Application to demonstrate OpenAPI Multiple Security Schemes Support
 ![Specmatic Sample Application to demonstrate OpenAPI OAuth2 security scheme support](assets/SpecmaticOAuth.gif)
 
-Specs: 
-- [POST Endpoints with OAuth2](spec/api_order_post_oauth.yaml) - POST operations protected with OAuth2
-- [GET Endpoints with Basic Auth](spec/api_order_get_basic.yaml) - GET operations protected with Basic Authentication
-- [DELETE Endpoints with API Key](spec/api_order_delete_apikey.yaml) - DELETE operations protected with API Key
-
 This project demonstrates how to leverage OpenAPI specifications as a Contract Test with Specmatic when the specification includes multiple [security schemes](https://spec.openapis.org/oas/v3.0.1#security-scheme-object) to protect different endpoints based on HTTP methods.
 
 ## Time required to complete this lab:
@@ -31,8 +26,17 @@ We have used below tools to demonstrate the same.
 
 The system under test here is a service that implements the OpenAPI specification and acts an OAuth2 resource server.
 
+### High-level flow
+
+- `Keycloak` acts as the OAuth2 authorization server (used for `POST` endpoint tokens).
+- `Order API` (Spring Boot) is the system under test and enforces:
+    - OAuth2 for `POST`
+    - Basic Auth for `GET`
+    - API Key for `DELETE`
+- `Specmatic` reads the OpenAPI spec and sends requests with the appropriate auth headers during contract tests.
+
 ## Running the application:
-In this mode, we'll run Keycloak locally which we will leverage as our OAuth authorization server for POST endpoints.  
+We'll run Keycloak locally which we will leverage as our OAuth authorization server for POST endpoints.  
 We use a Spring Security Configuration which implements:
 - **POST endpoints**: Secured with OAuth2, requiring a token with the 'email' scope in the Authorization header
 - **GET endpoints**: Secured with Basic Authentication, requiring username/password credentials
@@ -49,7 +53,7 @@ Specmatic will use the Order API's OpenAPI specifications, read the security sch
 
 The application now uses three separate OpenAPI specifications, each with its own security scheme:
 
-**1. POST endpoints with OAuth2** (```spec/api_order_post_oauth.yaml```):
+**1. POST endpoints with OAuth2** :
 ```yaml
   securitySchemes:
     oAuth2AuthCode:
@@ -61,9 +65,6 @@ The application now uses three separate OpenAPI specifications, each with its ow
           tokenUrl: http://localhost:8083/realms/specmatic/protocol/openid-connect/token
           scopes:
             email: email
-
-security:
-  - oAuth2AuthCode: []
 ```
 
 **2. GET endpoints with Basic Auth** (```spec/api_order_get_basic.yaml```):
@@ -73,9 +74,6 @@ security:
       type: http
       scheme: basic
       description: Basic Authentication with username and password
-
-security:
-  - basicAuth: []
 ```
 
 **3. DELETE endpoints with API Key** (```spec/api_order_delete_apikey.yaml```):
@@ -86,9 +84,6 @@ security:
       in: header
       name: X-API-Key
       description: API Key based authentication
-
-security:
-  - apiKeyAuth: []
 ```
 
 Specmatic will check if these security schemes are defined in the ```specmatic.yaml``` configuration.  
@@ -98,23 +93,17 @@ The security schemes are defined in ```specmatic.yaml```:
 ```yaml
 specs:
   - spec:
-      id: orderPostOAuthSpec
+      id: orderApiSpec
       securitySchemes:
         oAuth2AuthCode:
           type: oauth2
           token: ${OAUTH_TOKEN:OAUTH1234}
-  - spec:
-      id: orderGetBasicAuthSpec
-      securitySchemes:
         basicAuth:
-          type: http
-          token: ${BASIC_AUTH_TOKEN:Basic dXNlcjpwYXNzd29yZA==}
-  - spec:
-      id: orderDeleteApiKeySpec
-      securitySchemes:
+          type: basicAuth
+          token: ${BASIC_AUTH_TOKEN:dXNlcjpwYXNzd29yZA==}
         apiKeyAuth:
           type: apiKey
-          value: ${API_KEY:APIKEY1234}
+          token: ${API_KEY:APIKEY1234}
 ```
 
 #### Running tests with Docker Compose
