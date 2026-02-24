@@ -57,7 +57,7 @@ docker run --rm --name studio --network host -v .:/usr/src/app -v ../license.txt
 Open Studio at `http://127.0.0.1:9000/_specmatic/studio`.
 
 ## 3. Apply filters in Studio (guided)
-In Studio, open the [simple-openapi-spec.yaml](specs/simple-openapi-spec.yaml) file from the left sidebar, and you will see that 3 examples are valid.
+In Studio, open the [simple-openapi-spec.yaml](specs/simple-openapi-spec.yaml) file from the left sidebar.
 
 Go to the Mock tab and click on the "Run" button to start the mock server on port 8080
 
