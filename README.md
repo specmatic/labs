@@ -32,7 +32,6 @@ This is a mono-repo. Each lab is self-contained and organized in a separate dire
 - [Intelligent service virtualization](quick-start-mock/README.md)
   - Inline Examples as mock data 
   - External examples as mock data
-- [AsyncAPI Contract Testing](quick-start-async-contract-testing/README.md)
 - Examples
   - [Generate, Validate and Fix examples](external-examples/README.md)
   - [Partial examples](partial-examples/README.md)
@@ -43,9 +42,11 @@ This is a mono-repo. Each lab is self-contained and organized in a separate dire
   - [Request/Response Adapters](data-adapters/README.md)
   - [Overlays](overlays/README.md)
   - [Workflow within the Same Spec](workflow-in-same-spec/README.md)
+  - [Running Contract Tests and Mocks in CI](async-event-flow/README.md)
+- Event Driven Architecture with AsyncAPI
+  - [AsyncAPI Contract Testing](quick-start-async-contract-testing/README.md)
   - [Kafka and Avro Schema](kafka-avro/README.md)
   - [Async Event Flow](async-event-flow/README.md)
-  - [Running Contract Tests and Mocks in CI](async-event-flow/README.md)
 - More types of Testing
   - [Schema Resiliency Testing](schema-resiliency-testing/README.md)
   - [API Resiliency Testing](api-resiliency-testing/README.md)
