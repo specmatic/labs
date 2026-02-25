@@ -3,6 +3,8 @@
 ## Objective
 Run Specmatic against a real service implementation, see a contract failure, and fix the implementation without changing the contract.
 
+![Contract Testing](asset/contract-testing.gif)
+
 ## Why this lab matters
 This is the core contract-driven development loop:
 1. Keep the contract as source of truth.
