@@ -31,13 +31,13 @@ jobs:
         run: ./gradlew build
 
       - name: Upload HTML Test Report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ matrix.os }}-${{ matrix.java }}-html-report
           path: build/reports/specmatic/async/test/html
           
       - name: Upload CTRF Report
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         if: always() # Run even if tests fail
         with:
           name: ctrf-report
