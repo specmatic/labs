@@ -70,7 +70,7 @@ services:
       retries: 20
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:7.9.5
+    image: confluentinc/cp-schema-registry:8.2.0
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
