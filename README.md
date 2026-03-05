@@ -6,8 +6,9 @@ Contains all the Labs used during the Specmatic hands-on Workshop
 
 ## Prerequisites
 - Docker Engine installed and running on your machine
+- Ensure host networking is enabled in Docker Desktop on your machine.
+![Docker Config](assets/docker-desktop-host-networking.png) 
 - An IDE (IntelliJ, VS Code, etc.) 
-
 
 ## Getting Started
 Clone the repository to your local machine: 
