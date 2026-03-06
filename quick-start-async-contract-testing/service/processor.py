@@ -25,6 +25,7 @@ def create_consumer():
 def create_producer():
     return KafkaProducer(
         bootstrap_servers=[BOOTSTRAP_SERVER],
+        key_serializer=lambda k: str(k).encode("utf-8") if k is not None else None,
         value_serializer=lambda v: json.dumps(v).encode("utf-8"),
     )
 
@@ -62,13 +63,18 @@ def main():
                 correlation_id = extract_header(message.headers, "orderCorrelationId")
                 response_payload = process_message(message.value)
 
+                # Extract the key from the consumed message
+                message_key = message.key.decode("utf-8") if message.key else None
+
                 headers = [("orderCorrelationId", correlation_id.encode("utf-8"))] if correlation_id else []
-                producer.send(OUTPUT_TOPIC, value=response_payload, headers=headers)
+                producer.send(OUTPUT_TOPIC, key=message_key, value=response_payload, headers=headers)
                 producer.flush()
 
                 print(
                     "Processed order",
                     message.value.get("id"),
+                    "with key",
+                    message_key,
                     "and produced response:",
                     response_payload,
                 )

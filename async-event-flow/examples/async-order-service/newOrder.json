@@ -3,6 +3,7 @@
   "name": "NEW_ORDER",
   "receive": {
     "topic": "new-orders",
+    "key": 10,
     "payload": {
       "id": 10,
       "orderItems": [
@@ -26,6 +27,7 @@
   },
   "send": {
     "topic": "wip-orders",
+    "key": 10,
     "payload": {
       "id": "$match(exact:10)",
       "totalAmount": 3000,

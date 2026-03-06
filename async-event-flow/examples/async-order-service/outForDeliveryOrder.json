@@ -3,6 +3,7 @@
   "name": "ORDER_OUT_FOR_DELIVERY",
   "receive": {
     "topic": "out-for-delivery-orders",
+    "key": 456,
     "payload": {
       "orderId": 456,
       "deliveryAddress": "1234 Elm Street, Springfield",

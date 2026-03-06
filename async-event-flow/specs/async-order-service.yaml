@@ -74,6 +74,10 @@ components:
       name: OrderRequest
       title: An order request
       contentType: application/json
+      bindings:
+        kafka:
+          key:
+            type: integer
       headers:
         type: object
         properties:
@@ -112,6 +116,10 @@ components:
       name: OrderToProcess
       title: An order that needs to be processed
       contentType: application/json
+      bindings:
+        kafka:
+          key:
+            type: integer
       headers:
         type: object
         properties:
@@ -137,6 +145,10 @@ components:
       name: CancelOrderRequest
       title: A cancel order request
       contentType: application/json
+      bindings:
+        kafka:
+          key:
+            type: integer
       headers:
         type: object
         properties:
@@ -156,6 +168,10 @@ components:
       name: CancellationReference
       title: A cancellation reference in response to a cancel order request
       contentType: application/json
+      bindings:
+        kafka:
+          key:
+            type: integer
       headers:
         type: object
         properties:
@@ -178,6 +194,10 @@ components:
       name: OrderAccepted
       title: Order accepted by Warehouse
       contentType: application/json
+      bindings:
+        kafka:
+          key:
+            type: integer
       payload:
         type: object
         properties:
@@ -195,6 +215,10 @@ components:
       name: OutForDelivery
       title: Order is out for delivery
       contentType: application/json
+      bindings:
+        kafka:
+          key:
+            type: integer
       payload:
         type: object
         required:

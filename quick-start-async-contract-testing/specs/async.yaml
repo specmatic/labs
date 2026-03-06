@@ -36,6 +36,10 @@ components:
       name: OrderRequest
       title: An order request
       contentType: application/json
+      bindings:
+        kafka:
+          key:
+            type: integer
       examples:
         - name: KeyboardAndMouseOrderExample
           payload:
@@ -89,6 +93,10 @@ components:
       name: OrderToProcess
       title: An order that needs to be processed
       contentType: application/json
+      bindings:
+        kafka:
+          key:
+            type: integer
       examples:
         - name: KeyboardAndMouseOrderExample
           payload:
