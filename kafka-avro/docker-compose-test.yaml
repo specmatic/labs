@@ -70,7 +70,7 @@ services:
       retries: 20
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:7.9.5
+    image: confluentinc/cp-schema-registry:latest
     hostname: schema-registry
     container_name: schema-registry
     depends_on:
@@ -88,15 +88,8 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: SASL_PLAINTEXT
       SCHEMA_REGISTRY_KAFKASTORE_SASL_MECHANISM: PLAIN
       SCHEMA_REGISTRY_KAFKASTORE_SASL_JAAS_CONFIG: org.apache.kafka.common.security.plain.PlainLoginModule required username="test" password="test-secret";
-      SCHEMA_REGISTRY_AUTHENTICATION_METHOD: BASIC
-      SCHEMA_REGISTRY_AUTHENTICATION_ROLES: admin,developer,user
-      SCHEMA_REGISTRY_AUTHENTICATION_REALM: SchemaRegistry-Props
-      SCHEMA_REGISTRY_OPTS: -Djava.security.auth.login.config=/etc/schema-registry/schema-registry-jaas.conf
-    volumes:
-      - ./docker-config/schema-registry-jaas.conf:/etc/schema-registry/schema-registry-jaas.conf
-      - ./docker-config/password.properties:/etc/schema-registry/password.properties
     healthcheck:
-      test: ["CMD-SHELL", "curl -u admin:admin-secret -s http://localhost:8085/subjects > /dev/null"]
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8085/subjects > /dev/null"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -119,7 +112,7 @@ services:
     volumes:
       - ./docker-config/avro:/usr/src/app/schemas
     healthcheck:
-      test: ["CMD-SHELL", "curl -f -u admin:admin-secret -s http://schema-registry:8085/subjects/new-orders-value/versions/latest > /dev/null && curl -f -u admin:admin-secret -s http://schema-registry:8085/subjects/wip-orders-value/versions/latest > /dev/null"]
+      test: ["CMD-SHELL", "curl -fsS http://schema-registry:8085/subjects/new-orders-value/versions/latest > /dev/null && curl -fsS http://schema-registry:8085/subjects/wip-orders-value/versions/latest > /dev/null"]
       interval: 5s
       timeout: 5s
       retries: 20
