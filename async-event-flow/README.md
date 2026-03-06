@@ -72,10 +72,17 @@ docker compose up
 You should see 
 
 ```terminaloutput
-Tests run: 6, Successes: 6, Failures: 0, Errors: 0
+Tests run: 4, Successes: 4, Failures: 0, Errors: 0
 ```
 
 3. Bring down the Kafka broker after the tests are done.
 ```shell
 docker compose down -v
+```
+
+## Troubleshooting
+
+In case the tests are failing retry the above steps after pulling the latest images with
+```shell
+docker compose pull
 ```

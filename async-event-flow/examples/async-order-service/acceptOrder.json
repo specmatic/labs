@@ -26,6 +26,7 @@
   ],
   "send": {
     "topic": "accepted-orders",
+    "key": 123,
     "payload": {
       "id": 123,
       "status": "ACCEPTED",
