@@ -2,6 +2,7 @@
   "name": "PLACE_MACBOOK_ORDER",
   "receive": {
     "topic": "new-orders",
+    "key": 2,
     "payload": {
       "id": 2,
       "orderItems": [
@@ -16,6 +17,7 @@
   },
   "send": {
     "topic": "wip-orders",
+    "key": 2,
     "payload": {
       "id": 2,
       "status": "PROCESSING"
