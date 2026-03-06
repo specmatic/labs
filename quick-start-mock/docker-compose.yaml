@@ -1,7 +1,7 @@
 services:
   consumer:
     container_name: quick-start-mock-consumer
-    image: python:3.12-alpine
+    image: python:3.14-alpine
     working_dir: /app
     volumes:
       - ./ui:/app:ro
