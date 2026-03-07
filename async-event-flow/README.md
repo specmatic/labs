@@ -2,18 +2,18 @@
 
 Testing event-driven systems is fundamentally harder than testing REST APIs. Validating schemas is straightforward, but validating behavior in terms of what the system actually does when it receives or produces an event is still a major challenge. Teams often struggle to trigger their systems reliably, observe side effects, and automate end-to-end event flow testing without custom scripts or brittle harnesses.
 
-This sample project demonstrates how we can run validate an event flow in a Kafka-based system using Specmatic enterprise. It includes a simple Spring Boot application that listens to messages on a Kafka topic, processes them, and then publishes a reply message to another topic. It also handles notification and update events. The contract tests validate the behavior of these event flow using Specmatic's contract testing capabilities.
+This sample project demonstrates how to validate an event flow in a Kafka-based system using Specmatic Enterprise. It includes a simple Spring Boot application that listens to messages on a Kafka topic, processes them, and then publishes a reply message to another topic. It also handles notification and update events. The contract tests validate the behavior of these event flows using Specmatic's contract testing capabilities.
 
 Here we are using [AsyncAPI 3.0.0 specification](https://www.asyncapi.com/docs/reference/specification/v3.0.0).
 
 ## Background
 
-This project includes a consumer (`OrderService`) which implements following behaviour:
+This project includes a consumer (`OrderService`) that implements the following behavior:
 * listens to messages on `new-order` topic and then upon receiving a message, it processes the same and publishes a reply message to `wip-order` topic. Thereby it demonstrates the [request reply pattern](https://www.asyncapi.com/docs/tutorials/getting-started/request-reply) in AsyncAPI 3.0.0 specification.
 * on receiving an update (via RESTful API call) from the `WarehouseService`, the `OrderService` updates the order status to `accepted` and publishes a message on `accepted-orders` topic. Thereby it demonstrates the event notification pattern.
 * on receiving a message on the `out-for-delivery-orders` topic from the `Shipping App`, the `OrderService` updates the order status to `shipped` and triggers the `TaxService` to generate a tax invoice. Thereby it demonstrates the fire-and-forget pattern.
 
-![Order Appplication Workflow](assets/order-application-workflow.gif)
+![Order Application Workflow](assets/order-application-workflow.gif)
 
 ## Time required to complete this lab:
 10-15 minutes.
@@ -22,7 +22,7 @@ This project includes a consumer (`OrderService`) which implements following beh
 - Docker is installed and running.
 - You are in `labs/async-event-flow`.
 
-## How to Test these event flows?
+## How to test these event flows
 
 Specmatic solves event-flow testing by combining:
 1. **Contract validation** from `specs/async-order-service.yaml` (topics, payload schemas, headers, request-reply mappings).
@@ -82,7 +82,7 @@ docker compose down -v
 
 ## Troubleshooting
 
-In case the tests are failing retry the above steps after pulling the latest images with
+If the tests fail, retry the above steps after pulling the latest images:
 ```shell
 docker compose pull
 ```

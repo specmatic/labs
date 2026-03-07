@@ -61,7 +61,7 @@ docker compose down -v
 ```
 
 ## Goal of this lab
-The goal of this lab is to try different schema resiliency testing levels and see how the number of tests vary and how the coverage changes.
+The goal of this lab is to try different schema resiliency testing levels and see how the number of tests varies and how coverage changes.
 
 ### Positive Only Tests
 By setting the level to `positiveOnly` you should see

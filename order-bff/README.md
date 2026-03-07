@@ -11,7 +11,7 @@ Following are the specifications used in this project:
 * [AsyncAPI spec](specs/kafka.yaml) of Kafka that defines the topics and message schema and is used for mocking interactions with Kafka.
 
 ### Application Architecture
-![HTML client talks to BFF API which in-turn talks to backend API](assets/application-architcture.gif)
+![HTML client talks to BFF API, which in turn talks to backend API](assets/application-architcture.gif)
 
 ### Contract Testing Setup
 ![Contract testing setup with Specmatic](assets/specmatic-contract-test-setup.gif)

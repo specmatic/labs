@@ -2,7 +2,7 @@
 
 Want to test the functionality of an entire business workflow of your microservices architecture that involves both synchronous HTTP calls and asynchronous event-driven interactions?
 
-![Order Appplication Workflow](assets/arazzo-workflow.gif)
+![Order Application Workflow](assets/arazzo-workflow.gif)
 
 ## Time required to complete this lab:
 10-15 minutes.
@@ -11,11 +11,11 @@ Want to test the functionality of an entire business workflow of your microservi
 - Docker is installed and running.
 - You are in `labs/arazzo-workflow-testing`.
 
-## Sequency Diagram
+## Sequence Diagram
 
-![Sequency Diagram](./assets/flow.svg)
+![Sequence Diagram](./assets/flow.svg)
 
-Using a simple drag-and-drop approach, Specmatic-Arazzo facilitates the generation of an entire workflows and exporting that as an industry-standard Arazzo Specification. Once you've created the Arazzo specification, you can leverage Specmatic-Arazzo to perform end-to-end workflow testing and mocking of your microservices architecture.
+Using a simple drag-and-drop approach, Specmatic-Arazzo facilitates generating an entire workflow and exporting it as an industry-standard Arazzo specification. Once you've created the Arazzo specification, you can leverage Specmatic-Arazzo to perform end-to-end workflow testing and mocking for your microservices architecture.
 
 More details: https://docs.specmatic.io/supported_protocols/arazzo
 

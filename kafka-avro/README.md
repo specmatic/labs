@@ -105,4 +105,4 @@ Traditional integration testing often misses **contract compatibility issues** t
 1. **Services communicate correctly** - Validated message formats
 2. **Schema changes don't break consumers** - Compatibility testing
 3. **Deployments are safe** - Contract validation in CI/CD
-4. **Collaboration with ** - Living contracts via AsyncAPI
+4. **Collaboration with consumers** - Living contracts via AsyncAPI

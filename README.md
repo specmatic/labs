@@ -1,5 +1,5 @@
 # Specmatic Workshop Labs
-Contains all the Labs used during the Specmatic hands-on Workshop
+Contains all the labs used during the Specmatic hands-on workshop.
 
 ## Time required to complete this lab:
 10-15 minutes.
@@ -17,7 +17,7 @@ git clone https://github.com/specmatic/labs
 ```
 
 ## Lab Structure 
-This is a mono-repo. Each lab is self-contained and organized in a separate directory with its own README file containing instructions and code examples. 
+This is a monorepo. Each lab is self-contained and organized in a separate directory, with its own README file containing instructions and code examples.
 
 ## 3-Day Workshop Schedule 
 - Overview
