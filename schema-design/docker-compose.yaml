@@ -1,0 +1,26 @@
+services:
+  payment-service:
+    container_name: payment-service
+    build:
+      context: ./service
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; req=urllib.request.Request('http://localhost:8080/health', method='HEAD'); urllib.request.urlopen(req)"]
+      interval: 2s
+      timeout: 1s
+      retries: 30
+      start_period: 2s
+
+  contract-test:
+    container_name: schema-oneof-contract-test
+    image: specmatic/enterprise:latest
+    volumes:
+      - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    depends_on:
+      payment-service:
+        condition: service_healthy
+    environment:
+      APP_URL: http://payment-service:8080
+    command: ["test"]

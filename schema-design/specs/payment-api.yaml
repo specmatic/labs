@@ -1,0 +1,74 @@
+openapi: 3.0.0
+info:
+  title: Payment API
+  version: "1.0"
+servers:
+  - url: http://localhost:8080
+paths:
+  /payments:
+    post:
+      summary: Create a payment
+      operationId: createPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentRequest"
+      responses:
+        "201":
+          description: Payment accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentAccepted"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    PaymentRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        paymentType:
+          type: string
+          enum:
+            - card
+            - bank_transfer
+        cardNumber:
+          type: string
+        cardExpiry:
+          type: string
+        cardCvv:
+          type: string
+        bankAccountNumber:
+          type: string
+        bankRoutingNumber:
+          type: string
+        bankAccountHolder:
+          type: string
+      required:
+        - paymentType
+    PaymentAccepted:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+        status:
+          type: string
+      required:
+        - id
+        - status
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        message:
+          type: string
+      required:
+        - message

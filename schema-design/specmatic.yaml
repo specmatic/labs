@@ -1,0 +1,22 @@
+version: 3
+
+systemUnderTest:
+  service:
+    definitions:
+      - definition:
+          source:
+            filesystem:
+              directory: specs
+          specs:
+            - payment-api.yaml
+    runOptions:
+      openapi:
+        type: test
+        baseUrl: "${APP_URL:http://payment-service:8080}"
+
+specmatic:
+  settings:
+    test:
+      schemaResiliencyTests: positiveOnly
+  license:
+    path: /specmatic/specmatic-license.txt

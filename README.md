@@ -50,6 +50,7 @@ This is a monorepo. Each lab is self-contained and organized in a separate direc
   - [Async Event Flow](async-event-flow/README.md)
 - More types of Testing
   - [Schema Resiliency Testing](schema-resiliency-testing/README.md)
+  - [Schema Design](schema-design/README.md)
   - [API Resiliency Testing](api-resiliency-testing/README.md)
   - [API Security Schemes](api-security-schemes/README.md)
   - [API Workflow Testing](arazzo-workflow-testing/README.md)
