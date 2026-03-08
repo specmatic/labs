@@ -117,12 +117,49 @@ services:
         chmod +x /usr/src/app/schemas/register-schemas.sh && \
         sh -c /usr/src/app/schemas/register-schemas.sh
     volumes:
-      - ./src/test/avro:/usr/src/app/schemas
+      - ./docker-config/avro:/usr/src/app/schemas
     healthcheck:
       test: ["CMD-SHELL", "curl -f -u admin:admin-secret -s http://schema-registry:8085/subjects/new-orders-value/versions/latest > /dev/null && curl -f -u admin:admin-secret -s http://schema-registry:8085/subjects/wip-orders-value/versions/latest > /dev/null"]
       interval: 5s
       timeout: 5s
       retries: 20
+
+  order-service:
+    image: specmaticdemo/specmatic-kafka-avro-sample
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      register-schemas:
+        condition: service_completed_successfully
+    networks:
+      - avro-app-network
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: broker:9093
+      SPRING_KAFKA_PROPERTIES_SCHEMA_REGISTRY_URL: http://schema-registry:8085
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health > /dev/null"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  specmatic-test:
+    image: specmatic/enterprise
+    depends_on:
+      order-service:
+        condition: service_healthy
+    networks:
+      - avro-app-network
+    environment:
+      SCHEMA_REGISTRY_URL: http://schema-registry:8085
+      KAFKA_BROKER: broker:9093
+    volumes:
+      - ./specmatic.yaml:/usr/src/app/specmatic.yaml
+      - ./api-specs:/usr/src/app/api-specs
+      - ./build:/usr/src/app/build
+      - ../license.txt:/specmatic/specmatic-license.txt
+    command: ["test"]
 
 networks:
   avro-app-network:

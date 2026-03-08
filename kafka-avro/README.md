@@ -20,7 +20,7 @@ The diagram covers an order processing flow between `checkout-service` and `orde
 ## Referencing your existing Avro files your schema registry in AsyncAPI spec
 
 The AsyncAPI specification that this application is based on **reuses the Avro schemas by referencing them instead of redefining them again**. 
-This ensures that we have **a single source of truth** for the schemas whic is the schema registry.
+This ensures that we have **a single source of truth** for the schemas which is the schema registry.
 
 ```yaml
 components:
@@ -51,18 +51,24 @@ This will help you understand all the independent components involved in running
 #### Run the contract tests
 1. Pull the dependencies for the application and the test environment:
 ```bash
-docker compose -f docker-compose-test.yaml pull
+docker compose pull
 ```
 
 2. Build and start dependencies + order-service. Once the order-service has started, run the contract tests using Specmatic:
 
 ```bash
-docker compose -f docker-compose-test.yaml up --build specmatic-test --abort-on-container-exit
+docker compose up --build specmatic-test --abort-on-container-exit
+```
+
+You should see the following test results in the logs:
+
+```terminaloutput
+Tests run: 2, Successes: 2, Failures: 0, Errors: 0
 ```
 
 3. Stop the containers 
 ```bash
-docker compose -f docker-compose-test.yaml down -v --remove-orphans
+docker compose down -v --remove-orphans
 ```
 
 ### What all are we testing with Specmatic Contract Test:

@@ -50,4 +50,3 @@ components:
         schemaFormat: 'application/vnd.apache.avro+json;version=1.9.0'
         schema:
           $ref: '<SCHEMA_REGISTRY_URL>/subjects/wip-orders-value/versions/1/schema'
-
