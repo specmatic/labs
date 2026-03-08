@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Adapters Lab UI</title>
+  <style>
+    :root {
+      --bg: #f3f5f7;
+      --card: #ffffff;
+      --text: #1a1f24;
+      --muted: #56606b;
+      --border: #d0d7de;
+      --accent: #0052cc;
+      --error: #b42318;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    main {
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 16px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 8px 24px rgba(16, 24, 40, 0.06);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.4rem;
+    }
+
+    p {
+      margin: 0 0 16px;
+      color: var(--muted);
+    }
+
+    form {
+      display: grid;
+      gap: 12px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 0.95rem;
+    }
+
+    input {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 10px;
+      font-size: 0.95rem;
+    }
+
+    button {
+      width: max-content;
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    pre {
+      margin-top: 16px;
+      background: #0b1220;
+      color: #d4dae3;
+      border-radius: 8px;
+      padding: 12px;
+      overflow-x: auto;
+      min-height: 78px;
+    }
+
+    .error {
+      color: var(--error);
+      margin-top: 8px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="card">
+      <h1>PascalCase Request Sender</h1>
+      <p>
+        This UI sends a PascalCase request to <code>/test</code>.
+      </p>
+      <form id="requestForm">
+        <label>
+          RequestQuery (query parameter)
+          <input id="requestQuery" value="books" required>
+        </label>
+        <label>
+          RequestHeader (header value)
+          <input id="requestHeader" value="header-value" required>
+        </label>
+        <label>
+          RequestKey (JSON body field)
+          <input id="requestKey" value="request-value" required>
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+      <div id="error" class="error" aria-live="polite"></div>
+      <pre id="result" aria-live="polite"></pre>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("requestForm");
+    const result = document.getElementById("result");
+    const error = document.getElementById("error");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      error.textContent = "";
+      result.textContent = "Sending request...";
+
+      const requestQuery = document.getElementById("requestQuery").value;
+      const requestHeader = document.getElementById("requestHeader").value;
+      const requestKey = document.getElementById("requestKey").value;
+
+      try {
+        const response = await fetch(`/test?RequestQuery=${encodeURIComponent(requestQuery)}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "RequestHeader": requestHeader
+          },
+          body: JSON.stringify({ RequestKey: requestKey })
+        });
+
+        const bodyText = await response.text();
+        result.textContent = `HTTP ${response.status}\n\nBody:\n${bodyText}`;
+      } catch (e) {
+        error.textContent = "Request failed before reaching the camelCaseService. Check docker compose logs.";
+        result.textContent = String(e);
+      }
+    });
+  </script>
+</body>
+</html>

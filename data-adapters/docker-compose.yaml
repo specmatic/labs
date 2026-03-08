@@ -1,6 +1,6 @@
 services:
-  mock:
-    container_name: camcel-case-service
+  camelCaseService:
+    container_name: camel-case-service
     image: specmatic/enterprise:latest
     volumes:
       - ./:/usr/src/app
@@ -14,13 +14,33 @@ services:
       retries: 30
       start_period: 2s
 
-  test:
-    container_name: pascal-case-service
+  ui:
+    container_name: pascal-case-ui
+    image: nginx:1.27-alpine
+    volumes:
+      - ./ui/index.html:/usr/share/nginx/html/index.html:ro
+      - ./ui/default.conf:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - "8080:8080"
+    depends_on:
+      camelCaseService:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080 >/dev/null"]
+      interval: 2s
+      timeout: 1s
+      retries: 30
+      start_period: 2s
+
+  studio:
+    container_name: specmatic-studio
     image: specmatic/enterprise:latest
+    profiles: ["studio"]
     volumes:
       - ./:/usr/src/app
-    network_mode: "service:mock"
+    command: ["studio"]
+    ports:
+      - "9000:9000"
     depends_on:
-      mock:
+      camelCaseService:
         condition: service_healthy
-    command: ["test"]
