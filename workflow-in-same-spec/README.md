@@ -1,9 +1,12 @@
 # Workflow Inside the Same Spec File
 
 ## Objective
-Learn how Specmatic workflow mapping in `specmatic.yaml` propagates a created task ID from `POST /tasks` into `GET /tasks/{task_id}`, `PUT /tasks/{task_id}` and `DELETE /tasks/{task_id}`.
+In real API workflows, one call creates an ID and later calls must use that exact ID.  
+This lab shows how Specmatic workflow mapping in `specmatic.yaml` propagates IDs from `POST /tasks` into `PUT /tasks/{task_id}` and `DELETE /tasks/{task_id}`.
 
-This lab uses a simple Python service with in-memory state, so missing workflow causes real contract test failures.
+Why this matters:
+- Without workflow propagation, tests may still look green while exercising stale hardcoded IDs.
+- With workflow propagation, your test flow behaves like production: create first, then update/delete the created entity.
 
 ## Time required to complete this lab
 15-20 minutes.
@@ -16,18 +19,18 @@ This lab uses a simple Python service with in-memory state, so missing workflow 
 ## Files in this lab
 - `specmatic.yaml`: Specmatic test configuration (starts with workflow intentionally missing).
 - `specs/tasks.yaml`: OpenAPI contract.
-- `examples/*.json`: Contract test examples.
+- `examples/*.json`: Externalized request/response examples.
 - `service/app.py`: Python provider with in-memory task state.
-- `docker-compose.yaml`: Runs `tasks-service` and `test`.
+- `docker-compose.yaml`: Defines `tasks-service`, `test` (profile `test`) and `studio` (profile `studio`).
 
 ## Learner task
 1. Run tests in the current baseline state (workflow missing).
-2. Observe `PUT`/`DELETE` failures.
+2. Observe `GET`/`PUT`/`DELETE` failures.
 3. Add workflow mapping in `specmatic.yaml`.
 4. Re-run and verify all tests pass.
 
 ## Lab Rules
-- Edit only `workflow-in-same-spec/specmatic.yaml`.
+- Edit only `specmatic.yaml`.
 - Do not edit `specs/tasks.yaml`.
 - Do not edit files under `examples/`.
 - Do not edit `service/app.py`.
@@ -36,7 +39,7 @@ This lab uses a simple Python service with in-memory state, so missing workflow 
 ## Baseline run (intentional failure)
 The `workflow` section is intentionally missing under:
 `systemUnderTest -> service -> runOptions -> openapi`
-(in `specmatic.yaml`, around line 21).
+(in `specmatic.yaml`).
 
 Run:
 
@@ -47,22 +50,42 @@ docker compose --profile test up test --build --abort-on-container-exit
 Expected baseline result:
 
 ```text
-Tests run: 15, Successes: 11, Failures: 4, Errors: 0
+Tests run: 4, Successes: 1, Failures: 3, Errors: 0
 ```
 
 You should see failures for:
-- `PUT /tasks/(task_id:string) -> 200` (3 scenarios)
+- `GET /tasks/(task_id:string) -> 200` (1 scenario)
+- `PUT /tasks/(task_id:string) -> 200` (1 scenario)
 - `DELETE /tasks/(task_id:string) -> 204` (1 scenario)
 
 Why it fails:
-- Without workflow, `PUT` and `DELETE` use static IDs from examples (`wf-put-input-*`, `wf-delete-input-*`).
-- The in-memory provider only knows IDs created earlier by `POST /tasks` (`wf-created-*`).
-- `examples/tasks_task_id_put_200*.json` validates response `id` using `$match(exact:wf-created-plus-103)`.
+- Without workflow, `GET`, `PUT` and `DELETE` use random IDs from examples.
+- The provider service only knows of IDs created earlier by `POST /tasks` (`wf-created-json-101`).
+- `GET`, `PUT` and `DELETE` examples validate response `id` as the created task ID, so random IDs do not match.
 
 Cleanup:
 
 ```bash
 docker compose --profile test down -v
+```
+
+## Check in Studio
+Run Studio with the provider service:
+
+```bash
+docker compose --profile studio up studio --build
+```
+
+Open Studio:
+1. Open `http://127.0.0.1:9000/_specmatic/studio`,
+2. Open `tasks.yaml` and go to the `Test` tab, run tests by clicking on the `Run` button.
+3. You should see POST /tasks test pass, but GET/PUT/DELETE tests fail.
+4. Look at the request/response details for the failed GET/PUT/DELETE tests and observe that we are not using the ID created by POST /tasks.
+
+Stop Studio:
+
+```bash
+docker compose --profile studio down -v
 ```
 
 ## Fix path
@@ -90,7 +113,7 @@ docker compose --profile test up test --build --abort-on-container-exit
 Expected passing result:
 
 ```text
-Tests run: 15, Successes: 15, Failures: 0, Errors: 0
+Tests run: 4, Successes: 4, Failures: 0, Errors: 0
 ```
 
 Cleanup:
@@ -98,8 +121,3 @@ Cleanup:
 ```bash
 docker compose --profile test down -v
 ```
-
-## Troubleshooting
-- If Docker is not running, compose commands fail before tests start.
-- You may see warning `OAS0044`; it does not block this lab.
-- If tests still fail after adding workflow, verify exact YAML indentation and scenario keys in `workflow.ids`.
