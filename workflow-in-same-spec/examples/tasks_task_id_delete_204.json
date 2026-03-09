@@ -2,7 +2,7 @@
   "name": "delete task",
   "http-request": {
     "method": "DELETE",
-    "path": "/tasks/wf-delete-input-301",
+    "path": "/tasks/wf-created-json-101",
     "headers": {
       "x-request-id": "44444444-4444-4444-8444-444444444444",
       "Authorization": "Bearer test-oauth-token",
@@ -13,6 +13,6 @@
     }
   },
   "http-response": {
-    "status": "$match(exact:204)"
+    "status": 204
   }
 }
