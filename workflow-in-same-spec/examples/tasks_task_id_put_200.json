@@ -2,7 +2,7 @@
   "name": "update task",
   "http-request": {
     "method": "PUT",
-    "path": "/tasks/wf-created-json-101",
+    "path": "/tasks/(string)",
     "headers": {
       "x-request-id": "33333333-3333-4333-8333-333333333333",
       "Authorization": "Bearer test-oauth-token",

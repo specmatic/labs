@@ -2,7 +2,7 @@
   "name": "delete task",
   "http-request": {
     "method": "DELETE",
-    "path": "/tasks/wf-created-json-101",
+    "path": "/tasks/(string)",
     "headers": {
       "x-request-id": "44444444-4444-4444-8444-444444444444",
       "Authorization": "Bearer test-oauth-token",

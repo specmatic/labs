@@ -2,7 +2,7 @@
   "name": "get task by id",
   "http-request": {
     "method": "GET",
-    "path": "/tasks/wf-created-json-101",
+    "path": "/tasks/(string)",
     "headers": {
       "x-request-id": "99999999-9999-4999-8999-999999999999",
       "Authorization": "Bearer test-oauth-token",

@@ -63,16 +63,6 @@ paths:
               allOf:
                 - $ref: '#/components/schemas/createTasksRequest'
               description: Request model for Task creation
-          text/json:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/createTasksRequest'
-              description: Request model for Task creation
-          application/*+json:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/createTasksRequest'
-              description: Request model for Task creation
         required: true
       responses:
         '200':
@@ -85,45 +75,6 @@ paths:
           description: Internal Server Error
         '400':
           description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/problemDetails'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/problemDetails'
-    get:
-      tags:
-        - get-tasks
-      summary: Endpoint to get tasks
-      description: Retrieves a list of tasks of a given application
-      operationId: getTasks
-      parameters:
-        - $ref: '#/components/parameters/applicationNumberQuery'
-        - $ref: '#/components/parameters/xRequestIdHeader'
-        - $ref: '#/components/parameters/xStaffIdHeader'
-        - $ref: '#/components/parameters/xUserIdHeader'
-        - $ref: '#/components/parameters/xUserIdTypeHeader'
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/getTasksResponse'
-        '500':
-          description: Internal Server Error
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/problemDetails'
-        '404':
-          description: Not Found
           content:
             application/json:
               schema:
@@ -266,16 +217,6 @@ paths:
               allOf:
                 - $ref: '#/components/schemas/updateTaskRequest'
               description: Request model for updating task
-          text/json:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/updateTaskRequest'
-              description: Request model for updating task
-          application/*+json:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/updateTaskRequest'
-              description: Request model for updating task
         required: true
       responses:
         '200':
@@ -375,178 +316,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/problemDetails'
-  /tasks/verify:
-    post:
-      tags:
-        - complete-verification
-      summary: Endpoint to verify tasks in an application
-      description: Completes verification step for an application.
-      operationId: completeVerification
-      parameters:
-        - name: requestHeaders
-          in: header
-          description: Request Headers
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/requestHeaders'
-          explode: true
-          style: simple
-        - name: x-request-id
-          in: header
-          required: true
-          schema:
-            maxLength: 36
-            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
-            type: string
-            description: Must be in UUID v4 format.
-            format: uuid
-        - name: x-staff-id
-          in: header
-          schema:
-            maxLength: 10
-            pattern: '^[0-9]{1,10}$'
-            type: string
-            format: string
-        - name: x-user-id
-          in: header
-          schema:
-            maxLength: 10
-            pattern: '^[0-9]{1,10}$'
-            type: string
-            format: string
-        - name: x-user-id-type
-          in: header
-          schema:
-            $ref: '#/components/schemas/xUserIdType'
-      requestBody:
-        description: ''
-        content:
-          application/json:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/verifyTasksRequest'
-              description: Request model for verifying tasks
-          text/json:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/verifyTasksRequest'
-              description: Request model for verifying tasks
-          application/*+json:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/verifyTasksRequest'
-              description: Request model for verifying tasks
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/verifyTasksResponse'
-        '500':
-          description: Internal Server Error
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/problemDetails'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/problemDetails'
-  /tasks/cancel:
-    post:
-      tags:
-        - cancel-tasks
-      summary: Endpoint to cancel tasks in an application
-      description: Cancels tasks for an application
-      operationId: cancelTasks
-      parameters:
-        - name: requestHeaders
-          in: header
-          description: Request Headers
-          schema:
-            allOf:
-              - $ref: '#/components/schemas/requestHeaders'
-          explode: true
-          style: simple
-        - name: x-request-id
-          in: header
-          required: true
-          schema:
-            maxLength: 36
-            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
-            type: string
-            description: Must be in UUID v4 format.
-            format: uuid
-        - name: x-staff-id
-          in: header
-          schema:
-            maxLength: 10
-            pattern: '^[0-9]{1,10}$'
-            type: string
-            format: string
-        - name: x-user-id
-          in: header
-          schema:
-            maxLength: 10
-            pattern: '^[0-9]{1,10}$'
-            type: string
-            format: string
-        - name: x-user-id-type
-          in: header
-          schema:
-            $ref: '#/components/schemas/xUserIdType'
-      requestBody:
-        description: ''
-        content:
-          application/json:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/cancelTasksRequest'
-              description: Request model for cancelling tasks
-          text/json:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/cancelTasksRequest'
-              description: Request model for cancelling tasks
-          application/*+json:
-            schema:
-              allOf:
-                - $ref: '#/components/schemas/cancelTasksRequest'
-              description: Request model for cancelling tasks
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/cancelTasksSuccessResponse'
-        '500':
-          description: Internal Server Error
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/problemDetails'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/problemDetails'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/problemDetails'
 components:
   schemas:
     additionalDocumentsDetails:
@@ -562,26 +331,6 @@ components:
           description: Free text for reason
       additionalProperties: { }
       description: Additional Documents Details
-    cancelTasksRequest:
-      required:
-        - applicationNumber
-      type: object
-      properties:
-        applicationNumber:
-          minLength: 1
-          type: string
-          description: Application Number
-      additionalProperties: { }
-      description: Request model for cancelling tasks
-    cancelTasksSuccessResponse:
-      type: object
-      properties:
-        status:
-          type: string
-          description: Status field
-          nullable: true
-      additionalProperties: { }
-      description: Cancel tasks success response model
     createTask:
       required:
         - category
@@ -716,22 +465,6 @@ components:
           nullable: true
       additionalProperties: { }
       description: Fraud hold details
-    getTasksResponse:
-      type: object
-      properties:
-        applicationNumber:
-          type: string
-          description: Application Number
-        tasks:
-          type: array
-          items:
-            $ref: '#/components/schemas/taskResponse'
-          description: Associated tasks with the application Id
-        workflowState:
-          type: string
-          description: WorkflowState of the Application
-      additionalProperties: { }
-      description: Response model for Get Task
     problemDetails:
       type: object
       properties:
@@ -836,33 +569,6 @@ components:
           nullable: true
       additionalProperties: { }
       description: Request model for updating task
-    verifyTasksRequest:
-      required:
-        - applicationNumber
-      type: object
-      properties:
-        applicationNumber:
-          minLength: 1
-          type: string
-          description: Application Number
-      additionalProperties: { }
-      description: Request model for verifying tasks
-    verifyTasksResponse:
-      type: object
-      properties:
-        applicationNumber:
-          type: string
-          description: Application Number
-        tasks:
-          type: array
-          items:
-            $ref: '#/components/schemas/taskResponse'
-          description: /// Associated tasks with the application Id
-        workflowState:
-          type: string
-          description: Workflow State
-      additionalProperties: { }
-      description: Response model for Verify task
     xUserIdType:
       maxLength: 11
       pattern: ^application|cif$
