@@ -17,7 +17,7 @@
   "http-response": {
     "status": 200,
     "body": {
-      "id": "$match(exact:REQUEST.PARAMETERS.PATH.task_id)",
+      "id": "$match(exact:wf-created-text-102)",
       "type": "MANUAL_REVIEW",
       "category": "VERIFICATION",
       "subCategory": "IDENTITY",

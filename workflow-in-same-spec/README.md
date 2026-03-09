@@ -41,7 +41,7 @@ The `workflow` section is intentionally missing under:
 Run:
 
 ```bash
-docker compose up test --build --abort-on-container-exit
+docker compose --profile test up test --build --abort-on-container-exit
 ```
 
 Expected baseline result:
@@ -62,7 +62,7 @@ Why it fails:
 Cleanup:
 
 ```bash
-docker compose down -v
+docker compose --profile test down -v
 ```
 
 ## Fix path
@@ -84,7 +84,7 @@ workflow:
 Re-run:
 
 ```bash
-docker compose up test --build --abort-on-container-exit
+docker compose --profile test up test --build --abort-on-container-exit
 ```
 
 Expected passing result:
@@ -96,7 +96,7 @@ Tests run: 15, Successes: 15, Failures: 0, Errors: 0
 Cleanup:
 
 ```bash
-docker compose down -v
+docker compose --profile test down -v
 ```
 
 ## Troubleshooting

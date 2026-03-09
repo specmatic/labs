@@ -870,8 +870,6 @@ components:
         - application
         - cif
       type: string
-      additionalProperties: { }
-      format: string
   parameters:
     applicationNumberQuery:
       name: applicationNumber

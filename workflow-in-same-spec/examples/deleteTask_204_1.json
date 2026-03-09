@@ -1,0 +1,22 @@
+{
+    "http-request": {
+        "path": "/tasks/wf-created-json-101",
+        "method": "DELETE",
+        "query": {
+            "applicationNumber": "APP-1001"
+        },
+        "headers": {
+            "x-request-id": "8bd3ef1a-2803-46ae-b473-85347c3c1abb",
+            "x-staff-id": "15000075",
+            "x-user-id": "15000074",
+            "x-user-id-type": "application",
+            "Authorization": "Bearer test-oauth-token"
+        },
+        "description": "This is an example of a request to delete an entity at the /tasks/15000042 endpoint"
+    },
+    "http-response": {
+        "status": 204,
+        "status-text": "No Content",
+        "description": "This is an example of a response confirming deletion of an entity at the /tasks/15000042 endpoint"
+    }
+}

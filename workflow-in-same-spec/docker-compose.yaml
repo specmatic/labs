@@ -3,9 +3,9 @@ services:
     build:
       context: ./service
     ports:
-      - "9000:9000"
+      - "8090:8090"
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9000/actuator/health', timeout=2)"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8090/actuator/health', timeout=2)"]
       interval: 2s
       timeout: 2s
       retries: 30
@@ -13,12 +13,29 @@ services:
 
   test:
     image: specmatic/enterprise
+    profiles: ["test"]
     working_dir: /usr/src/app
     volumes:
       - .:/usr/src/app
     command: ["test"]
     environment:
-      TASKS_BASE_URL: http://tasks-service:9000
+      TASKS_BASE_URL: http://tasks-service:8090
+    depends_on:
+      tasks-service:
+        condition: service_healthy
+
+  studio:
+    image: specmatic/enterprise
+    profiles: ["studio"]
+    working_dir: /usr/src/app
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    command: ["studio"]
+    environment:
+      TASKS_BASE_URL: http://tasks-service:8090
     depends_on:
       tasks-service:
         condition: service_healthy
