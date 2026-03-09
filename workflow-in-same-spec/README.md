@@ -1,12 +1,9 @@
 # Workflow Inside the Same Spec File
 
 ## Objective
-In real API workflows, one call creates an ID and later calls must use that exact ID.  
-This lab shows how Specmatic workflow mapping in `specmatic.yaml` propagates IDs from `POST /tasks` into `PUT /tasks/{task_id}` and `DELETE /tasks/{task_id}`.
+Learn how Specmatic workflow mapping in `specmatic.yaml` propagates a created task ID from `POST /tasks` into `GET /tasks/{task_id}`, `PUT /tasks/{task_id}` and `DELETE /tasks/{task_id}`.
 
-Why this matters:
-- Without workflow propagation, tests may still look green while exercising stale hardcoded IDs.
-- With workflow propagation, your test flow behaves like production: create first, then update/delete the created entity.
+This lab uses a simple Python service with in-memory state, so missing workflow causes real contract test failures.
 
 ## Time required to complete this lab
 15-20 minutes.
@@ -17,94 +14,92 @@ Why this matters:
 - You are in `labs/workflow-in-same-spec`.
 
 ## Files in this lab
-- `specmatic.yaml`: Workflow mapping (`extract` and `use`) configuration.
+- `specmatic.yaml`: Specmatic test configuration (starts with workflow intentionally missing).
 - `specs/tasks.yaml`: OpenAPI contract.
-- `examples/*.json`: Externalized request/response examples.
-- `docker-compose.yaml`: `mock` + `test` services for learner execution.
+- `examples/*.json`: Contract test examples.
+- `service/app.py`: Python provider with in-memory task state.
+- `docker-compose.yaml`: Runs `tasks-service` and `test`.
 
 ## Learner task
-1. Intentionally break ID extraction in `specmatic.yaml`.
-2. Run the lab and observe that requests stop using created IDs.
-3. Fix the mapping and re-run to verify dynamic ID propagation.
+1. Run tests in the current baseline state (workflow missing).
+2. Observe `PUT`/`DELETE` failures.
+3. Add workflow mapping in `specmatic.yaml`.
+4. Re-run and verify all tests pass.
 
 ## Lab Rules
-- Edit only `specmatic.yaml`.
+- Edit only `workflow-in-same-spec/specmatic.yaml`.
 - Do not edit `specs/tasks.yaml`.
-- Do not edit files in `examples/`.
-- Use the exact command order in this README.
-- Run cleanup after each execution:
+- Do not edit files under `examples/`.
+- Do not edit `service/app.py`.
+- Use the exact command order below.
+
+## Baseline run (intentional failure)
+The `workflow` section is intentionally missing under:
+`systemUnderTest -> service -> runOptions -> openapi`
+(in `specmatic.yaml`, around line 21).
+
+Run:
 
 ```bash
-docker compose down -v
+docker compose up test --build --abort-on-container-exit
 ```
 
-## Intentional failure (Baseline run)
-1. Open `specmatic.yaml`.
-2. In `systemUnderTest -> service -> runOptions -> openapi -> workflow -> ids`, change:
+Expected baseline result:
 
-```yaml
-extract: "BODY.tasks.[0].id"
+```text
+Tests run: 15, Successes: 11, Failures: 4, Errors: 0
 ```
 
-to:
+You should see failures for:
+- `PUT /tasks/(task_id:string) -> 200` (3 scenarios)
+- `DELETE /tasks/(task_id:string) -> 204` (1 scenario)
 
-```yaml
-extract: "BODY.tasks.[0].taskId"
-```
+Why it fails:
+- Without workflow, `PUT` and `DELETE` use static IDs from examples (`wf-put-input-*`, `wf-delete-input-*`).
+- The in-memory provider only knows IDs created earlier by `POST /tasks` (`wf-created-*`).
+- `examples/tasks_task_id_put_200*.json` validates response `id` using `$match(exact:wf-created-plus-103)`.
 
-3. Run:
-
-```bash
-docker compose up test --abort-on-container-exit
-```
-
-4. In the test output, locate the `PUT /tasks/...` request lines.
-
-Expected intentional failure signal:
-- You will see `PUT /tasks/wf-put-input-201` (and similar `wf-put-input-*` values), which means the created ID was not propagated.
-- The final test summary can still be green; this lab failure is behavioral (wrong workflow propagation), not only pass/fail count.
-
-5. Clean up:
+Cleanup:
 
 ```bash
 docker compose down -v
 ```
 
 ## Fix path
-1. Reopen `specmatic.yaml`.
-2. Restore:
+Add this block in `specmatic.yaml` under `systemUnderTest.service.runOptions.openapi`:
 
 ```yaml
-extract: "BODY.tasks.[0].id"
+workflow:
+  ids:
+    "POST /tasks -> 200":
+      extract: "BODY.tasks.[0].id"
+    "GET /tasks/(task_id:string) -> 200":
+      use: "PATH.task_id"
+    "PUT /tasks/(task_id:string) -> 200":
+      use: "PATH.task_id"
+    "DELETE /tasks/(task_id:string) -> 204":
+      use: "PATH.task_id"
 ```
 
-3. Re-run:
+Re-run:
 
 ```bash
-docker compose up test --abort-on-container-exit
+docker compose up test --build --abort-on-container-exit
 ```
 
-4. Verify `PUT /tasks/...` lines now use a created value such as:
-- `PUT /tasks/wf-created-plus-103`
+Expected passing result:
 
-5. Clean up:
+```text
+Tests run: 15, Successes: 15, Failures: 0, Errors: 0
+```
+
+Cleanup:
 
 ```bash
 docker compose down -v
 ```
 
-## Pass criteria
-- Workflow extraction line is `extract: "BODY.tasks.[0].id"` in `specmatic.yaml`.
-- `PUT /tasks/...` requests in logs use a created ID (`wf-created-*`) instead of static `wf-put-input-*`.
-- `DELETE /tasks/...` follows the propagated ID path.
-- Final summary line is `Tests run: 14, Successes: 14, Failures: 0, Errors: 0`.
-
-## Risks/gaps
-- You may see warning `OAS0044` in output (from the provided OpenAPI schema). This warning does not block test execution in this lab.
-- If Docker daemon is not running, `docker compose` will fail before the lab starts.
-- Because external examples contain valid static IDs, purely checking green/red status is not enough; always verify request-path behavior in logs.
-
-## Specmatic references (mapped to changes)
-- Why request/response logs matter for contract tests: [Contract Testing](https://docs.specmatic.io/contract_driven_development/contract_testing.html)
-- How externalized examples are loaded (this lab uses `examples/*.json`): [Externalized Examples](https://docs.specmatic.io/features/external_examples/)
-- Understanding and triaging the warning shown in this lab output: [Rules - OAS0044](https://docs.specmatic.io/rules#oas0044)
+## Troubleshooting
+- If Docker is not running, compose commands fail before tests start.
+- You may see warning `OAS0044`; it does not block this lab.
+- If tests still fail after adding workflow, verify exact YAML indentation and scenario keys in `workflow.ids`.

@@ -2,7 +2,7 @@
   "name": "update task",
   "http-request": {
     "method": "PUT",
-    "path": "/tasks/wf-put-input-201",
+    "path": "/tasks/wf-created-json-101",
     "headers": {
       "x-request-id": "33333333-3333-4333-8333-333333333333",
       "Authorization": "Bearer test-oauth-token",
@@ -17,12 +17,12 @@
   "http-response": {
     "status": 200,
     "body": {
-      "id": "wf-put-input-201",
+      "id": "$match(exact:REQUEST.PARAMETERS.PATH.task_id)",
       "type": "MANUAL_REVIEW",
       "category": "VERIFICATION",
       "subCategory": "IDENTITY",
-      "state": "COMPLETED",
-      "outcome": "APPROVED",
+      "state": "$match(exact:COMPLETED)",
+      "outcome": "$match(exact:APPROVED)",
       "createdDate": "2026-02-20T00:00:00Z",
       "updatedDate": "2026-02-20T00:10:00Z"
     }

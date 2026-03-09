@@ -10,7 +10,7 @@
       "Content-Type": "application/*+json"
     },
     "body": {
-      "applicationNumber": "APP-1001",
+      "applicationNumber": "APP-2001",
       "tasks": [
         {
           "type": "MANUAL_REVIEW",
@@ -24,7 +24,7 @@
   "http-response": {
     "status": 200,
     "body": {
-      "applicationNumber": "APP-1001",
+      "applicationNumber": "$match(exact:APP-2001)",
       "tasks": [
         {
           "id": "wf-created-plus-103",

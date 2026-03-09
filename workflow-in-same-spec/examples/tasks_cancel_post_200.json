@@ -16,7 +16,7 @@
   "http-response": {
     "status": 200,
     "body": {
-      "status": "CANCELLED"
+      "status": "$match(exact:CANCELLED)"
     }
   }
 }

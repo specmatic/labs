@@ -135,6 +135,81 @@ paths:
               schema:
                 $ref: '#/components/schemas/problemDetails'
   '/tasks/{task_id}':
+    get:
+      tags:
+        - get-task
+      summary: Endpoint to get a task by id
+      description: Retrieves a single task by task id.
+      operationId: getTask
+      parameters:
+        - name: task_id
+          in: path
+          description: Task Id
+          required: true
+          schema:
+            type: string
+        - name: requestHeaders
+          in: header
+          description: Request Headers
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/requestHeaders'
+          explode: true
+          style: simple
+        - name: x-request-id
+          in: header
+          required: true
+          schema:
+            maxLength: 36
+            pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+            type: string
+            description: Must be in UUID v4 format.
+            format: uuid
+        - name: x-staff-id
+          in: header
+          schema:
+            maxLength: 10
+            pattern: '^[0-9]{1,10}$'
+            type: string
+            format: string
+        - name: x-user-id
+          in: header
+          schema:
+            maxLength: 10
+            pattern: '^[0-9]{1,10}$'
+            type: string
+            format: string
+        - name: x-user-id-type
+          in: header
+          schema:
+            $ref: '#/components/schemas/xUserIdType'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/taskResponse'
+        '500':
+          description: Internal Server Error
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/problemDetails'
     put:
       tags:
         - update-task

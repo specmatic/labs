@@ -1,14 +1,11 @@
 services:
-  mock:
-    image: specmatic/enterprise
-    working_dir: /usr/src/app
-    volumes:
-      - .:/usr/src/app
-    command: ["mock"]
-    environment:
-      TASKS_BASE_URL: http://0.0.0.0:9000
+  tasks-service:
+    build:
+      context: ./service
+    ports:
+      - "9000:9000"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/actuator/health"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9000/actuator/health', timeout=2)"]
       interval: 2s
       timeout: 2s
       retries: 30
@@ -21,7 +18,7 @@ services:
       - .:/usr/src/app
     command: ["test"]
     environment:
-      TASKS_BASE_URL: http://mock:9000
+      TASKS_BASE_URL: http://tasks-service:9000
     depends_on:
-      mock:
+      tasks-service:
         condition: service_healthy

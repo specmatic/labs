@@ -16,10 +16,10 @@
   "http-response": {
     "status": 200,
     "body": {
-      "applicationNumber": "APP-1001",
+      "applicationNumber": "$match(exact:APP-1001)",
       "tasks": [
         {
-          "id": "wf-verify-visible-501",
+          "id": "(string)",
           "type": "MANUAL_REVIEW",
           "category": "VERIFICATION",
           "subCategory": "IDENTITY",

@@ -19,7 +19,7 @@
       "applicationNumber": "APP-1001",
       "tasks": [
         {
-          "id": "wf-verify-visible-503",
+          "id": "(string)",
           "type": "MANUAL_REVIEW",
           "category": "VERIFICATION",
           "subCategory": "IDENTITY",

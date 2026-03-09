@@ -15,7 +15,7 @@
   "http-response": {
     "status": 200,
     "body": {
-      "applicationNumber": "APP-1001",
+      "applicationNumber": "$match(exact:APP-1001)",
       "tasks": [
         {
           "id": "wf-get-visible-401",
@@ -26,7 +26,7 @@
           "createdDate": "2026-02-20T00:00:00Z"
         }
       ],
-      "workflowState": "IN_PROGRESS"
+      "workflowState": "$match(exact:IN_PROGRESS)"
     }
   }
 }
