@@ -16,7 +16,7 @@ services:
 
   ui:
     container_name: pascal-case-ui
-    image: nginx:1.27-alpine
+    image: nginx:1.29-alpine
     volumes:
       - ./ui/index.html:/usr/share/nginx/html/index.html:ro
       - ./ui/default.conf:/etc/nginx/conf.d/default.conf:ro
