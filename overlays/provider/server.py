@@ -4,6 +4,8 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 
 USER_PATH_PATTERN = re.compile(r"^/api/v1/users/(\d+)$")
+PRODUCT_PATH_PATTERN = re.compile(r"^/api/products/(\d+)$")
+ORDER_PATH_PATTERN = re.compile(r"^/api/orders/(\d+)$")
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -35,10 +37,25 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json(200, {"status": "ok"})
             return
 
+        # User path has /v1/ prefix (will be added by overlay)
         match = USER_PATH_PATTERN.fullmatch(self.path)
         if match:
             user_id = int(match.group(1))
             self._send_json(200, {"id": user_id, "name": "Jane Doe"})
+            return
+
+        # Product path has no v1 prefix (overlay should not affect this)
+        match = PRODUCT_PATH_PATTERN.fullmatch(self.path)
+        if match:
+            product_id = int(match.group(1))
+            self._send_json(200, {"id": product_id, "name": "Laptop", "price": 999.99})
+            return
+
+        # Order path has no v1 prefix (overlay should not affect this)
+        match = ORDER_PATH_PATTERN.fullmatch(self.path)
+        if match:
+            order_id = int(match.group(1))
+            self._send_json(200, {"id": order_id, "productId": 123, "quantity": 2})
             return
 
         self._send_json(404, {"error": "Not Found", "path": self.path})

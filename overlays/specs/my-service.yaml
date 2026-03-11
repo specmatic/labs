@@ -11,9 +11,37 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/User200"
+  /api/products/{id}:
+    get:
+      summary: Get product by id
+      parameters:
+        - $ref: "#/components/parameters/ProductIdPathParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/Product200"
+  /api/orders/{id}:
+    get:
+      summary: Get order by id
+      parameters:
+        - $ref: "#/components/parameters/OrderIdPathParam"
+      responses:
+        "200":
+          $ref: "#/components/responses/Order200"
 components:
   parameters:
     UserIdPathParam:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    ProductIdPathParam:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    OrderIdPathParam:
       name: id
       in: path
       required: true
@@ -26,6 +54,18 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/User"
+    Product200:
+      description: Product found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Product"
+    Order200:
+      description: Order found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Order"
   schemas:
     User:
       type: object
@@ -37,3 +77,29 @@ components:
           type: integer
         name:
           type: string
+    Product:
+      type: object
+      required:
+        - id
+        - name
+        - price
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        price:
+          type: number
+    Order:
+      type: object
+      required:
+        - id
+        - productId
+        - quantity
+      properties:
+        id:
+          type: integer
+        productId:
+          type: integer
+        quantity:
+          type: integer
