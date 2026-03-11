@@ -2,4 +2,17 @@ overlay: 1.0.0
 info:
   title: Add /api/v1 prefix for deployed provider compatibility
   version: "1.0"
-actions: []
+actions:
+  - target: "$.paths"
+    update:
+      /api/v1/users/{id}:
+        get:
+          summary: Get user by id
+          parameters:
+            - $ref: "#/components/parameters/UserIdPathParam"
+          responses:
+            "200":
+              $ref: "#/components/responses/User200"
+
+  - target: "$.paths['/api/users/{id}']"
+    remove: true
