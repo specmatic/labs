@@ -19,7 +19,7 @@ systemUnderTest:
             id: my-service
             baseUrl: http://myservice:8080
 #            uncomment the below line to add a path prefix to all paths in the spec. This is useful when the service is running behind an API gateway that adds a path prefix.
-#            overlayFilePath: ./overlays/path-prefix.overlay.yaml
+            overlayFilePath: ./overlays/path-prefix.overlay.yaml
 
 specmatic:
   license:
