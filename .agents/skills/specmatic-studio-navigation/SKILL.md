@@ -38,7 +38,17 @@ Use this skill when the task requires driving Specmatic Studio through its web U
 - In the tree, click the folder expander to open a directory. Clicking the folder title may only select it.
 - Open `specs`, then select the target spec such as `service.yaml`.
 - For OpenAPI specs, the screen usually opens on the `Examples` tab.
-- In headless automation, the left tree may not respond reliably to normal clicks. The tree is a Wunderbaum control exposed as `_fileTree`. If direct clicks are flaky, expand and activate nodes programmatically after the tree loads:
+- In headless automation, prefer DOM-based Wunderbaum selectors first. Some Studio builds render the file tree but do not expose `_fileTree` globally.
+- Stable selectors for the tree:
+  - left sidebar toggle: `#left-sidebar-toggle`
+  - tree root: `#spec-tree`
+  - `specs` folder node: `#spec-tree .wb-node[data-file-path="/usr/src/app/specs"]`
+  - `specs` folder expander: `#spec-tree .wb-node[data-file-path="/usr/src/app/specs"] .wb-expander`
+  - `service.yaml` title: `#spec-tree .wb-node[data-file-path="/usr/src/app/specs/service.yaml"] .wb-title`
+- DOM-first fallback for headless automation:
+  - `document.querySelector('#spec-tree .wb-node[data-file-path="/usr/src/app/specs"] .wb-expander')?.dispatchEvent(new MouseEvent('click', { bubbles: true }))`
+  - `document.querySelector('#spec-tree .wb-node[data-file-path="/usr/src/app/specs/service.yaml"] .wb-title')?.dispatchEvent(new MouseEvent('click', { bubbles: true }))`
+- Use `_fileTree` only if it is actually available in the page:
   - `const specs = _fileTree.root.children.find(n => n.title === 'specs')`
   - `await specs.setExpanded(true)`
   - `await specs.children.find(n => n.title === 'service.yaml').setActive(true)`
@@ -49,6 +59,14 @@ Use this skill when the task requires driving Specmatic Studio through its web U
 - `Mock`: starts a mock server for the loaded spec.
 - `Test`: runs contract tests against a service using the service URL as per instructions.
 - `Spec`: edits the loaded specification.
+- Stable tab selectors:
+  - `Examples`: `.tab[data-type="example"]`
+  - `Mock`: `.tab[data-type="mock"]`
+  - `Test`: `.tab[data-type="test"]`
+- If visible clicks on tabs are flaky, switch tabs through the DOM and then wait for the tab-specific controls to become usable:
+  - `document.querySelector('.tab[data-type="test"]')?.dispatchEvent(new MouseEvent('click', { bubbles: true }))`
+  - `document.querySelector('.tab[data-type="mock"]')?.dispatchEvent(new MouseEvent('click', { bubbles: true }))`
+  - `document.querySelector('.tab[data-type="example"]')?.dispatchEvent(new MouseEvent('click', { bubbles: true }))`
 
 ## Example Generation for OpenAPI
 
@@ -56,6 +74,19 @@ Use this skill when the task requires driving Specmatic Studio through its web U
 2. Wait for the examples iframe to load before interacting with it.
 3. In `Examples`, click `Generate`.
 4. Confirm the generated example appears in the iframe and that a file is written.
+
+### OpenAPI Examples Selectors
+
+- Prefer the iframe as the primary interaction surface once the spec is open.
+- Stable iframe selector: `iframe[src*="/_specmatic/examples"]`
+- In Playwright:
+  - `const frame = page.frameLocator('iframe[src*="/_specmatic/examples"]')`
+  - `await frame.locator('body').waitFor({ state: 'visible', timeout: 30000 })`
+- Stable example controls inside the iframe:
+  - bulk generate: `#bulk-generate`
+  - row generate: `button.generate`
+- Prefer `button.generate` when reproducing a single operation example quickly.
+- Verify generation by checking the lab filesystem, not only the UI. Generated files are typically written under `specs/*_examples/*.json` or `examples/*.json`.
 
 ## Test Execution for OpenAPI
 
@@ -65,12 +96,23 @@ Use this skill when the task requires driving Specmatic Studio through its web U
 4. Click `Run`.
 5. If the summary row only shows aggregate failures, click the table row for the endpoint and inspect the details pane to see scenario-level failures.
 
+### OpenAPI Test Selectors
+
+- base URL input: `#testBaseUrl`
+- run button: `#openapi-run-test`
+- Wait for both selectors to exist before filling and running.
+
 ## Starting a Mock for OpenAPI
 
 1. Open the spec from the left tree.
 2. Switch to `Mock`.
 3. Set the port explicitly as per the instructions in the README.
 4. Click `Run`.
+
+### OpenAPI Mock Selectors
+
+- mock port input: `#mockPort`
+- Wait for the field to exist before filling it.
 
 ## Running a Loop Test for OpenAPI
 
@@ -95,6 +137,7 @@ Use this skill when the task requires driving Specmatic Studio through its web U
 - In the tree, target the expander icon for folders and the title text for files.
 - For OpenAPI example generation, wait for the iframe content to load before interacting with the iframe content rather than the top-level page.
 - In Playwright, target the iframe directly with a frame locator and wait for the frame body text or controls, not just the iframe element.
+- Prefer DOM-dispatched `MouseEvent('click', { bubbles: true })` on tree nodes and tabs when Playwright visible clicks are flaky.
 - After switching to `Mock`, wait for the tab to initialize before filling `#mockPort` or clicking the run button.
 - After switching to `Test`, wait for the tab to initialize before filling `#testBaseUrl` or clicking the run button.
 - For OpenAPI `Test`, the relevant controls are `#testBaseUrl` and `#openapi-run-test`.
