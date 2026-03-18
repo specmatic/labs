@@ -58,6 +58,7 @@ This is a monorepo. Each lab is self-contained and organized in a separate direc
   - [API Resiliency Testing](api-resiliency-testing/README.md)
 - GenAI in Action
   - [MCP Auto Test](mcp-auto-test/README.md)
+  - [Specmatic as a Guardrails for Coding Agents](coding-agents/README.md)
 
 ## Additional Resources 
 For more information on Specmatic and its features, please refer to the official documentation: [Specmatic Documentation](https://docs.specmatic.in)
