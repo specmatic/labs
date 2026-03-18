@@ -1,0 +1,12 @@
+{
+  "get_order_summary": {
+    "order_id": "ORD-2002",
+    "include_history": true
+  },
+  "create_return_quote": {
+    "order_id": "ORD-1001",
+    "reason": "damaged",
+    "opened": false,
+    "days_since_delivery": 5
+  }
+}

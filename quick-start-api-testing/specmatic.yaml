@@ -1,0 +1,32 @@
+version: 3
+
+components:
+  sources:
+    localSpecs:
+      filesystem:
+        directory: specs
+
+systemUnderTest:
+  service:
+    definitions:
+      - definition:
+          source:
+            $ref: "#/components/sources/localSpecs"
+          specs:
+            - verification-api.yaml
+    runOptions:
+      openapi:
+        type: test
+        baseUrl: "${APP_URL:http://verification-service:8080}"
+    data:
+      examples:
+        - directories:
+            - ./examples
+
+specmatic:
+  settings:
+    test:
+      strictMode: true
+      schemaResiliencyTests: none
+  license:
+    path: /specmatic/specmatic-license.txt

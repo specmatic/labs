@@ -1,0 +1,29 @@
+services:
+  mcp-server:
+    container_name: mcp-server
+    build:
+      context: ./service
+    ports:
+      - "8090:8090"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8090/health')"]
+      interval: 2s
+      timeout: 1s
+      retries: 30
+      start_period: 2s
+
+  mcp-test:
+    container_name: mcp-auto-test
+    image: specmatic/specmatic:latest
+    working_dir: /usr/src/app
+    volumes:
+      - ./:/usr/src/app
+    depends_on:
+      mcp-server:
+        condition: service_healthy
+    command:
+      - mcp
+      - test
+      - --url=http://mcp-server:8090/mcp
+      - --transport-kind=STREAMABLE_HTTP
+      - --dictionary-file=dictionary/orders.json

@@ -1,0 +1,60 @@
+openapi: 3.0.3
+info:
+  title: Verification API
+  version: "1.0.0"
+  description: Sample verification service used to teach Specmatic matchers in tests.
+servers:
+  - url: http://verification-service:8080
+paths:
+  /verifyUser:
+    post:
+      summary: Verify a user before continuing a workflow
+      operationId: verifyUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyUserRequest"
+      responses:
+        "200":
+          description: Verification completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/VerifyUserResponse"
+components:
+  schemas:
+    VerifyUserRequest:
+      type: object
+      properties:
+        userId:
+          type: integer
+        department:
+          type: string
+          enum:
+            - finance
+            - support
+      required:
+        - userId
+        - department
+    VerifyUserResponse:
+      type: object
+      properties:
+        handledBy:
+          type: string
+        decision:
+          type: string
+          enum:
+            - approved
+            - verified
+        referenceCode:
+          type: string
+        processedOn:
+          type: string
+          format: date
+      required:
+        - handledBy
+        - decision
+        - referenceCode
+        - processedOn

@@ -1,0 +1,22 @@
+services:
+  verification-service:
+    container_name: verification-service
+    build:
+      context: ./service
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; req=urllib.request.Request('http://127.0.0.1:8080/health', method='HEAD'); urllib.request.urlopen(req, timeout=2)"]
+      interval: 2s
+      timeout: 1s
+      retries: 30
+      start_period: 2s
+
+  api-test:
+    container_name: api-test
+    image: specmatic/enterprise:latest
+    volumes:
+      - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    depends_on:
+      verification-service:
+        condition: service_healthy
+    command: ["test"]

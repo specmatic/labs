@@ -33,6 +33,8 @@ This is a monorepo. Each lab is self-contained and organized in a separate direc
 - [Intelligent service virtualization](quick-start-mock/README.md)
   - Inline Examples as mock data 
   - External examples as mock data
+- [API Testing](quick-start-api-testing/README.md)
+  - Using matchers to assert specific values in the API response
 - Examples
   - [Generate, Validate and Fix examples](external-examples/README.md)
   - [Partial examples](partial-examples/README.md)
@@ -54,6 +56,8 @@ This is a monorepo. Each lab is self-contained and organized in a separate direc
   - [Schema Design](schema-design/README.md)
   - [API Workflow Testing](arazzo-workflow-testing/README.md)
   - [API Resiliency Testing](api-resiliency-testing/README.md)
+- GenAI in Action
+  - [MCP Auto Test](mcp-auto-test/README.md)
 
 ## Additional Resources 
 For more information on Specmatic and its features, please refer to the official documentation: [Specmatic Documentation](https://docs.specmatic.in)
