@@ -1,10 +1,12 @@
-# Lab: Test a MCP Server with Specmatic MCP Auto Test
+# Lab: Test MCP Servers with Specmatic MCP Auto Test
 
 ## Objective
-Run Specmatic MCP Auto Test against a real Streamable HTTP MCP server, observe two failing tool invocations, and fix the provider implementation without changing the dictionary or Docker Compose setup.
+MCP Auto Test addresses a critical gap in the MCP tool development lifecycle: automated, repeatable, and systematic testing of server-exposed MCP tools. This lab teaches you how to use Specmatic MCP Auto Test to validate a Streamable HTTP MCP server implementation, see tool execution failures, and fix the provider code until all tests pass.
 
 ## Why this lab matters
-MCP tools are often tested manually through ad hoc prompts or inspector utilities. That makes regressions easy to miss.
+MCP tools are often tested manually through ad hoc prompts or inspector utilities. This approach makes it difficult to ensure consistent quality, slows down release cycles, and leaves room for regressions when new features are introduced.
+
+MCP Auto Test addresses this gap by providing a reproducible, fully automated framework for schema drift Detection, regression, edge case, and input-combination testing of MCP tools exposed by an MCP Server. With automated coverage, teams can shift-left and catch issues earlier, improve reliability, and release changes with greater confidence.
 
 This lab shows the faster loop:
 1. Keep the MCP server running locally.
@@ -17,7 +19,7 @@ This lab shows the faster loop:
 
 ## Prerequisites
 - Docker is installed and running.
-- You are in `labs/mcp-auto-test-python-service`.
+- You are in `labs/mcp-auto-test`.
 - Port `8090` is available.
 
 ## Files in this lab
@@ -27,7 +29,7 @@ This lab shows the faster loop:
 - `service/Dockerfile`: Builds the MCP server image.
 - `dictionary/orders.json`: Input data used by MCP Auto Test.
 - `docker-compose.yaml`: Starts the MCP server and the Specmatic MCP test runner.
-- `build/reports/specmatic/mcp/`: Generated tools schema and JSON test report.
+- `build/reports/specmatic/mcp/`: Generated tools schema, JSON test report, and HTML report.
 
 ## Who is who in this lab
 - Test runner: Specmatic MCP Auto Test
@@ -74,6 +76,9 @@ What Specmatic is doing here:
 Artifacts created:
 - `build/reports/specmatic/mcp/tools_schema.json`
 - `build/reports/specmatic/mcp/mcp_test_report.json`
+- `build/reports/specmatic/mcp/specmatic_report.html`
+
+The HTML report is generated automatically as part of the `mcp-test` Docker Compose step.
 
 Clean up:
 
@@ -114,20 +119,29 @@ docker compose down -v
 After fixing the two bugs, run:
 
 ```shell
-docker compose run --rm mcp-test \
-  mcp test \
-  --url=http://mcp-server:8090/mcp \
-  --transport-kind=STREAMABLE_HTTP \
-  --dictionary-file=dictionary/orders.json \
-  --enable-resiliency-tests
+docker compose run --rm mcp-test --enable-resiliency-tests
 ```
 
-This is not required for the lab goal. It is a follow-up to explore how Specmatic mutates valid tool inputs to probe validation boundaries.
+This command still generates:
+- `build/reports/specmatic/mcp/mcp_test_report.json`
+- `build/reports/specmatic/mcp/tools_schema.json`
+- `build/reports/specmatic/mcp/specmatic_report.html`
+
+Expected Summary:
+```terminaloutput
+SUMMARY:
+Total: 35
+Passed: 33
+Failed: 2
+Overall Success Rate: 94.3%
+```
+
+This is not required for the lab goal. It is a follow-up to explore how Specmatic mutates valid tool inputs to probe validation boundaries. Try to pass all 35 tests.
 
 ## Pass criteria
 - Baseline run fails with two tool execution failures.
 - After fixing only `service/order_service.py`, both tests pass.
-- `build/reports/specmatic/mcp/` contains generated output from the test run.
+- `build/reports/specmatic/mcp/` contains generated output from the test run, including `specmatic_report.html`.
 
 ## Troubleshooting
 - If the test runner starts before the server is ready, rerun after `docker compose down -v`.

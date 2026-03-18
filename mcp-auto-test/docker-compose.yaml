@@ -14,16 +14,15 @@ services:
 
   mcp-test:
     container_name: mcp-auto-test
-    image: specmatic/specmatic:latest
+    build:
+      context: .
+      dockerfile: ./script/Dockerfile
     working_dir: /usr/src/app
     volumes:
       - ./:/usr/src/app
     depends_on:
       mcp-server:
         condition: service_healthy
-    command:
-      - mcp
-      - test
-      - --url=http://mcp-server:8090/mcp
-      - --transport-kind=STREAMABLE_HTTP
-      - --dictionary-file=dictionary/orders.json
+    entrypoint:
+      - /bin/bash
+      - script/run_mcp_test_and_report.sh
