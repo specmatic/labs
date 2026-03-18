@@ -118,12 +118,36 @@ docker run --rm --network host -v .:/usr/src/app -v ../license.txt:/specmatic/sp
 ```
 
 Open [Specmatic Studio](http://127.0.0.1:9000/_specmatic/studio), then:
-1. From the left panel, open `specs/service.yaml`.
-2. Go to the **Test** tab.
-3. Set URL to `http://127.0.0.1:8080`.
-4. Click **Run**.
+1. Hover the small chevron on the left edge to open the file tree.
+2. Expand `specs`.
+3. Open `service.yaml`.
+
+### Studio flow 1: Direct contract test
+1. Go to the **Test** tab.
+2. Set URL to `http://127.0.0.1:8080`.
+3. Click **Run**.
 
 You should observe the same fail-then-pass behavior based on whether `petType` is fixed to `type`.
+
+### Studio flow 2: Expose a bug in the service
+1. Starting from `service.yaml`, go to the **Examples** tab.
+2. Click **Generate** to generate an example for GET /pets 200.
+3. View the generated request/response payloads by clicking on the example name
+4. Switch to the **Test** tab.
+5. Set URL to `http://127.0.0.1:8080`.
+6. Click **Run**.
+
+Expected observations:
+- Studio writes an externalized example under `specs/service_examples/`.
+- The generated example name similar to as `pets_242.0_GET_200_1`.
+- The test run now executes `2` scenarios instead of `1`.
+- The newly generated-example scenario fails with `Connection is closed`.
+- The Python handler raises a request-processing `ValueError` because `service/server.py` calls `int(pet_id)` however the generated pet id in the path segment contains a double (number) instead of an int. Generated pet_id was a double because the spec says petid is of type number not integer.
+
+How to inspect the evidence:
+- The Studio terminal shows the generated example file being written and later loaded during the test run.
+- Provider logs show the `ValueError`.
+- This reproduces a request-handler exception and closed connection for that scenario; do not assume the container always exits completely.
 
 Stop Studio by pressing `Ctrl+C` in the terminal where you started it.
 
