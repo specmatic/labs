@@ -46,14 +46,45 @@ Run:
 docker compose up contract-test --build --abort-on-container-exit
 ```
 
+```terminaloutput
+Request to http://petstore:8080 at <date-time-stamp>
+  GET /pets/1
+  Specmatic-Response-Code: 200
+  Host: petstore:8080
+  Accept-Charset: UTF-8
+  Accept: */*
+  Content-Type: NOT SENT
+  
+Response at <date-time-stamp>
+  200 OK
+  Server: BaseHTTP/0.6 Python/3.14.3
+  Date: <date-time-stamp>
+  Content-Type: application/json
+  Content-Length: 79
+  
+  {
+      "id": 1,
+      "name": "Scooby",
+      "petType": "Golden Retriever",
+      "status": "Adopted"
+  }
+
+Scenario: GET /pets/(petid:number) -> 200 with the request from the example 'SCOOBY_200_OK' has FAILED
+```
+
 Expected output:
 ```terminaloutput
 Tests run: 1, Successes: 0, Failures: 1, Errors: 0
 ```
 
-Expected failure reason:
+How did Specmatic generate the GET request for /pets with ID `1`?
+- The request was generated from the inline example named `SCOOBY_200_OK` in `specs/service.yaml`.
+
+How did Specmatic fail the test? (Expected failure reason:)
 - Contract requires response field `type`.
 - Service currently returns `petType`.
+
+Ignore:
 - You may also see `Could not find the Specmatic configuration at path /usr/src/app/specmatic.yaml`.
   In this lab, that message is expected because `contract-test` runs directly with `./specs/service.yaml`.
 
