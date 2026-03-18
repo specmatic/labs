@@ -35,6 +35,8 @@ This is a monorepo. Each lab is self-contained and organized in a separate direc
   - External examples as mock data
 - [API Testing](quick-start-api-testing/README.md)
   - Using matchers to assert specific values in the API response
+- [Backward Compatibility Testing](backward-compatibility-testing/README.md)
+  - Using Specmatic to ensure changes to your API don't accidentally break your consumers
 - Examples
   - [Generate, Validate and Fix examples](external-examples/README.md)
   - [Partial examples](partial-examples/README.md)
