@@ -179,6 +179,47 @@ Restore the tracked file:
 git restore products.yaml
 ```
 
+## Check backward compatibility in Specmatic Studio before saving
+Start Studio from `labs/backward-compatibility-testing`:
+
+```shell
+docker run --rm \
+  --network host \
+  -v .:/usr/src/app \
+  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
+  specmatic/enterprise:latest \
+  studio
+```
+Windows (PowerShell/CMD) single-line:
+```shell
+docker run --rm --network host -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest studio
+```
+
+Open [Specmatic Studio](http://127.0.0.1:9000/_specmatic/studio), then:
+1. Hover the small chevron on the left edge to open the file tree.
+2. Open `products.yaml`.
+3. Switch to the **Spec** tab.
+4. Make the same breaking changes described in Part A.
+5. Before saving the file, click the **Backward Compatibility** check button on the **Spec** tab.
+
+Expected Studio behavior:
+- Studio checks the edited in-memory spec against the saved file, even before you save the file.
+- The check should report the same incompatibility for `RESPONSE.BODY.name`.
+- This lets you validate the impact of the change before you save it to disk.
+
+After observing the failure:
+1. Change `name` back to `string`.
+2. Keep `category` and version `1.1.0`.
+3. Click the **Backward Compatibility** check button again.
+4. Confirm the check passes.
+5. Save the file only after the compatibility result is what you expect.
+
+What was verified in Studio:
+- Opening `products.yaml` from the left file tree activates the live screen for this file.
+- The **Test Backward Compatibility** button on the **Spec** tab sends the current unsaved editor content for validation.
+- A breaking unsaved edit returns the expected incompatibility.
+- Fixing the unsaved edit and running the check again returns a passing result.
+
 ## Optional extension
 - Add a `WIP` tag to the `get` operation in `products.yaml` and re-run the check to see how Specmatic reports incompatible changes for APIs still in progress.
 - Try a different additive change, such as adding another optional response field, and confirm that the check still passes.
@@ -187,6 +228,7 @@ git restore products.yaml
 - Running the command from another directory. The README assumes you are in `labs/backward-compatibility-testing`.
 - Expecting Specmatic to compare two arbitrary files. In this lab it compares your working tree change to the tracked version on `origin/main`.
 - Mounting only the current folder into Docker. Specmatic needs the `labs` repo root mounted so git metadata is available inside the container.
+- In Studio, saving first and checking later. For this workflow, use the **Backward Compatibility** check button on the **Spec** tab before saving.
 
 ## What you learned
 - Backward compatibility can be validated directly from API specifications.
