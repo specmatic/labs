@@ -35,6 +35,8 @@ This is a monorepo. Each lab is self-contained and organized in a separate direc
   - External examples as mock data
 - [API Testing](quick-start-api-testing/README.md)
   - Using matchers to assert specific values in the API response
+- [API Coverage](api-coverage/README.md)
+  - Using the app's published OpenAPI document to detect implemented routes missing from the checked-in spec
 - [Backward Compatibility Testing](backward-compatibility-testing/README.md)
   - Ensure changes to your API don't accidentally break your consumers
 - Examples - Simplified Test Data Management

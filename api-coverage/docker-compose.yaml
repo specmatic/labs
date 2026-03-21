@@ -1,0 +1,24 @@
+services:
+  petstore:
+    container_name: api-coverage-openapi-petstore
+    build:
+      context: ./service
+    ports:
+      - "${PETSTORE_PORT:-8080}:8080"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/openapi.json', timeout=2)"]
+      interval: 2s
+      timeout: 1s
+      retries: 30
+      start_period: 2s
+
+  contract-test:
+    container_name: api-coverage-openapi-contract-test
+    image: specmatic/enterprise:latest
+    volumes:
+      - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    depends_on:
+      petstore:
+        condition: service_healthy
+    command: ["test"]

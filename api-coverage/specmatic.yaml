@@ -1,0 +1,29 @@
+version: 3
+
+systemUnderTest:
+  service:
+    definitions:
+      - definition:
+          source:
+            filesystem:
+              directory: specs
+          specs:
+            - service.yaml
+    runOptions:
+      openapi:
+        type: test
+        baseUrl: http://petstore:8080
+        swaggerUrl: http://petstore:8080/openapi.json
+
+specmatic:
+  governance:
+    report:
+      formats:
+        - html
+      outputDirectory: build/reports/specmatic
+    successCriteria:
+      minCoveragePercentage: 100
+      maxMissedOperationsInSpec: 0
+      enforce: true
+  license:
+    path: /specmatic/specmatic-license.txt
