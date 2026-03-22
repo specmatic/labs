@@ -22,6 +22,9 @@ This lab shows the faster loop:
 - You are in `labs/mcp-auto-test`.
 - Port `8090` is available.
 
+## MCP Auto Test Overview Video
+[![Watch the video](https://img.youtube.com/vi/QSNr9QJrxKY/hqdefault.jpg)](https://www.youtube.com/watch?v=QSNr9QJrxKY)
+
 ## Files in this lab
 - `service/server.py`: MCP transport wiring and tool declarations.
 - `service/order_service.py`: Backing business logic with two intentional bugs.

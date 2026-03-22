@@ -19,6 +19,9 @@ This helps teams detect consumer-impacting contract changes during design and co
 - Git is installed.
 - You are in `labs/backward-compatibility-testing`.
 
+## Backward Compatibility Overview Video
+[![Watch the video](https://img.youtube.com/vi/MYEv94ldfGY/hqdefault.jpg)](https://www.youtube.com/watch?v=MYEv94ldfGY)
+
 ## Files in this lab
 - `products.yaml` - The baseline OpenAPI contract already tracked in git.
 

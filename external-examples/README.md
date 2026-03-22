@@ -17,6 +17,9 @@ Use Specmatic Studio (and `validate`) to:
 - You are in `labs/external-examples`.
 - Ports `9000` and `9001` are free (for Studio).
 
+## External Examples Overview Video
+[![Watch the video](https://img.youtube.com/vi/TcNayIEP4sw/hqdefault.jpg)](https://www.youtube.com/watch?v=TcNayIEP4sw)
+
 ## Files in this lab
 - `specs/simple-openapi-spec.yaml`: OpenAPI contract for the BFF API.
 - `examples/*.json`: External examples validated against the contract.

@@ -22,6 +22,9 @@ Coding agents are fast, but they can drift when they generate code without a str
 - You are in `labs/coding-agents`.
 - Ports `3000`, `4000`, and `9001` are available.
 
+## Coding Agents Overview Video
+[![Watch the video](https://img.youtube.com/vi/UgxxDtE5h_s/hqdefault.jpg)](https://www.youtube.com/watch?v=UgxxDtE5h_s)
+
 ## Files in this lab
 - `products_api.yaml`: The source-of-truth OpenAPI specification.
 - `AGENT.md`: Shared instructions for the coding agent at the project root.

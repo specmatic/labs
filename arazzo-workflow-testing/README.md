@@ -11,6 +11,9 @@ Want to test the functionality of an entire business workflow of your microservi
 - Docker is installed and running.
 - You are in `labs/arazzo-workflow-testing`.
 
+## API Workflow Testing Overview Video
+[![Watch the video](https://img.youtube.com/vi/baYcsznD_Mk/hqdefault.jpg)](https://www.youtube.com/watch?v=baYcsznD_Mk)
+
 ## Sequence Diagram
 
 ![Sequence Diagram](./assets/flow.svg)

@@ -18,6 +18,9 @@ Run the async contract tests, observe the intentional failure, update the Avro s
 - You are in `labs/kafka-avro`.
 - Ports `2181`, `8080`, `8085`, and `9092` are free.
 
+## AsyncAPI and Avro Overview Video
+[![Watch the video](https://img.youtube.com/vi/c4KQVcKoFCU/hqdefault.jpg)](https://www.youtube.com/watch?v=c4KQVcKoFCU)
+
 ## Files in this lab
 
 - `docker-config/avro/NewOrders.avsc` - Avro schema for messages published to `new-orders`
