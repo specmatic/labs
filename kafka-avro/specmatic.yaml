@@ -27,10 +27,8 @@ systemUnderTest:
               producer:
                 basic.auth.credentials.source: USER_INFO
                 basic.auth.user.info: admin:admin-secret
+    settings:
+      strictMode: true
 specmatic:
-  governance:
-    report:
-      formats:
-        - ctrf
   license:
     path: /specmatic/specmatic-license.txt

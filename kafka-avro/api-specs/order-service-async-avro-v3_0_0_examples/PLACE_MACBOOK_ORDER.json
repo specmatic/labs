@@ -4,13 +4,13 @@
     "topic": "new-orders",
     "key": 2,
     "payload": {
-      "id": 2,
+      "id": 102,
       "orderItems": [
         {
           "id": 1,
-          "name": "Macbook",
+          "name": "Macbook Mini Pro M5",
           "quantity": 50,
-          "price": 6000.00
+          "price": 600.00
         }
       ]
     }
@@ -19,7 +19,7 @@
     "topic": "wip-orders",
     "key": 2,
     "payload": {
-      "id": 2,
+      "id": "$match(exact:102)",
       "status": "PROCESSING"
     }
   }
