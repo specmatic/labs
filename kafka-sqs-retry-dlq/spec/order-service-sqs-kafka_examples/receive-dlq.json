@@ -1,0 +1,40 @@
+{
+  "name": "Receive_DLQ_Scenario_Standard_Order",
+  "receive": {
+    "topic": "place-order-topic",
+    "payload": {
+      "orderType": "STANDARD",
+      "orderId": "ORD-RECEIVE-DLQ-90001",
+      "customerId": "CUST-DIRECT-DLQ-001",
+      "items": [
+        {
+          "productId": "PROD-DIRECT-DLQ-111",
+          "quantity": 1,
+          "price": 49.99
+        }
+      ],
+      "totalAmount": 49.99,
+      "orderDate": "2026-01-19T12:00:00Z"
+    },
+    "headers": {
+      "CorrelationId": "corr-receive-dlq-90001",
+      "MessageGroupId": "direct-dlq-test-group",
+      "Subject": "Direct DLQ Test Order"
+    }
+  },
+  "dlq": {
+    "topic": "place-order-dlq-topic",
+    "headers": {
+      "CorrelationId": "corr-receive-dlq-90001"
+    },
+    "payload": {
+      "originalMessage": "(string)",
+      "messageKey": "ORD-RECEIVE-DLQ-90001",
+      "totalRetries": 0,
+      "firstAttemptTimestamp": "(datetime)",
+      "failedTimestamp": "(datetime)",
+      "finalErrorMessage": "(string)",
+      "finalErrorStackTrace": "(string)"
+    }
+  }
+}

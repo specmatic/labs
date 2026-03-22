@@ -1,0 +1,42 @@
+{
+  "name": "Standard_Order_Kafka_SQS",
+  "receive": {
+    "topic": "place-order-topic",
+    "payload": {
+      "orderType": "STANDARD",
+      "orderId": "ORD-90001",
+      "customerId": "CUST-44556",
+      "items": [
+        {
+          "productId": "PROD-111",
+          "quantity": 1,
+          "price": 899.99
+        },
+        {
+          "productId": "PROD-222",
+          "quantity": 2,
+          "price": 129.50
+        }
+      ],
+      "totalAmount": 1158.99,
+      "orderDate": "2025-12-09T14:20:00Z"
+    },
+    "headers": {
+      "CorrelationId": "corr-standard-90001",
+      "MessageGroupId": "order-group-9",
+      "Subject": "Order Placed"
+    }
+  },
+  "send": {
+    "topic": "place-order-queue",
+    "headers": {
+      "CorrelationId": "corr-standard-90001"
+    },
+    "payload": {
+      "orderId": "ORD-90001",
+      "itemsCount": "$match(exact: 2)",
+      "status": "$match(exact: WIP)",
+      "processingStartedAt": "(datetime)"
+    }
+  }
+}

@@ -54,6 +54,7 @@ This is a monorepo. Each lab is self-contained and organized in a separate direc
   - [AsyncAPI Contract Testing](quick-start-async-contract-testing/README.md)
   - [Kafka and Avro Schema](kafka-avro/README.md)
   - [Async Event Flow](async-event-flow/README.md)
+  - [Kafka to SQS Retry and DLQ](kafka-sqs-retry-dlq/README.md)
 - Advanced Testing Concepts
   - [API Security Schemes](api-security-schemes/README.md)
   - [Schema Resiliency Testing](schema-resiliency-testing/README.md)

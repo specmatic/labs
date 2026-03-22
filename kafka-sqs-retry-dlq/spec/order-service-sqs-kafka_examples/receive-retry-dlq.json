@@ -1,0 +1,58 @@
+{
+  "name": "Receive_Retry_DLQ_Scenario_Priority_Order",
+  "receive": {
+    "topic": "place-order-topic",
+    "payload": {
+      "orderType": "PRIORITY",
+      "orderId": "ORD-DLQ-90001",
+      "customerId": "CUST-DLQ-001",
+      "items": [
+        {
+          "productId": "PROD-DLQ-555",
+          "quantity": 2,
+          "price": 199.99
+        }
+      ],
+      "totalAmount": 399.98,
+      "orderDate": "2026-01-19T11:00:00Z",
+      "priorityLevel": "HIGH",
+      "expectedDeliveryDate": "2026-01-20T18:00:00Z"
+    },
+    "headers": {
+      "CorrelationId": "corr-dlq-90001",
+      "MessageGroupId": "dlq-test-group",
+      "Subject": "DLQ Test Order",
+      "Priority": "HIGH"
+    }
+  },
+  "retry": {
+    "topic": "place-order-retry-topic",
+    "headers": {
+      "CorrelationId": "corr-dlq-90001"
+    },
+    "payload": {
+      "originalMessage": "(string)",
+      "messageKey": "ORD-DLQ-90001",
+      "retryCount": "(number)",
+      "firstAttemptTimestamp": "(datetime)",
+      "lastAttemptTimestamp": "(datetime)",
+      "errorMessage": "(string)",
+      "errorStackTrace": "(string)"
+    }
+  },
+  "dlq": {
+    "topic": "place-order-dlq-topic",
+    "headers": {
+      "CorrelationId": "corr-dlq-90001"
+    },
+    "payload": {
+      "originalMessage": "(string)",
+      "messageKey": "ORD-DLQ-90001",
+      "totalRetries": 3,
+      "firstAttemptTimestamp": "(datetime)",
+      "failedTimestamp": "(datetime)",
+      "finalErrorMessage": "(string)",
+      "finalErrorStackTrace": "(string)"
+    }
+  }
+}

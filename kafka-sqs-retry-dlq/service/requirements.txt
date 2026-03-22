@@ -1,0 +1,2 @@
+boto3==1.40.59
+kafka-python-ng==2.2.3

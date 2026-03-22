@@ -1,0 +1,52 @@
+{
+  "name": "Retry_Scenario_Standard_Order",
+  "receive": {
+    "topic": "place-order-topic",
+    "payload": {
+      "orderType": "STANDARD",
+      "orderId": "ORD-RETRY-90001",
+      "customerId": "CUST-RETRY-001",
+      "items": [
+        {
+          "productId": "PROD-RETRY-111",
+          "quantity": 1,
+          "price": 99.99
+        }
+      ],
+      "totalAmount": 99.99,
+      "orderDate": "2026-01-19T10:00:00Z"
+    },
+    "headers": {
+      "CorrelationId": "corr-retry-90001",
+      "MessageGroupId": "retry-test-group",
+      "Subject": "Retry Test Order"
+    }
+  },
+  "retry": {
+    "topic": "place-order-retry-topic",
+    "headers": {
+      "CorrelationId": "corr-retry-90001"
+    },
+    "payload": {
+      "originalMessage": "(string)",
+      "messageKey": "ORD-RETRY-90001",
+      "retryCount": "(number)",
+      "firstAttemptTimestamp": "(datetime)",
+      "lastAttemptTimestamp": "(datetime)",
+      "errorMessage": "(string)",
+      "errorStackTrace": "(string)"
+    }
+  },
+  "send": {
+    "topic": "place-order-queue",
+    "headers": {
+      "CorrelationId": "corr-retry-90001"
+    },
+    "payload": {
+      "orderId": "ORD-RETRY-90001",
+      "itemsCount": 1,
+      "status": "WIP",
+      "processingStartedAt": "(datetime)"
+    }
+  }
+}
