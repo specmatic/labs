@@ -1,114 +1,311 @@
-# Contract Testing with AsyncAPI & Avro Schema Registry
+# Contract Testing with AsyncAPI and Avro Schema Registry
 
-> **Leveraging your Avro schema files by referencing them from AsyncAPI spec to test your event-driven microservices**
+This lab shows a common event-driven drift problem: the service already enforces some input validations, but those rules are still implicit in code instead of being captured in the contract artifacts that other teams rely on.
 
-## Overview
+Your job is to make those hidden rules explicit in the Avro schemas and then update the AsyncAPI examples so the contract tests describe valid business messages end to end.
 
-This project demonstrates **contract-driven development** using your Avro schemas for asynchronous microservices communication. It showcases how [AsyncAPI specification](https://www.asyncapi.com/en) can be used in conjunction with your Avro schemas to thoroughly contract test your EDA.
+## Objective
+
+Run the async contract tests, observe the intentional failure, update the Avro schemas and examples, and verify a passing run.
+
+## Time required to complete this lab
+
+15-20 minutes.
+
+## Prerequisites
+
+- Docker is installed and running.
+- You are in `labs/kafka-avro`.
+- Ports `2181`, `8080`, `8085`, and `9092` are free.
+
+## Files in this lab
+
+- `docker-config/avro/NewOrders.avsc` - Avro schema for messages published to `new-orders`
+- `docker-config/avro/WipOrders.avsc` - Avro schema for messages published to `wip-orders`
+- `api-specs/order-service-async-avro-v3_0_0.yaml` - AsyncAPI contract that references schemas from Schema Registry
+- `api-specs/order-service-async-avro-v3_0_0_examples/` - externalized examples used as executable async tests
+- `specmatic.yaml` - Specmatic async test configuration
+- `docker-compose.yaml` - Kafka, Schema Registry, application, and Specmatic test runner
+
+## Lab Rules
+
+- Do not edit: `api-specs/order-service-async-avro-v3_0_0.yaml`, `specmatic.yaml`, `docker-compose.yaml`.
+- Edit only:
+  - `docker-config/avro/NewOrders.avsc`
+  - `docker-config/avro/WipOrders.avsc`
+  - `api-specs/order-service-async-avro-v3_0_0_examples/PLACE_IPHONE_ORDER.json`
+  - `api-specs/order-service-async-avro-v3_0_0_examples/PLACE_MACBOOK_ORDER.json`
+- Do not change any other file. In this lab, the contract artifacts are the source of truth you need to fix.
+
+## Architecture mental model
 
 ![Architecture Diagram](assets/avro-sample-architecture.png)
 
-The diagram covers an order processing flow between `checkout-service` and `order-service` communicating through Kafka topics with Avro serialization for the payloads.
+- Contract test runner: `specmatic-test`
+- Provider under test: `order-service`
+- Supporting components: Kafka broker plus Schema Registry
 
-## Time required to complete this lab:
-10-15 minutes.
+Flow:
+1. Specmatic reads the AsyncAPI spec and resolves Avro schemas from Schema Registry.
+2. Specmatic publishes the `receive` example message to the `new-orders` topic.
+3. `order-service` consumes the message and applies its built-in validations.
+4. Only valid messages are transformed and published to `wip-orders`.
+5. Specmatic waits for and validates the `send` message on `wip-orders`.
 
-## Prerequisites
-- Docker is installed and running.
-- You are in `labs/kafka-avro`.
+Why the baseline fails:
+- The starter `.avsc` files are too permissive.
+- The starter examples use values that violate validations already enforced by `order-service`.
+- Because the service rejects those messages, no reply is published on `wip-orders`, and the contract tests time out.
 
-## Referencing your existing Avro files your schema registry in AsyncAPI spec
+## Run the baseline and observe the failure
 
-The AsyncAPI specification that this application is based on **reuses the Avro schemas by referencing them instead of redefining them again**. 
-This ensures that we have **a single source of truth** for the schemas which is the schema registry.
+Pull images first:
 
-```yaml
-components:
-  messages:
-    OrderRequest:
-      name: OrderRequest
-      title: An order request
-      payload:
-        schemaFormat: 'application/vnd.apache.avro+json;version=1.9.0'
-        schema:
-          $ref: 'http://localhost:8085/subjects/new-orders-value/versions/1/schema'
-```
-
-## Contract Testing the application
-
-### Prerequisites
-- Java 17+
-- Docker & Docker Compose
-
-![Test Architecture Diagram](assets/avro-sample-test-architecture.png)
-
-The `order-service` is the system under test in our case.
-
-### Run Contract Tests using Docker CLI
-
-This will help you understand all the independent components involved in running the app, its dependencies and the contract test itself.
-
-#### Run the contract tests
-1. Pull the dependencies for the application and the test environment:
-```bash
+```shell
 docker compose pull
 ```
 
-2. Build and start dependencies + order-service. Once the order-service has started, run the contract tests using Specmatic:
+Run the async contract tests:
 
-```bash
-docker compose up --build specmatic-test --abort-on-container-exit
+```shell
+docker compose up specmatic-test --abort-on-container-exit
 ```
 
-You should see the following test results in the logs:
+Expected failure signal:
+
+```terminaloutput
+Timeout waiting for a message on topic 'wip-orders'.
+Refer to Message Count Report to verify the message counts on different topics.
+
+Tests run: 2, Successes: 0, Failures: 2, Errors: 0
+```
+
+The message count report should show:
+
+```terminaloutput
+| topic      | Actual | Expected |
+| new-orders |    2   |    2     |
+| wip-orders |    0   |    2     |
+```
+
+Clean up before making changes:
+
+```shell
+docker compose down -v --remove-orphans
+```
+
+## Learner task
+
+Update the contract artifacts so they reflect the validations already implemented in the service.
+
+You need to do two things:
+1. Add the missing constraints to the Avro schemas so invalid payloads are rejected by contract, so we don't rely on hidden service logic.
+2. Update both example messages so their values satisfy those constraints.
+
+Focus on the fields that currently drift from service behavior:
+- order `id`
+- `orderItems[].name`
+- `orderItems[].price`
+
+## Fix path
+
+### Step 1: Update the Avro schemas
+
+In `docker-config/avro/NewOrders.avsc` and `docker-config/avro/WipOrders.avsc`, add the missing validation constraints so the schemas describe the service's real expectations.
+
+Replace `docker-config/avro/NewOrders.avsc` with:
+
+```json
+{
+  "type": "record",
+  "name": "OrderRequest",
+  "namespace": "order",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int",
+      "x-minimum": 1,
+      "x-maximum": 100
+    },
+    {
+      "name": "orderItems",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "Item",
+          "fields": [
+            { "name": "id", "type": "int" },
+            {
+              "name": "name",
+              "type": "string",
+              "x-minLength": 2,
+              "x-maxLength": 10,
+              "x-regex": "^[A-Za-z]{2,10}$"
+            },
+            { "name": "quantity", "type": "int" },
+            {
+              "name": "price",
+              "type": "int",
+              "x-minimum": 1000
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+Note all the x- constraints added to `id`, `name`, and `price` fields.
+
+Replace `docker-config/avro/WipOrders.avsc` with:
+
+```json
+{
+  "type": "record",
+  "name": "OrderToProcess",
+  "namespace": "order",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int",
+      "x-minimum": 1,
+      "x-maximum": 100
+    },
+    {
+      "name": "status",
+      "type": {
+        "type": "enum",
+        "name": "OrderStatus",
+        "symbols": ["PENDING", "PROCESSING", "COMPLETED", "CANCELLED"]
+      }
+    }
+  ]
+}
+```
+
+### Step 2: Update the examples
+
+In both files under `api-specs/order-service-async-avro-v3_0_0_examples/`, replace the current invalid values with values that satisfy the new schema constraints.
+
+Keep the overall flow the same:
+- `receive.topic` stays `new-orders`
+- `send.topic` stays `wip-orders`
+- `status` stays `PROCESSING`
+
+Replace `api-specs/order-service-async-avro-v3_0_0_examples/PLACE_IPHONE_ORDER.json` with:
+
+```json
+{
+  "name": "PLACE_IPHONE_ORDER",
+  "receive": {
+    "topic": "new-orders",
+    "key": 1,
+    "payload": {
+      "id": 1,
+      "orderItems": [
+        {
+          "id": 1,
+          "name": "iPhone",
+          "quantity": 10,
+          "price": 5000.00
+        }
+      ]
+    }
+  },
+  "send": {
+    "topic": "wip-orders",
+    "key": 1,
+    "payload": {
+      "id": "$match(exact:1)",
+      "status": "$match(exact:PROCESSING)"
+    }
+  }
+}
+```
+
+Replace `api-specs/order-service-async-avro-v3_0_0_examples/PLACE_MACBOOK_ORDER.json` with:
+
+```json
+{
+  "name": "PLACE_MACBOOK_ORDER",
+  "receive": {
+    "topic": "new-orders",
+    "key": 2,
+    "payload": {
+      "id": 2,
+      "orderItems": [
+        {
+          "id": 1,
+          "name": "Macbook",
+          "quantity": 50,
+          "price": 6000.00
+        }
+      ]
+    }
+  },
+  "send": {
+    "topic": "wip-orders",
+    "key": 2,
+    "payload": {
+      "id": "$match(exact:2)",
+      "status": "$match(exact:PROCESSING)"
+    }
+  }
+}
+```
+
+## Verify the fix
+
+Re-run the contract tests:
+
+```shell
+docker compose up specmatic-test --abort-on-container-exit
+```
+
+Expected passing output:
 
 ```terminaloutput
 Tests run: 2, Successes: 2, Failures: 0, Errors: 0
 ```
 
-3. Stop the containers 
-```bash
+The message count report should now show:
+
+```terminaloutput
+| topic      | Actual | Expected |
+| new-orders |    2   |    2     |
+| wip-orders |    2   |    2     |
+```
+
+Clean up:
+
+```shell
 docker compose down -v --remove-orphans
 ```
 
-### What all are we testing with Specmatic Contract Test:
-- **Message delivery** to correct topics
-- **Schema compatibility** with registry
-- **Consumer behavior** on message receipt
-- **Error handling** for malformed messages
-- **And more ...**
+## What changed and why
 
-## Schema Management
+The service behavior did not need fixing. The contract artifacts were incomplete.
 
-### Schema Organization
-```
-src/main/avro/
-├── NewOrders.avsc          # Order creation events
-├── WipOrders.avsc          # Work-in-progress updates
-├── OrdersToCancel.avsc     # Cancellation requests
-└── CancelledOrders.avsc    # Cancellation confirmations
-```
+By moving those rules into the `.avsc` files and aligning the executable examples with them, you:
+- document the true message constraints in shared contract artifacts,
+- ensure Schema Registry carries those rules,
+- make the examples realistic and executable,
+- prevent future teams from publishing values the service will silently reject.
 
-### Registration Process
-Schemas are automatically registered during test setup via `register-schemas.sh` script, ensuring tests run against the actual schema registry.
+## Troubleshooting
 
-## Business Impact
+- `port is already allocated`:
+  Free ports `2181`, `8080`, `8085`, and `9092`, then retry.
+- `Timeout waiting for a message on topic 'wip-orders'` even after your edits:
+  Bring the stack down with `docker compose down -v --remove-orphans` and run again so schemas are re-registered from your updated `.avsc` files.
+- Schema registration errors:
+  Check that the `.avsc` files still contain valid JSON after your edits.
+- Shell script errors on Windows:
+  Ensure `docker-config/create-topics.sh` and `docker-config/avro/register-schemas.sh` use LF line endings, not CRLF.
 
-### Development Benefits
-- **Catch integration issues early** - Before they reach higher environments
-- **Reduce debugging time** - Eliminate guesswork
-- **Confident deployments** - Automated validation prevents failures
+## Optional extension
 
-### Technical Benefits
-- **Schema evolution safety** - Backward compatibility validation
-- **Avoid API-Drift** - Specs match actual implementation
-- **Automated Testing** - No manual contract verification needed, nor do you need to write or maintain any test code
-
-## Why This Matters
-
-Traditional integration testing often misses **contract compatibility issues** that only surface in production. Leveraging AsyncAPI spec with Avro schemas for Contract Testing ensures:
-
-1. **Services communicate correctly** - Validated message formats
-2. **Schema changes don't break consumers** - Compatibility testing
-3. **Deployments are safe** - Contract validation in CI/CD
-4. **Collaboration with consumers** - Living contracts via AsyncAPI
+- Add one more example that should pass under the same constraints.
+- Intentionally introduce a bad example and observe whether the failure happens at schema validation time or behavior verification time.
