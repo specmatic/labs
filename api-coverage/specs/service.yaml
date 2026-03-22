@@ -29,7 +29,7 @@ paths:
                     name: Scooby
                     type: dog
                     status: Adopted
-  /pets/find:
+  /pets/search:
     get:
       summary: Search pets by type
       parameters:

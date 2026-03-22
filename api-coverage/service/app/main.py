@@ -19,7 +19,7 @@ PETS = {
 }
 
 
-@app.get("/pets/search")
+@app.get("/pets/find")
 def search_pets(type: str = Query(...)):
     return [pet for pet in PETS.values() if pet["type"] == type]
 
