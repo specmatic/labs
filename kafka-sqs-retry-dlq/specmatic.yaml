@@ -4,6 +4,8 @@ systemUnderTest:
     $ref: "#/components/services/sqsKafkaService"
     runOptions:
       $ref: "#/components/runOptions/sqsKafkaServiceTest"
+    settings:
+      strictMode: true
 components:
   sources:
     localSpecs:

@@ -76,7 +76,6 @@ operations:
         - $ref: '#/channels/wipOrder/messages/wipOrderMessage'
         - $ref: '#/channels/wipOrder/messages/deliveredOrderMessage'
         - $ref: '#/channels/wipOrder/messages/completedOrderMessage'
-
     x-specmatic-retry:
       channel:
         $ref: '#/channels/retryTopic'
@@ -87,13 +86,12 @@ operations:
         type: "exponential"
         initialDelaySeconds: 1
         multiplier: 2
-
     x-specmatic-dlq:
       channel:
         $ref: '#/channels/dlqTopic'
       messages:
         - $ref: '#/channels/dlqTopic/messages/placeOrderDlqMessage'
-      waitTimeInSeconds: 30
+      waitTimeInSeconds: 10
 
 components:
   messages:

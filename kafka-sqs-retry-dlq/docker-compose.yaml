@@ -84,8 +84,7 @@ services:
     volumes:
       - ./:/usr/src/app
       - ../license.txt:/specmatic/specmatic-license.txt:ro
-    entrypoint: ["sh", "-lc"]
-    command: ["sleep 8 && specmatic test"]
+    command: ["test"]
 
   studio:
     image: specmatic/enterprise:latest

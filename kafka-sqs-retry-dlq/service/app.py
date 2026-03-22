@@ -265,7 +265,8 @@ class BridgeApplication:
 
         self.threads = [
             threading.Thread(target=self._run_main_bridge, name="MainBridge", daemon=True),
-            threading.Thread(target=self._run_retry_consumer, name="RetryConsumer", daemon=True),
+            # Lab fix: uncomment the retry consumer to process messages from place-order-retry-topic and complete the retry/DLQ flow.
+            # threading.Thread(target=self._run_retry_consumer, name="RetryConsumer", daemon=True),
         ]
 
         for thread in self.threads:
