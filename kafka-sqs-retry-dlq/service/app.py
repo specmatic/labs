@@ -354,7 +354,9 @@ class BridgeApplication:
             return
 
         try:
-            transformed_message = self.transformer.transform_message(retryable_message["originalMessage"])
+            transformed_message = self.transformer.transform_message(
+                json.dumps(retryable_message["originalMessage"])
+            )
             self.send_to_sqs(
                 transformed_message,
                 retryable_message["messageKey"],
@@ -391,10 +393,11 @@ class BridgeApplication:
         error: Exception,
     ) -> None:
         assert self.producer is not None
+        original_message_object = json.loads(original_message)
         message_key = self.transformer.extract_message_key_from_json(original_message)
         timestamp = now_iso()
         retryable_message = {
-            "originalMessage": original_message,
+            "originalMessage": original_message_object,
             "messageKey": message_key,
             "retryCount": current_retry_count,
             "firstAttemptTimestamp": first_attempt_timestamp or timestamp,
@@ -437,10 +440,11 @@ class BridgeApplication:
         error: Exception,
     ) -> None:
         assert self.producer is not None
+        original_message_object = json.loads(original_message)
         message_key = self.transformer.extract_message_key_from_json(original_message)
         timestamp = now_iso()
         dlq_message = {
-            "originalMessage": original_message,
+            "originalMessage": original_message_object,
             "messageKey": message_key,
             "totalRetries": total_retries,
             "firstAttemptTimestamp": timestamp,

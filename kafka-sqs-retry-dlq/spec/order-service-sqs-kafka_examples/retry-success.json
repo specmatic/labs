@@ -28,7 +28,20 @@
       "CorrelationId": "corr-retry-90001"
     },
     "payload": {
-      "originalMessage": "(string)",
+      "originalMessage": {
+        "orderType": "STANDARD",
+        "orderId": "ORD-RETRY-90001",
+        "customerId": "CUST-RETRY-001",
+        "items": [
+          {
+            "productId": "PROD-RETRY-111",
+            "quantity": 1,
+            "price": 99.99
+          }
+        ],
+        "totalAmount": 99.99,
+        "orderDate": "2026-01-19T10:00:00Z"
+      },
       "messageKey": "ORD-RETRY-90001",
       "retryCount": "(number)",
       "firstAttemptTimestamp": "(datetime)",

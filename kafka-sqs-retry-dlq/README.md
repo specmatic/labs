@@ -34,7 +34,7 @@ Run the async contract tests, observe the intentional failure, update the Python
 
 ## Architecture mental model
 
-![Architecture Diagram](assets/architecture.png)
+![Architecture Diagram](assets/architecture.gif)
 
 - Contract test runner: `contract-test`
 - Provider under test: `provider`

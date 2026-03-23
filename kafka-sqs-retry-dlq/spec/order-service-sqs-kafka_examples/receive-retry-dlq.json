@@ -31,7 +31,22 @@
       "CorrelationId": "corr-dlq-90001"
     },
     "payload": {
-      "originalMessage": "(string)",
+      "originalMessage": {
+        "orderType": "PRIORITY",
+        "orderId": "ORD-DLQ-90001",
+        "customerId": "CUST-DLQ-001",
+        "items": [
+          {
+            "productId": "PROD-DLQ-555",
+            "quantity": 2,
+            "price": 199.99
+          }
+        ],
+        "totalAmount": 399.98,
+        "orderDate": "2026-01-19T11:00:00Z",
+        "priorityLevel": "HIGH",
+        "expectedDeliveryDate": "2026-01-20T18:00:00Z"
+      },
       "messageKey": "ORD-DLQ-90001",
       "retryCount": "(number)",
       "firstAttemptTimestamp": "(datetime)",
@@ -46,7 +61,22 @@
       "CorrelationId": "corr-dlq-90001"
     },
     "payload": {
-      "originalMessage": "(string)",
+      "originalMessage": {
+        "orderType": "PRIORITY",
+        "orderId": "ORD-DLQ-90001",
+        "customerId": "CUST-DLQ-001",
+        "items": [
+          {
+            "productId": "PROD-DLQ-555",
+            "quantity": 2,
+            "price": 199.99
+          }
+        ],
+        "totalAmount": 399.98,
+        "orderDate": "2026-01-19T11:00:00Z",
+        "priorityLevel": "HIGH",
+        "expectedDeliveryDate": "2026-01-20T18:00:00Z"
+      },
       "messageKey": "ORD-DLQ-90001",
       "totalRetries": 3,
       "firstAttemptTimestamp": "(datetime)",

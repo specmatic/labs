@@ -91,7 +91,7 @@ operations:
         $ref: '#/channels/dlqTopic'
       messages:
         - $ref: '#/channels/dlqTopic/messages/placeOrderDlqMessage'
-      waitTimeInSeconds: 10
+      waitTimeInSeconds: 15
 
 components:
   messages:
@@ -571,10 +571,9 @@ components:
         type: object
         properties:
           originalMessage:
-            type: string
-            description: The original message body that failed processing
-            examples:
-              - '{"orderType":"STANDARD","orderId":"ORD-RETRY-90001",...}'
+            type: object
+            description: The original message payload that failed processing
+            additionalProperties: true
           messageKey:
             type: string
             description: The message key for partitioning
@@ -633,7 +632,8 @@ components:
         type: object
         properties:
           originalMessage:
-            type: string
+            type: object
+            additionalProperties: true
           messageKey:
             type: string
           totalRetries:
