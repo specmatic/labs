@@ -1,0 +1,31 @@
+openapi: 3.0.3
+info:
+  title: Order BFF
+  version: 1.0.0
+paths:
+  /order-summary/{orderId}:
+    get:
+      summary: Fetch an order summary for the UI
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Order summary
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - orderId
+                  - displayStatus
+                properties:
+                  orderId:
+                    type: integer
+                  displayStatus:
+                    type: string
+                  priorityBadge:
+                    type: string

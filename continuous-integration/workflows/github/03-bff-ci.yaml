@@ -1,0 +1,68 @@
+name: BFF CI with Domain API Virtualization
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  bff-contract-tests:
+    runs-on: ubuntu-latest
+    env:
+      PUBLISH_TO_INSIGHTS: ${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Start virtualized Order API
+        run: |
+          docker run -d --name order-api-mock \
+            -v ${{ github.workspace }}:/usr/src/app \
+            -p 9001:9000 \
+            specmatic/enterprise \
+            mock
+
+      - name: Start BFF application
+        run: ./gradlew bootRun &
+
+      - name: Wait for BFF startup
+        run: sleep 30
+
+      - name: Run contract tests against the BFF
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/usr/src/app \
+            --network host \
+            specmatic/enterprise \
+            test
+
+      - name: Stop virtualized Order API
+        if: always()
+        run: docker rm -f order-api-mock
+
+      - name: Write specmatic license key to file
+        if: env.PUBLISH_TO_INSIGHTS == 'true'
+        run: |
+          mkdir -p ~/.specmatic
+          echo "${{ secrets.SPECMATIC_LICENSE_KEY }}" > ~/.specmatic/specmatic-license.txt
+
+      - name: Publish Build Reports to Specmatic Insights
+        if: env.PUBLISH_TO_INSIGHTS == 'true'
+        run: |
+          docker run --rm \
+            -v ~/.specmatic:/root/.specmatic \
+            -v ${{ github.workspace }}:/usr/src/app \
+            specmatic/enterprise \
+            send-report \
+            --branch-name ${{ github.ref_name }} \
+            --repo-name ${{ github.event.repository.name }} \
+            --repo-id ${{ github.repository_id }} \
+            --repo-url ${{ github.event.repository.html_url }}

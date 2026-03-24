@@ -1,0 +1,79 @@
+openapi: 3.0.3
+info:
+  title: Order API
+  version: 1.1.0
+paths:
+  /orders:
+    post:
+      summary: Create an order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - productId
+                - quantity
+                - priority
+              properties:
+                productId:
+                  type: string
+                quantity:
+                  type: integer
+                  minimum: 1
+                priority:
+                  type: string
+                  enum:
+                    - standard
+                    - express
+      responses:
+        '201':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                  - status
+                properties:
+                  id:
+                    type: integer
+                  status:
+                    type: string
+                  priority:
+                    type: string
+                    enum:
+                      - standard
+                      - express
+  /orders/{orderId}:
+    get:
+      summary: Fetch an order by id
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                  - status
+                  - priority
+                properties:
+                  id:
+                    type: integer
+                  status:
+                    type: string
+                  priority:
+                    type: string
+                    enum:
+                      - standard
+                      - express

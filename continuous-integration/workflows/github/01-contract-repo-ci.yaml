@@ -1,0 +1,79 @@
+name: Contract Repository CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  contract-repo-checks:
+    runs-on: ubuntu-latest
+    env:
+      DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+      PUBLISH_TO_INSIGHTS: ${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install CLI dependencies
+        run: npm install -g @stoplight/spectral-cli
+
+      - name: Lint contracts with Spectral
+        run: spectral lint --ruleset .spectral.yaml contracts/*.yaml
+
+      - name: Write specmatic license key to file
+        if: env.PUBLISH_TO_INSIGHTS == 'true'
+        run: |
+          mkdir -p ~/.specmatic
+          echo "${{ secrets.SPECMATIC_LICENSE_KEY }}" > ~/.specmatic/specmatic-license.txt
+
+      - name: Validate Examples
+        run: |
+          docker run --rm \
+            -v ~/.specmatic:/root/.specmatic \
+            -v ${{ github.workspace }}:/usr/src/app \
+            specmatic/enterprise \
+            examples validate --specs-dir contracts
+
+      - name: Check backward compatibility
+        run: |
+          docker run --rm \
+            -v ~/.specmatic:/root/.specmatic \
+            -v ${{ github.workspace }}:/usr/src/app \
+            specmatic/enterprise \
+            backward-compatibility-check --base-branch origin/${DEFAULT_BRANCH} --target-path contracts
+
+      - name: Generate central contract repo report
+        if: env.PUBLISH_TO_INSIGHTS == 'true'
+        run: |
+          docker run --rm \
+            -v ~/.specmatic:/root/.specmatic \
+            -v ${{ github.workspace }}:/usr/src/app \
+            specmatic/enterprise \
+            central-contract-repo-report
+
+      - name: Publish Build Reports to Specmatic Insights
+        if: env.PUBLISH_TO_INSIGHTS == 'true'
+        run: |
+          docker run --rm \
+            -v ~/.specmatic:/root/.specmatic \
+            -v ${{ github.workspace }}:/usr/src/app \
+            specmatic/enterprise \
+            send-report \
+            --branch-name ${{ github.ref_name }} \
+            --repo-name ${{ github.event.repository.name }} \
+            --repo-id ${{ github.repository_id }} \
+            --repo-url ${{ github.event.repository.html_url }}

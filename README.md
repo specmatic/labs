@@ -49,7 +49,7 @@ This is a monorepo. Each lab is self-contained and organized in a separate direc
   - [Request/Response Adapters](data-adapters/README.md)
   - [Overlays](overlays/README.md)
   - [Workflow within the Same Spec](workflow-in-same-spec/README.md)
-  - [Running Contract Tests and Mocks in CI](async-event-flow/README.md)
+  - [Running Contract Tests and Mocks in CI](continuous-integration/README.md)
 - Event Driven Architecture with AsyncAPI
   - [AsyncAPI Contract Testing](quick-start-async-contract-testing/README.md)
   - [Kafka and Avro Schema](kafka-avro/README.md)

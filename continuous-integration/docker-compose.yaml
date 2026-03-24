@@ -1,0 +1,9 @@
+services:
+  contract-repo-ci:
+    container_name: central-repo-ci
+    build:
+      context: ./ci-runner
+    volumes:
+      - ./:/workspace
+    working_dir: /workspace
+    command: ["/bin/sh", "/opt/ci/run-contract-repo-ci.sh"]

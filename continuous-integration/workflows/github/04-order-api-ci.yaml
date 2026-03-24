@@ -1,0 +1,56 @@
+name: Order API Provider CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  provider-contract-tests:
+    runs-on: ubuntu-latest
+    env:
+      PUBLISH_TO_INSIGHTS: ${{ github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Start Order API provider
+        run: ./gradlew bootRun &
+
+      - name: Wait for provider startup
+        run: sleep 30
+
+      - name: Run Specmatic contract tests against the provider
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/usr/src/app \
+            --network host \
+            specmatic/enterprise \
+            test
+
+      - name: Write specmatic license key to file
+        if: env.PUBLISH_TO_INSIGHTS == 'true'
+        run: |
+          mkdir -p ~/.specmatic
+          echo "${{ secrets.SPECMATIC_LICENSE_KEY }}" > ~/.specmatic/specmatic-license.txt
+
+      - name: Publish Build Reports to Specmatic Insights
+        if: env.PUBLISH_TO_INSIGHTS == 'true'
+        run: |
+          docker run --rm \
+            -v ~/.specmatic:/root/.specmatic \
+            -v ${{ github.workspace }}:/usr/src/app \
+            specmatic/enterprise \
+            send-report \
+            --branch-name ${{ github.ref_name }} \
+            --repo-name ${{ github.event.repository.name }} \
+            --repo-id ${{ github.repository_id }} \
+            --repo-url ${{ github.event.repository.html_url }}
