@@ -41,10 +41,10 @@ components:
               securitySchemes:
                 oAuth2AuthCode:
                   type: oauth2
-                  token: ${OAUTH_TOKEN:OAUTH1234}
+                  token: ${INVALID_OAUTH_TOKEN:OAUTH1234}
                 basicAuth:
                   type: basicAuth
-                  token: ${BASIC_AUTH_TOKEN:dXNlcjpwYXNzd29yZA==}
+                  token: ${BASIC_AUTH_TOKEN:dXNlcjppbnZhbGlkcGFzcw==}
                 apiKeyAuth:
                   type: apiKey
-                  token: ${API_KEY:APIKEY1234}
+                  token: ${API_KEY:INVALID_APIKEY1234}

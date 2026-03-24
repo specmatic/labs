@@ -3,55 +3,35 @@
 
 This project demonstrates how to leverage OpenAPI specifications as a Contract Test with Specmatic when the specification includes multiple [security schemes](https://spec.openapis.org/oas/v3.0.1#security-scheme-object) to protect different endpoints based on HTTP methods.
 
-## Time required to complete this lab:
+Run the contract tests, observe the authentication failures, then fix [`specmatic.yaml`](specmatic.yaml) so Specmatic sends the right OAuth2, Basic Auth, and API key values.
+
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
 - Docker is installed and running.
 - You are in `labs/api-security-schemes`.
 
-## Security Scheme Configuration
+## Architecture
 
-The application implements three different security schemes:
-- **OAuth2 (POST endpoints)**: All POST operations require OAuth2 authentication with 'email' scope
-- **Basic Authentication (GET endpoints)**: All GET operations require username/password authentication
-- **API Key (DELETE endpoints)**: All DELETE operations require an API key in the X-API-Key header
-
-We have used below tools to demonstrate the same.
-- Spring Boot
-- Keycloak
-- Spring Security
-- Specmatic
-- Open API Specification
-
-The system under test here is a service that implements the OpenAPI specification and acts an OAuth2 resource server.
-
-### High-level flow
-
-- `Keycloak` acts as the OAuth2 authorization server (used for `POST` endpoint tokens).
-- `Order API` (Spring Boot) is the system under test and enforces:
-    - OAuth2 for `POST`
-    - Basic Auth for `GET`
-    - API Key for `DELETE`
-- `Specmatic` reads the OpenAPI spec and sends requests with the appropriate auth headers during contract tests.
-
-## Running the application:
-We'll run Keycloak locally which we will leverage as our OAuth authorization server for POST endpoints.  
-We use a Spring Security Configuration which implements:
-- **POST endpoints**: Secured with OAuth2, requiring a token with the 'email' scope in the Authorization header
-- **GET endpoints**: Secured with Basic Authentication, requiring username/password credentials
-- **DELETE endpoints**: Secured with API Key authentication, requiring a valid API key in the X-API-Key header
+- `Keycloak` acts as the OAuth2 authorization server for `POST` requests.
+- `Order API` is the system under test and enforces:
+  - OAuth2 for `POST`
+  - Basic Auth for `GET`
+  - API key for `DELETE`
+- `Specmatic` reads the OpenAPI contract, looks up matching `securitySchemes` entries in `specmatic.yaml`, and sends auth headers during contract tests.
 
 The application validates OAuth2 tokens by calling the ```spring.security.oauth2.resourceserver.jwt.issuer-uri``` url defined in the ```application.properties``` file.
 
-## Running contract tests:
-Within the context of contract tests, we do want to make sure that security schemes defined in the specification are validated.
+## Security Schemes
 
-Specmatic will use the Order API's OpenAPI specifications, read the security schemes, and generate appropriate authentication headers while making requests.
+The application uses three security schemes:
 
-### Security Schemes in Test Mode
+- **OAuth2 (POST endpoints)**: Requires a bearer token with the `email` scope.
+- **Basic Authentication (GET endpoints)**: Requires valid username/password credentials.
+- **API Key (DELETE endpoints)**: Requires a valid `X-API-Key` header.
 
-The application now uses three separate OpenAPI specifications, each with its own security scheme:
+The OpenAPI contract defines these schemes:
 
 **1. POST endpoints with OAuth2** :
 ```yaml
@@ -67,7 +47,7 @@ The application now uses three separate OpenAPI specifications, each with its ow
             email: email
 ```
 
-**2. GET endpoints with Basic Auth** (```spec/api_order_get_basic.yaml```):
+**2. GET endpoints with Basic Auth*:
 ```yaml
   securitySchemes:
     basicAuth:
@@ -76,7 +56,7 @@ The application now uses three separate OpenAPI specifications, each with its ow
       description: Basic Authentication with username and password
 ```
 
-**3. DELETE endpoints with API Key** (```spec/api_order_delete_apikey.yaml```):
+**3. DELETE endpoints with API Key**:
 ```yaml
   securitySchemes:
     apiKeyAuth:
@@ -97,67 +77,77 @@ specs:
       securitySchemes:
         oAuth2AuthCode:
           type: oauth2
-          token: ${OAUTH_TOKEN:OAUTH1234}
+          token: ${INVALID_OAUTH_TOKEN:OAUTH1234}
         basicAuth:
           type: basicAuth
-          token: ${BASIC_AUTH_TOKEN:dXNlcjpwYXNzd29yZA==}
+          token: ${BASIC_AUTH_TOKEN:dXNlcjppbnZhbGlkcGFzcw==}
         apiKeyAuth:
           type: apiKey
-          token: ${API_KEY:APIKEY1234}
+          token: ${API_KEY:INVALID_APIKEY1234}
 ```
 
-#### Running tests with Docker Compose
-This mode runs all required components using containers:
-- Keycloak (OAuth server)
-- Order API (Spring Boot application)
-- Specmatic test runner
+## Lab Rules
 
-From the project root, run:
+- Do not edit files under `spec/`.
+- Do not edit `docker-compose.yaml`.
+- Edit only [`specmatic.yaml`](specmatic.yaml).
+
+## Intentional Failure
+
+Because the OUATH token name and the default values for the BASIC_AUTH_TOKEN and API_KEY in `specmatic.yaml` are intentionally wrong, the protected endpoints return `401 Unauthorized`.
+
+## Run the failing tests
+
+From `labs/api-security-schemes`, run:
 
 ```shell
 docker compose up specmatic-test --abort-on-container-exit
 ```
 
-Expected result:
-- All 167 tests should pass
-- Compose command exits with code `0`
-- Specmatic output ends with `Failures: 0`
+Expected failing result:
 
-Generated test reports:
-- `build/reports/specmatic/test/html/index.html`
-- `build/reports/specmatic/test/ctrf/ctrf-report.json`
+- The compose command exits with a non-zero code.
+- Specmatic reports failures against secured endpoints.
+- The failures include `401 Unauthorized` responses.
 
-Cleanup after run:
+Since OUATH token name and the default values for the BASIC_AUTH_TOKEN and API_KEY in [`specmatic.yaml`](specmatic.yaml) is invalid, Specmatic sends invalid credentials and the protected endpoints return `401 Unauthorized`.
+
+Cleanup after each run:
 
 ```shell
 docker compose down -v
 ```
-You should see different authentication headers set based on the HTTP method:
 
-**For POST requests (OAuth2):**
-```
-Request to http://localhost:8080
-    POST /products
-    Authorization: Bearer OAUTH1234
-    Accept-Charset: UTF-8
-    Accept: */*
-    Content-Type: application/json
-```
+## Your Task
 
-**For GET requests (Basic Auth):**
-```
-Request to http://localhost:8080
-    GET /products/10
-    Authorization: Basic dXNlcjpwYXNzd29yZA==
-    Accept-Charset: UTF-8
-    Accept: */*
+Update [`specmatic.yaml`](specmatic.yaml) to valid values again:
+
+- `INVALID_OAUTH_TOKEN` to `OAUTH_TOKEN`
+- `dXNlcjppbnZhbGlkcGFzcw==` to `dXNlcjpwYXNzd29yZA==`
+- `INVALID_APIKEY1234` to `APIKEY1234`
+
+Do not change anything else. Fix only the above values.
+
+## Verify the fix
+
+Re-run:
+
+```shell
+docker compose up specmatic-test --abort-on-container-exit
 ```
 
-**For DELETE requests (API Key):**
-```
-Request to http://localhost:8080
-    DELETE /products/20
-    X-API-Key: APIKEY1234
-    Accept-Charset: UTF-8
-    Accept: */*
-```
+Expected passing result:
+
+- All 167 tests pass.
+- The compose command exits with code `0`.
+- Specmatic output ends with `Failures: 0`.
+
+Generated test reports:
+- `build/reports/specmatic/test/html/index.html`
+
+## Troubleshooting
+
+- If Docker ports `8080` or `8083` are already in use, stop the conflicting process and try again.
+- If containers from a previous run are still present, run `docker compose down -v` before retrying.
+- If Keycloak takes a little longer to start, wait for the compose run to finish; the test container already includes readiness checks.
+- If tests still fail after your change, compare the three token fallback values in `specmatic.yaml` against the valid values shown in the lab.
