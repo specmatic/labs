@@ -19,7 +19,7 @@ In this lab, the contract is already the source of truth:
 Your job is to test the service under test (BFF) matches those resilience expectations by simulating downstream delays through the downstream mock examples.
 
 ## Time required to complete this lab
-20-25 minutes.
+15-20 minutes.
 
 ## Prerequisites
 - Docker is installed and running.
@@ -199,6 +199,12 @@ Expected failure direction:
 - one concrete `202` example still passes
 - the new failures come from additional valid request variations generated from the contract
 
+Expected Task C checkpoint result before the matcher fix:
+
+```text
+Tests run: 209, Successes: 198, Failures: 11, Errors: 0
+```
+
 Why this is useful:
 - this is closer to real-world resiliency testing
 - Specmatic is not only checking one example anymore
@@ -260,7 +266,7 @@ Expected outcome:
 Final expected result:
 
 ```text
-Tests run: 17, Successes: 17, Failures: 0, Errors: 0
+Tests run: 209, Successes: 209, Failures: 0, Errors: 0
 ```
 
 Clean up:

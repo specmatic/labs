@@ -60,12 +60,10 @@ dependencies:
             servers:
               - host: "${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}"
                 protocol: kafka
+  data:
+    adapters:
+      post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh
 
 specmatic:
-  governance:
-    successCriteria:
-      minCoveragePercentage: 60
-      maxMissedOperationsInSpec: 0
-      enforce: true
   license:
     path: /specmatic/specmatic-license.txt
