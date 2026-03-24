@@ -1,21 +1,17 @@
 openapi: 3.0.0
 info:
-  title: Order BFF
-  description: Sample Order BFF
-  version: '5.0'
+  title: Resiliency Testing BFF
+  description: Lab contract for graceful 429 and 202 responses
+  version: '6.0'
   contact:
     email: devs@specmatic.io
 servers:
   - url: http://localhost:8080
 tags:
-  - name: WIP
-    description: API still under development
   - name: Product
-    description: Product Related APIs
-  - name: Order
-    description: Order Related APIs
+    description: Product related APIs
   - name: Monitor
-    description: Monitor Related APIs
+    description: Monitor APIs
 paths:
   /products:
     summary: Create a new product
@@ -29,6 +25,12 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ProductBase'
+            examples:
+              SUCCESS_PRODUCT:
+                value:
+                  name: iPhone
+                  type: gadget
+                  inventory: 100
       responses:
         '201':
           description: Product created
@@ -36,12 +38,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Id'
+              examples:
+                SUCCESS_PRODUCT:
+                  value:
+                    id: 1
         '202':
           description: Product Accepted
           headers:
             Link:
               schema:
                 $ref: '#/components/schemas/MonitorLink'
+            Retry-After:
+              schema:
+                type: integer
+                description: The number of seconds to wait before polling the monitor link
         '400':
           description: Bad Request
           content:
@@ -55,23 +65,37 @@ paths:
         name: type
         in: query
         required: false
+        examples:
+          SUCCESS_GET:
+            value: gadget
       - name: pageSize
         in: header
         schema:
           type: integer
         required: true
+        examples:
+          SUCCESS_GET:
+            value: 10
       - name: from-date
         in: query
-        required: true
         schema:
           type: string
           format: date
+        required: true
+        description: Filter products created from this date
+        examples:
+          SUCCESS_GET:
+            value: "2025-01-01"
       - name: to-date
         in: query
-        required: true
         schema:
           type: string
           format: date
+        required: true
+        description: Filter products created by this date
+        examples:
+          SUCCESS_GET:
+            value: "2025-11-28"
     get:
       description: Find available products
       operationId: findAvailableProducts
@@ -86,6 +110,14 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Product'
+              examples:
+                SUCCESS_GET:
+                  value:
+                    - name: iPhone
+                      id: 1
+                      type: gadget
+                      inventory: 100
+                      createdOn: "2024-01-01"
         '429':
           description: TooManyRequests
           headers:
@@ -93,36 +125,6 @@ paths:
               schema:
                 type: integer
                 description: The number of seconds to wait before making the next request
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BadRequest'
-  /ordres:
-    post:
-      description: Create a new order
-      operationId: createOrder
-      tags:
-        - Order
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/OrderBase'
-      responses:
-        '201':
-          description: Order created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Id'
-        '202':
-          description: Order accepted
-          headers:
-            Link:
-              schema:
-                $ref: '#/components/schemas/MonitorLink'
         '400':
           description: Bad Request
           content:
@@ -170,7 +172,6 @@ components:
         - other
     MonitorLink:
       type: string
-      pattern: "<\\/monitor\\/\\d+>;rel=related;title=monitor"
       description: Monitor link to check status
       example: </monitor/123>;rel=related;title=monitor
     Id:
@@ -194,41 +195,19 @@ components:
         - name
         - type
         - inventory
+    CreatedOn:
+        type: object
+        required:
+          - createdOn
+        properties:
+          createdOn:
+            type: string
+            format: date
     Product:
       allOf:
         - $ref: '#/components/schemas/Id'
         - $ref: '#/components/schemas/ProductBase'
         - $ref: '#/components/schemas/CreatedOn'
-    CreatedOn:
-      type: object
-      required:
-        - createdOn
-      properties:
-        createdOn:
-          type: string
-          format: date
-    OrderBase:
-      title: Order Details
-      type: object
-      properties:
-        productid:
-          type: integer
-        count:
-          type: integer
-      required:
-        - productid
-        - count
-    Order:
-      allOf:
-        - $ref: '#/components/schemas/Id'
-        - $ref: '#/components/schemas/OrderBase'
-        - type: object
-          properties:
-            status:
-              type: string
-              enum: [pending, completed, cancelled]
-          required:
-            - status
     MonitorResponse:
       type: object
       description: Monitoring of resources

@@ -3,7 +3,7 @@ info:
   title: Product audits API
   version: 1.0.0
 servers:
-  kafka-dev:
+  kafka-server:
     host: 'localhost:9092'
     protocol: kafka
 channels:
@@ -12,6 +12,8 @@ channels:
     messages:
       publishObjectMessage.message:
         $ref: '#/components/messages/product'
+    servers:
+      - $ref: '#/servers/kafka-server'
 operations:
   publishObjectMessage:
     action: receive

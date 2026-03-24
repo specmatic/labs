@@ -1,31 +1,71 @@
-version: 2
-contracts:
-- filesystem:
-    directory: .
-  provides:
-  - baseUrl: http://order-bff:8080
-    specs:
-    - product_search_bff_v5.yaml
-  consumes:
-  - port: 9090
-    specs:
-    - proxy_generated.yaml
-  - port: 9092
-    specs:
-    - kafka.yaml
-  - port: 8095
-    specs:
-    - inventory.wsdl
-proxy:
-  port: 9090
-  targetUrl: http://order-api:8090
-  consumes:
-  - proxy_recordings.yaml
-report:
-  types:
-    APICoverage:
-      OpenAPI:
-        successCriteria:
-          minThresholdPercentage: 70
-          maxMissedEndpointsInSpec: 0
-          enforce: true
+version: 3
+
+components:
+  sources:
+    localSpecs:
+      filesystem:
+        directory: .
+
+systemUnderTest:
+  service:
+    definitions:
+      - definition:
+          source:
+            $ref: "#/components/sources/localSpecs"
+          specs:
+            - ./specs/product_search_bff_v6.yaml
+    runOptions:
+      openapi:
+        type: test
+        baseUrl: "${APP_URL:http://order-bff:8080}"
+        filter: "PATH!='/health,/monitor/{id},/swagger,/orders'"
+        actuatorUrl: "${APP_URL:http://order-bff:8080}/actuator/mappings"
+    data:
+      examples:
+        - directories:
+            - ./examples/bff
+    settings:
+      schemaResiliencyTests: none
+
+dependencies:
+  services:
+    - service:
+        definitions:
+          - definition:
+              source:
+                $ref: "#/components/sources/localSpecs"
+              specs:
+                - ./specs/api_order_v5.yaml
+        runOptions:
+          openapi:
+            type: mock
+            baseUrl: "${ORDER_API_URL:http://localhost:8090}"
+        data:
+          examples:
+            - directories:
+                - ./examples/order-service
+    - service:
+        definitions:
+          - definition:
+              source:
+                $ref: "#/components/sources/localSpecs"
+              specs:
+                - ./specs/kafka.yaml
+        runOptions:
+          asyncapi:
+            type: mock
+            inMemoryBroker:
+              host: "${KAFKA_BOOTSTRAP_SERVER_HOST:localhost}"
+              port: 9092
+            servers:
+              - host: "${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}"
+                protocol: kafka
+
+specmatic:
+  governance:
+    successCriteria:
+      minCoveragePercentage: 60
+      maxMissedOperationsInSpec: 0
+      enforce: true
+  license:
+    path: /specmatic/specmatic-license.txt
