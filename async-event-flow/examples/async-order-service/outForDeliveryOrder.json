@@ -34,7 +34,7 @@
       "type": "http",
       "http-request": {
         "baseUrl": "http://localhost:8090",
-        "path": "/_specmatic/verify?exampleId=tax-invoice-for-order-456",
+        "path": "/_specmatic/verify?exampleIds=tax-invoice-for-order-456",
         "method": "GET"
       },
       "http-response": {
