@@ -2,18 +2,19 @@ version: 3
 
 components:
   sources:
-    localSpecs:
-      filesystem:
-        directory: specs
+    labsContracts:
+      git:
+        url: https://github.com/specmatic/labs-contracts.git
+        branch: main
 
 systemUnderTest:
   service:
     definitions:
       - definition:
           source:
-            $ref: "#/components/sources/localSpecs"
+            $ref: "#/components/sources/labsContracts"
           specs:
-            - verification-api.yaml
+            - openapi/verification/verification-api.yaml
     runOptions:
       openapi:
         type: test

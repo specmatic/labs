@@ -27,12 +27,12 @@ This lab shows how to express each of those expectations with the right matcher 
 
 ## Architecture
 - `service/server.py` runs a small Python verification service.
-- `specs/verification-api.yaml` defines the contract.
+- `.specmatic/repos/labs-contracts/openapi/verification/verification-api.yaml` defines the contract loaded by `specmatic.yaml`.
 - `specmatic.yaml` points Specmatic at the spec and external test examples.
 - `examples/*.json` contains the test requests and expected responses.
 
 ## Files in this lab
-- `specs/verification-api.yaml` - OpenAPI contract for the verification service.
+- `.specmatic/repos/labs-contracts/openapi/verification/verification-api.yaml` - OpenAPI contract for the verification service.
 - `service/server.py` - Python service implementation that already satisfies the contract.
 - `examples/test_finance_user_11.json` - test example you will fix using `pattern`.
 - `examples/test_support_user_55.json` - test example you will fix using `dataType` and `pattern`.
@@ -40,7 +40,7 @@ This lab shows how to express each of those expectations with the right matcher 
 - `specmatic.yaml` - Specmatic configuration.
 
 ## Lab Rules
-- Do not edit `specs/verification-api.yaml`.
+- Do not edit the specs in `.specmatic/repos/labs-contracts/openapi/verification/verification-api.yaml`.
 - Do not edit `service/server.py`.
 - Do not edit `docker-compose.yaml`.
 - Edit only these files:
