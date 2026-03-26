@@ -12,7 +12,7 @@ Use Specmatic Studio to repair incomplete external examples using partial exampl
 - Ports `9000` and `9001` are available for Studio.
 
 ## Files in this lab
-- `specs/simple-openapi-spec.yaml`: OpenAPI contract for the BFF API.
+- `.specmatic/repos/labs-contracts/openapi/partial-examples/simple-openapi-spec.yaml`: OpenAPI contract for the BFF API, loaded by `specmatic.yaml`.
 - `examples/*.json`: Incomplete external examples that will be fixed using partial examples.
 - `specmatic.yaml`: Specmatic configuration for contract testing and mocking.
 - `docker-compose.yaml`: Mock + test loop setup.
@@ -51,7 +51,7 @@ Windows (PowerShell/CMD) single-line:
 docker run --rm --name studio --network host -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest studio
 ```
 
-Open [simple-openapi-spec.yaml](specs/simple-openapi-spec.yaml) in Studio. You will see 3 failing external examples.
+Open `specmatic.yaml` in Studio. The suite loads the contract into `.specmatic/repos/labs-contracts/openapi/partial-examples/simple-openapi-spec.yaml`, and you will see 3 failing external examples. Open that checked-out contract from the left sidebar if you want to inspect it directly.
 
 ## Learner task: fix 3 examples using partial examples
 Please do not click the `Fix` button to make these examples valid. Instead, use [partial examples](https://docs.specmatic.io/contract_driven_development/service_virtualization#partial-examples) to fix them.

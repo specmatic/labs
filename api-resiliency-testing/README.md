@@ -29,13 +29,13 @@ Your job is to test the service under test (BFF) matches those resilience expect
 ## Architecture
 - `test` is the Specmatic contract-test runner.
 - `order-bff` is the system under test on port `8080`.
-- `mock` is the downstream dependency mock generated from `specs/api_order_v5.yaml` and `specs/kafka.yaml`.
-- The BFF contract under test is `specs/product_search_bff_v6.yaml`.
+- `mock` is the downstream dependency mock generated from shared contracts in `labs-contracts` (`common/openapi/order-api/api_order_v5.yaml` and `common/asyncapi/product-audits/kafka.yaml`).
+- The BFF contract under test is pulled from `labs-contracts` (`openapi/order-bff-resiliency/product_search_bff_v6.yaml`).
 - You will edit only downstream mock examples in `examples/order-service/`.
 
 ## Files in this lab
-- `specs/product_search_bff_v6.yaml` - BFF contract under test.
-- `specs/api_order_v5.yaml` - downstream product API contract used for mocking.
+- `.specmatic/repos/labs-contracts/openapi/order-bff-resiliency/product_search_bff_v6.yaml` - BFF contract under test after `specmatic.yaml` checks out the contracts repo.
+- `.specmatic/repos/labs-contracts/common/openapi/order-api/api_order_v5.yaml` - downstream product API contract used for mocking.
 - `examples/bff/test_products_too_many_requests.json` - test expecting `429`.
 - `examples/bff/test_accepted_product_request.json` - test expecting `202`.
 - `examples/order-service/stub_products_200.json` - healthy downstream search stub.
@@ -53,7 +53,7 @@ Your job is to test the service under test (BFF) matches those resilience expect
 7. Re-run and confirm the full suite passes.
 
 ## Lab Rules
-- Do not edit files under `specs/`.
+- Do not edit the specs pulled from `labs-contracts` in this lab.
 - Do not edit files under `examples/bff/`.
 - Do not edit `docker-compose.yaml`.
 - Edit only:

@@ -11,9 +11,10 @@ Understand how you can use Specmatic Dictionary feature to generate deterministi
 - You are in `labs/dictionary`.
 
 ## Files in this lab
-- `specs/simple-openapi-spec.yaml` - OpenAPI spec for the BFF API (source of truth for this lab).
+- `.specmatic/repos/labs-contracts/openapi/dictionary/simple-openapi-spec.yaml` - runtime OpenAPI contract used by `specmatic.yaml` after the contracts repo is checked out.
+- `specs/simple-openapi-spec.yaml` - local copy kept only for the `examples dictionary --spec-file ...` command in this lab.
 - `examples/*.json` - External examples used by tests.
-- `specmatic.yaml` - Specmatic config file that defines the spec and examples.
+- `specmatic.yaml` - Specmatic config file that pulls the runtime contract from `labs-contracts` and uses local examples.
 
 ## 1. Run loop test using Docker (intentional failure)
 ```shell

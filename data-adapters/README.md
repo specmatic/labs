@@ -11,12 +11,12 @@ Understand why a client fails against a mock, and how Specmatic data adapters ca
 - You are in `labs/data-adapters`.
 
 ## Architecture
-- `camel-case-service` (Specmatic mock): serves `camelCase.yaml` on `http://127.0.0.1:9090`
+- `camel-case-service` (Specmatic mock): serves the contract from `.specmatic/repos/labs-contracts/openapi/data-adapters/camelCase.yaml` on `http://127.0.0.1:9090`
 - `ui` service (Nginx): serves a small web page on `http://127.0.0.1:8080`
 - Browser UI sends a PascalCase request to camel-case-service, which expects request in camelCase
 
 ## Files in this lab
-- `camelCase.yaml`: Provider's Contract used by us to start a mock service to emulate the real provider.
+- `.specmatic/repos/labs-contracts/openapi/data-adapters/camelCase.yaml`: Provider contract used by `specmatic.yaml` to start the mock service after the contracts repo is checked out.
 - `specmatic.yaml`: Specmatic configuration.
 - `ui/index.html`: Simple UI that sends PascalCase query/header/body fields.
 - `ui/default.conf`: Nginx config that serves UI and proxies `/test` to the mock.
@@ -28,7 +28,7 @@ Understand why a client fails against a mock, and how Specmatic data adapters ca
 - Processor hooks concept: [https://docs.specmatic.io/features/hooks/processor_hooks](https://docs.specmatic.io/features/hooks/processor_hooks)
 
 ## Lab Rules
-- Do not edit `camelCase.yaml`.
+- Do not edit the spec in `.specmatic/repos/labs-contracts/openapi/data-adapters/camelCase.yaml`.
 - Do not change `docker-compose.yaml`.
 - Do not touch the `ui/index.html`.
 - Fix the mismatch only by wiring the existing hook scripts in `specmatic.yaml`.
@@ -114,7 +114,7 @@ Start Studio:
 docker compose --profile studio up -d studio ui
 ```
 1. Open `http://127.0.0.1:9000/_specmatic/studio`, 
-2. Open `camelCase.yaml` and go to the `Mock` tab, enter 9090 as the port and start the mock by clicking on the `Run` button.
+2. Open `specmatic.yaml`, run the suite or start the mock from the `Mock` tab, and use port `9090`. If you want to inspect the contract file in Studio, open `.specmatic/repos/labs-contracts/openapi/data-adapters/camelCase.yaml` from the left panel after the repo is checked out.
 3. Open `http://127.0.0.1:8080`.
 4. Keep default values and click **Submit** button.
 5. Observe a 200 response in the result panel.

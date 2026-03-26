@@ -27,12 +27,12 @@ Start with two failing contract tests, then fix the missing `before` fixture and
 
 ## Lab Rules
 - Edit only `examples/async-order-service/acceptOrder.json` and `examples/async-order-service/outForDeliveryOrder.json`.
-- Do not edit `specs/async-order-service.yaml`, `specmatic.yaml`, or `docker-compose.yaml`.
+- Do not edit the specs pulled from `labs-contracts` (`asyncapi/async-event-flow/async-order-service.yaml` and `openapi/async-event-flow/tax-service.yaml`), `specmatic.yaml`, or `docker-compose.yaml`.
 
 ## How to test these event flows
 
 Specmatic solves event-flow testing by combining:
-1. **Contract validation** from `specs/async-order-service.yaml` (topics, payload schemas, headers, request-reply mappings).
+1. **Contract validation** from `.specmatic/repos/labs-contracts/asyncapi/async-event-flow/async-order-service.yaml` (topics, payload schemas, headers, request-reply mappings).
 2. **Scenario examples** from `examples/async-order-service/*.json` that describe concrete interactions and expected behavior.
 
 In this sample, each example acts like an executable test case:
@@ -78,7 +78,7 @@ Together, `receive`/`send` plus `before`/`after` fixtures let you express full e
 docker compose up
 ```
    
-2. Open the [specmatic.yaml](specmatic.yaml) file from the left sidebar, and click on the "Run Suite" button to run the tests against the service.
+2. Open the [specmatic.yaml](specmatic.yaml) file from the left sidebar, click on "Run Suite", and use the checked-out contract under `.specmatic/repos/labs-contracts/asyncapi/async-event-flow/async-order-service.yaml` if you want to inspect the loaded AsyncAPI file in Studio.
 
 You should first see 2 passing tests and 2 failing tests:
 

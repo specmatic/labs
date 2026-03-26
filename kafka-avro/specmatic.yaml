@@ -1,13 +1,18 @@
 version: 3
+components:
+  sources:
+    labsContracts:
+      git:
+        url: https://github.com/specmatic/labs-contracts.git
+        branch: main
 systemUnderTest:
   service:
     definitions:
       - definition:
           source:
-            filesystem:
-              directory: api-specs
+            $ref: "#/components/sources/labsContracts"
           specs:
-            - order-service-async-avro-v3_0_0.yaml
+            - asyncapi/kafka-avro/order-service-async-avro-v3_0_0.yaml
     runOptions:
       asyncapi:
         type: test

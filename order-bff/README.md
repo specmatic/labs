@@ -6,9 +6,9 @@ BFF is dependent on Domain API and Kafka. Using this sample project we'll demons
 
 Following are the specifications used in this project:
 
-* [BFF's OpenAPI spec](specs/product_search_bff_v6.yaml) is used for running contract tests against the BFF.
-* [Domain API's OpenAPI spec](specs/api_order_v5.yaml) is used for stubbing the Domain API.
-* [AsyncAPI spec](specs/kafka.yaml) of Kafka that defines the topics and message schema and is used for mocking interactions with Kafka.
+* `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml` is the shared BFF contract used for running contract tests against the BFF.
+* `.specmatic/repos/labs-contracts/common/openapi/order-api/api_order_v5.yaml` is the shared Domain API contract used for stubbing the Domain API.
+* `.specmatic/repos/labs-contracts/common/asyncapi/product-audits/kafka.yaml` defines the shared topics and message schema used for mocking Kafka interactions.
 
 ### Application Architecture
 ![HTML client talks to BFF API, which in turn talks to backend API](assets/application-architcture.gif)
@@ -32,7 +32,7 @@ docker compose --profile studio up
 ```
 This will start the Specmatic Studio and the System Under Test (SUT) [BFF in this case] in Docker containers. 
 Once the containers are up and running, open [Specmatic Studio](http://localhost:9000/_specmatic/studio) in your browser. 
-In Studio, on the left sidebar, open the specmatic.yaml file and click on the "Run Suite" button to start all the dependencies as mocks and then execute the contract tests against the SUT.
+In Studio, on the left sidebar, open `specmatic.yaml` and click on `Run Suite` to start all dependencies as mocks and execute the contract tests against the SUT. The suite checks out its contracts under `.specmatic/repos/labs-contracts`, and you can inspect those files from the left sidebar if needed.
 
 When the tests complete, you should see the following in the status header indicating that the contract tests run successfully:
 

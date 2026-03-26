@@ -22,24 +22,25 @@ dependencies:
 
 components:
   sources:
-    specmaticOrderContracts:
-      filesystem:
-        directory: .
+    labsContracts:
+      git:
+        url: https://github.com/specmatic/labs-contracts.git
+        branch: main
   services:
     orderAsyncService:
       definitions:
         - definition:
             source:
-              $ref: "#/components/sources/specmaticOrderContracts"
+              $ref: "#/components/sources/labsContracts"
             specs:
-              - specs/async-order-service.yaml
+              - asyncapi/async-event-flow/async-order-service.yaml
     taxService:
       definitions:
         - definition:
             source:
-              $ref: "#/components/sources/specmaticOrderContracts"
+              $ref: "#/components/sources/labsContracts"
             specs:
-              - specs/tax-service.yaml
+              - openapi/async-event-flow/tax-service.yaml
   runOptions:
     orderAsyncServiceTest:
       asyncapi:

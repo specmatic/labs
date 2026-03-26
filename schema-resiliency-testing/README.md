@@ -11,7 +11,7 @@ Here we'll send contract-invalid requests and ensure the API handles it graceful
 - You are in `labs/schema-resiliency-testing`.
 
 ## Files in this lab
-- `specs/simple-openapi-spec.yaml` - OpenAPI spec for the BFF API. This is the main contract that we will be working with in this lab.
+- `.specmatic/repos/labs-contracts/openapi/schema-resiliency/simple-openapi-spec.yaml` - OpenAPI spec for the BFF API, loaded by `specmatic.yaml`. This is the main contract used in this lab.
 - `examples/*.json` - External examples for the BFF API. These examples have some issues we'll fix them
 - `specmatic.yaml` - Specmatic config file that defines the Spec, and it's example files.
 
@@ -33,7 +33,7 @@ docker run --rm --name studio -v .:/usr/src/app -v ../license.txt:/specmatic/spe
 ## Loop Test
 
 ### 1. Loop Test in Studio
-In Studio, open the [simple-openapi-spec.yaml](specs/simple-openapi-spec.yaml) file from the left sidebar, and you will see that 3 examples are valid.
+In Studio, open `specmatic.yaml` from the left sidebar. The suite loads the contract into `.specmatic/repos/labs-contracts/openapi/schema-resiliency/simple-openapi-spec.yaml`, and you will see that 3 examples are valid. Open that checked-out file from the left sidebar if you want to inspect it directly.
 
 Go to the Mock tab and click on the "Run" button to start the mock server on port 8080
 

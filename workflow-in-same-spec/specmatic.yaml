@@ -1,15 +1,21 @@
 version: 3
 
+components:
+  sources:
+    labsContracts:
+      git:
+        url: https://github.com/specmatic/labs-contracts.git
+        branch: main
+
 systemUnderTest:
   service:
     definitions:
       - definition:
           source:
-            filesystem:
-              directory: ./specs
+            $ref: "#/components/sources/labsContracts"
           specs:
             - spec:
-                path: tasks.yaml
+                path: openapi/workflow-in-same-spec/tasks.yaml
     data:
       examples:
         - directories:

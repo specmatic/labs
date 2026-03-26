@@ -14,20 +14,21 @@ specmatic:
       enforce: true
 components:
   sources:
-    localContracts:
-      filesystem:
-        directory: .
+    labsContracts:
+      git:
+        url: https://github.com/specmatic/labs-contracts.git
+        branch: main
   services:
     orderService:
       description: Order Service with Multiple Auth Schemes
       definitions:
         - definition:
             source:
-              $ref: "#/components/sources/localContracts"
+              $ref: "#/components/sources/labsContracts"
             specs:
               - spec:
                   id: orderApiSpec
-                  path: ./spec/order-api-with-auth.yaml
+                  path: openapi/security/order-api-with-auth.yaml
   runOptions:
     orderServiceTest:
       openapi:

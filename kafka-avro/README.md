@@ -25,14 +25,14 @@ Run the async contract tests, observe the intentional failure, update the Avro s
 
 - `docker-config/avro/NewOrders.avsc` - Avro schema for messages published to `new-orders`
 - `docker-config/avro/WipOrders.avsc` - Avro schema for messages published to `wip-orders`
-- `api-specs/order-service-async-avro-v3_0_0.yaml` - AsyncAPI contract that references schemas from Schema Registry
+- `.specmatic/repos/labs-contracts/asyncapi/kafka-avro/order-service-async-avro-v3_0_0.yaml` - AsyncAPI contract that references schemas from Schema Registry
 - `api-specs/order-service-async-avro-v3_0_0_examples/` - externalized examples used as executable async tests
 - `specmatic.yaml` - Specmatic async test configuration
 - `docker-compose.yaml` - Kafka, Schema Registry, application, and Specmatic test runner
 
 ## Lab Rules
 
-- Do not edit: `api-specs/order-service-async-avro-v3_0_0.yaml`, `specmatic.yaml`, `docker-compose.yaml`.
+- Do not edit: the contract in `.specmatic/repos/labs-contracts/asyncapi/kafka-avro/order-service-async-avro-v3_0_0.yaml`, `specmatic.yaml`, `docker-compose.yaml`.
 - Edit only:
   - `docker-config/avro/NewOrders.avsc`
   - `docker-config/avro/WipOrders.avsc`

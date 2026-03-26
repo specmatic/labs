@@ -20,7 +20,7 @@ Run the async contract tests, observe the intentional failure, update the Python
 
 ## Files in this lab
 
-- `spec/order-service-sqs-kafka.yaml` - AsyncAPI contract that already declares success, retry, and DLQ behavior
+- `.specmatic/repos/labs-contracts/asyncapi/kafka-sqs-retry-dlq/order-service-sqs-kafka.yaml` - AsyncAPI contract that already declares success, retry, and DLQ behavior
 - `spec/order-service-sqs-kafka_examples/` - externalized examples for success, retry-success, retry-to-DLQ, and direct-to-DLQ flows
 - `service/app.py` - Python provider implementation with an intentional retry bug
 - `specmatic.yaml` - Specmatic async test configuration
@@ -28,7 +28,7 @@ Run the async contract tests, observe the intentional failure, update the Python
 
 ## Lab Rules
 
-- Do not edit: `spec/order-service-sqs-kafka.yaml`, `specmatic.yaml`, `docker-compose.yaml`, or any file under `spec/order-service-sqs-kafka_examples/`.
+- Do not edit: the contract in `.specmatic/repos/labs-contracts/asyncapi/kafka-sqs-retry-dlq/order-service-sqs-kafka.yaml`, `specmatic.yaml`, `docker-compose.yaml`, or any file under `spec/order-service-sqs-kafka_examples/`.
 - Edit only: `service/app.py`.
 - Do not change the contract or the examples. In this lab, the service behavior is incomplete and must be fixed.
 
@@ -135,7 +135,7 @@ docker compose down -v
 docker compose --profile studio up studio --build
 ```
 
-Open [Studio](http://127.0.0.1:9000/_specmatic/studio), load `specmatic.yaml`, and run the suite.
+Open [Studio](http://127.0.0.1:9000/_specmatic/studio), load `specmatic.yaml`, and run the suite. The contract will be checked out under `.specmatic/repos/labs-contracts/asyncapi/kafka-sqs-retry-dlq/order-service-sqs-kafka.yaml` if you want to inspect it in the left panel.
 
 Stop Studio:
 

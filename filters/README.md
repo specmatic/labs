@@ -12,14 +12,14 @@ Use Specmatic test filters to temporarily exclude selected failing scenarios and
 - Ports `9000` and `9001` are available for Studio.
 
 ## Files in this lab
-- `specs/simple-openapi-spec.yaml`: OpenAPI contract.
+- `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`: shared OpenAPI contract loaded by `specmatic.yaml`.
 - `specmatic.yaml`: Specmatic configuration where filters can be persisted.
 
 ## Reference
 - [Supported filters and operators](https://docs.specmatic.io/contract_driven_development/contract_testing#supported-filters--operators)
 
 ## Lab Rules
-- Do not edit `specs/simple-openapi-spec.yaml`.
+- Do not edit the shared contract in `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`.
 - Focus on filter actions first; config export/update comes later.
 
 ## 1. Baseline run (intentional failure)
@@ -57,7 +57,7 @@ docker run --rm --name studio --network host -v .:/usr/src/app -v ../license.txt
 Open Studio at `http://127.0.0.1:9000/_specmatic/studio`.
 
 ## 3. Apply filters in Studio (guided)
-In Studio, open the [simple-openapi-spec.yaml](specs/simple-openapi-spec.yaml) file from the left sidebar.
+In Studio, open `specmatic.yaml` from the left sidebar. The suite loads the contract into `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`. Open that checked-out file from the left sidebar if you want to inspect the loaded contract directly.
 
 Go to the Mock tab and click on the "Run" button to start the mock server on port 8080
 

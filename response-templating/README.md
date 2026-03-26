@@ -23,7 +23,7 @@ Participants will:
 - You are in `labs/response-templating`.
 
 ## Files in this lab
-- `specs/simple-openapi-spec.yaml`: OpenAPI contract.
+- `.specmatic/repos/labs-contracts/openapi/response-templating/simple-openapi-spec.yaml`: OpenAPI contract loaded by `specmatic.yaml`.
 - `examples/test/*.json`: Contract tests (do not edit these in this lab).
 - `examples/mock/*.json`: Mock examples (you will edit these).
 - `specmatic.yaml`: Specmatic test/mock configuration.
@@ -32,7 +32,7 @@ Participants will:
 - Correlated request/response values (Direct Substitution + Data Lookup): [https://docs.specmatic.io/contract_driven_development/service_virtualization#correlated-request-and-response-values](https://docs.specmatic.io/contract_driven_development/service_virtualization#correlated-request-and-response-values)
 
 ## Lab Rules
-- Do not edit `specs/simple-openapi-spec.yaml`.
+- Do not edit the spec in `.specmatic/repos/labs-contracts/openapi/response-templating/simple-openapi-spec.yaml`.
 - Do not edit files under `examples/test/`.
 - Apply all fixes only in files under `examples/mock/`.
 

@@ -2,18 +2,19 @@ version: 3
 
 components:
   sources:
-    localSpecs:
-      filesystem:
-        directory: .
+    labsContracts:
+      git:
+        url: https://github.com/specmatic/labs-contracts.git
+        branch: main
 
 systemUnderTest:
   service:
     definitions:
       - definition:
           source:
-            $ref: "#/components/sources/localSpecs"
+            $ref: "#/components/sources/labsContracts"
           specs:
-            - ./specs/product_search_bff_v6.yaml
+            - common/openapi/order-bff/product_search_bff_v6.yaml
     runOptions:
       openapi:
         type: test
@@ -33,9 +34,9 @@ dependencies:
         definitions:
           - definition:
               source:
-                $ref: "#/components/sources/localSpecs"
+                $ref: "#/components/sources/labsContracts"
               specs:
-                - ./specs/api_order_v5.yaml
+                - common/openapi/order-api/api_order_v5.yaml
         runOptions:
           openapi:
             type: mock
@@ -48,9 +49,9 @@ dependencies:
         definitions:
           - definition:
               source:
-                $ref: "#/components/sources/localSpecs"
+                $ref: "#/components/sources/labsContracts"
               specs:
-                - ./specs/kafka.yaml
+                - common/asyncapi/product-audits/kafka.yaml
         runOptions:
           asyncapi:
             type: mock

@@ -18,7 +18,7 @@ Why this matters:
 
 ## Files in this lab
 - `specmatic.yaml`: Specmatic test configuration (starts with workflow intentionally missing).
-- `specs/tasks.yaml`: OpenAPI contract.
+- `.specmatic/repos/labs-contracts/openapi/workflow-in-same-spec/tasks.yaml`: OpenAPI contract loaded by `specmatic.yaml`.
 - `examples/*.json`: Externalized request/response examples.
 - `service/app.py`: Python provider with in-memory task state.
 - `docker-compose.yaml`: Defines `tasks-service`, `test` (profile `test`) and `studio` (profile `studio`).
@@ -31,7 +31,7 @@ Why this matters:
 
 ## Lab Rules
 - Edit only `specmatic.yaml`.
-- Do not edit `specs/tasks.yaml`.
+- Do not edit the spec in `.specmatic/repos/labs-contracts/openapi/workflow-in-same-spec/tasks.yaml`.
 - Do not edit files under `examples/`.
 - Do not edit `service/app.py`.
 - Use the exact command order below.
@@ -78,7 +78,7 @@ docker compose --profile studio up studio --build
 
 Open Studio:
 1. Open `http://127.0.0.1:9000/_specmatic/studio`,
-2. Open `tasks.yaml` and go to the `Test` tab, run tests by clicking on the `Run` button.
+2. Open `specmatic.yaml`, go to the `Test` tab, and run the suite. The contract is loaded into `.specmatic/repos/labs-contracts/openapi/workflow-in-same-spec/tasks.yaml`, which you can inspect from the left sidebar if needed.
 3. You should see POST /tasks test pass, but GET/PUT/DELETE tests fail.
 4. Look at the request/response details for the failed GET/PUT/DELETE tests and observe that we are not using the ID created by POST /tasks.
 

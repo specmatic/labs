@@ -21,7 +21,7 @@ Use Specmatic Studio (and `validate`) to:
 [![Watch the video](https://img.youtube.com/vi/TcNayIEP4sw/hqdefault.jpg)](https://www.youtube.com/watch?v=TcNayIEP4sw)
 
 ## Files in this lab
-- `specs/simple-openapi-spec.yaml`: OpenAPI contract for the BFF API.
+- `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`: shared OpenAPI contract for the BFF API, loaded by `specmatic.yaml` after checkout.
 - `examples/*.json`: External examples validated against the contract.
 - `specmatic.yaml`: Specmatic config (contract + examples directory).
 
@@ -29,7 +29,7 @@ Use Specmatic Studio (and `validate`) to:
 Bring external examples to a fully valid state and ensure all required create-scenario examples are present.
 
 ## Lab Rules
-- Do not edit `specs/simple-openapi-spec.yaml`.
+- Do not edit the shared contract in `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`.
 - Edit only files under `examples/`.
 
 ## 1. Intentional failure (baseline run)
@@ -69,7 +69,7 @@ Windows (PowerShell/CMD) single-line:
 ```shell
 docker run --rm --name studio --network host -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest studio
 ```
-In Studio, open the [simple-openapi-spec.yaml](specs/simple-openapi-spec.yaml) file from the left sidebar, and you will see that 3 examples have failed validation.
+In Studio, open `specmatic.yaml` from the left sidebar. The suite loads the contract into `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`, and you will see that 3 examples have failed validation. You can inspect that checked-out file from the left sidebar if needed.
 
 Click on each failed example to see the validation errors and fix them. You can either fix the examples manually or use the "Fix" button in Studio to automatically fix the issues.
 

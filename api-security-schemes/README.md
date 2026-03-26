@@ -88,7 +88,7 @@ specs:
 
 ## Lab Rules
 
-- Do not edit files under `spec/`.
+- Do not edit the specs checked out under `.specmatic/repos/labs-contracts/openapi/security/` in this lab.
 - Do not edit `docker-compose.yaml`.
 - Edit only [`specmatic.yaml`](specmatic.yaml).
 

@@ -1,12 +1,18 @@
 version: 3
+components:
+  sources:
+    labsContracts:
+      git:
+        url: https://github.com/specmatic/labs-contracts.git
+        branch: main
 systemUnderTest:
   service:
     definitions:
     - definition:
         source:
-          $ref: "#/components/sources/localSpecs"
+          $ref: "#/components/sources/labsContracts"
         specs:
-        - simple-openapi-spec.yaml
+        - common/openapi/order-bff/product_search_bff_v6.yaml
     runOptions:
       openapi:
         type: test
@@ -19,9 +25,9 @@ dependencies:
       definitions:
       - definition:
           source:
-            $ref: "#/components/sources/localSpecs"
+            $ref: "#/components/sources/labsContracts"
           specs:
-          - simple-openapi-spec.yaml
+          - common/openapi/order-bff/product_search_bff_v6.yaml
       runOptions:
         openapi:
           type: mock
@@ -30,8 +36,3 @@ dependencies:
 specmatic:
   license:
     path: /specmatic/specmatic-license.txt
-components:
-  sources:
-    localSpecs:
-      filesystem:
-        directory: specs

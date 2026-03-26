@@ -1,5 +1,12 @@
 version: 3
 
+components:
+  sources:
+    labsContracts:
+      git:
+        url: https://github.com/specmatic/labs-contracts.git
+        branch: main
+
 dependencies:
   services:
     - service:
@@ -7,10 +14,9 @@ dependencies:
         definitions:
           - definition:
               source:
-                filesystem:
-                  directory: '.'
+                $ref: "#/components/sources/labsContracts"
               specs:
-                - camelCase.yaml
+                - openapi/data-adapters/camelCase.yaml
         runOptions:
           openapi:
             type: mock

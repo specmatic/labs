@@ -11,7 +11,7 @@ Use a Specmatic overlay to patch a contract path mismatch at test time, without 
 - You are in `labs/overlays`.
 
 ## Files in this lab
-- `specs/my-service.yaml` - Service contract (older path: `/api/users/{id}`)
+- `.specmatic/repos/labs-contracts/openapi/overlays/my-service.yaml` - service contract (older path: `/api/users/{id}`), loaded by `specmatic.yaml`
 - `provider/server.py` - Tiny real HTTP service that only exposes `/api/v1/users/{id}`
 - `provider/Dockerfile` - Container image for the provider service
 - `overlays/path-prefix.overlay.yaml` - Overlay file you will update
@@ -25,7 +25,7 @@ Fix the failing contract test by:
 3. re-running tests to confirm pass state
 
 ## Lab Rules
-- Do not edit `specs/my-service.yaml`.
+- Do not edit the spec in `.specmatic/repos/labs-contracts/openapi/overlays/my-service.yaml`.
 - Do not edit `provider/server.py`.
 - Make changes only in:
   - `overlays/path-prefix.overlay.yaml`

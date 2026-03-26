@@ -8,17 +8,18 @@ systemUnderTest:
       strictMode: true
 components:
   sources:
-    localSpecs:
-      filesystem:
-        directory: spec
+    labsContracts:
+      git:
+        url: https://github.com/specmatic/labs-contracts.git
+        branch: main
   services:
     sqsKafkaService:
       definitions:
         - definition:
             source:
-              $ref: "#/components/sources/localSpecs"
+              $ref: "#/components/sources/labsContracts"
             specs:
-              - order-service-sqs-kafka.yaml
+              - asyncapi/kafka-sqs-retry-dlq/order-service-sqs-kafka.yaml
   runOptions:
     sqsKafkaServiceTest:
       asyncapi:

@@ -2,18 +2,19 @@ version: 3
 
 components:
   sources:
-    localSpecs:
-      filesystem:
-        directory: specs
+    labsContracts:
+      git:
+        url: https://github.com/specmatic/labs-contracts.git
+        branch: main
 
 systemUnderTest:
   service:
     definitions:
       - definition:
           source:
-            $ref: "#/components/sources/localSpecs"
+            $ref: "#/components/sources/labsContracts"
           specs:
-            - simple-openapi-spec.yaml
+            - openapi/schema-resiliency/simple-openapi-spec.yaml
     runOptions:
       openapi:
         type: test
@@ -30,9 +31,9 @@ dependencies:
         definitions:
           - definition:
               source:
-                $ref: "#/components/sources/localSpecs"
+                $ref: "#/components/sources/labsContracts"
               specs:
-                - simple-openapi-spec.yaml
+                - openapi/schema-resiliency/simple-openapi-spec.yaml
         runOptions:
           openapi:
             type: mock
