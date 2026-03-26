@@ -15,7 +15,7 @@ Run an async contract test against a real Kafka-based provider, observe the inte
 - Ports `9000` and `9001` are free (required for Studio).
 
 ## Files in this lab
-- `specs/async.yaml` - AsyncAPI contract (source of truth for this lab)
+- `.specmatic/repos/labs-contracts/asyncapi/quick-start/async.yaml` - AsyncAPI contract (source of truth for this lab)
 - `service/processor.py` - Provider implementation with one intentional mismatch
 - `specmatic.yaml` - Specmatic async test configuration
 - `docker-compose.yaml` - Kafka, provider service, test runner, and optional Studio
@@ -25,7 +25,8 @@ Run an async contract test against a real Kafka-based provider, observe the inte
 Fix the provider so the emitted response event matches the contract's allowed `status` values.
 
 ## Lab Rules
-- Do not edit: `specs/async.yaml`, `specmatic.yaml`, `docker-compose.yaml`.
+- Do not edit: the specs in `.specmatic/repos/labs-contracts/asyncapi/quick-start/async.yaml`
+- Do not edit: `specmatic.yaml`, `docker-compose.yaml`.
 - Edit only: `service/processor.py`.
 - If your baseline run unexpectedly passes, reset `service/processor.py` so `process_message` returns `"status": "STARTED"` before continuing.
 
@@ -35,7 +36,7 @@ Fix the provider so the emitted response event matches the contract's allowed `s
 - Flow:
   1. Specmatic publishes an event/message to Kafka topic `new-orders`.
   2. Provider consumes that event, transforms payload, and emits to `wip-orders`.
-  3. Specmatic validates emitted payload and headers against `specs/async.yaml`.
+  3. Specmatic validates emitted payload and headers against `.specmatic/repos/labs-contracts/asyncapi/quick-start/async.yaml`.
 
 ## Intentional failure (baseline run)
 From this folder, run:
@@ -95,7 +96,9 @@ Start Studio:
 docker compose --profile studio up studio --build
 ```
 
-Open [Studio](http://127.0.0.1:9000/_specmatic/studio), load `specmatic.yaml`, and click **Run Suite**.
+Open [Studio](http://127.0.0.1:9000/_specmatic/studio), load `specmatic.yaml`, and click **Run Suite**. 
+
+Also inspect the loaded contract in the left sidebar by opening `.specmatic/repos/labs-contracts/asyncapi/quick-start/async.yaml`.
 
 Stop Studio stack:
 

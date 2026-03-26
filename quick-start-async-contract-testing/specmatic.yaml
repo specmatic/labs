@@ -1,14 +1,20 @@
 version: 3
 
+components:
+  sources:
+    labsContracts:
+      git:
+        url: https://github.com/specmatic/labs-contracts.git
+        branch: main
+
 systemUnderTest:
   service:
     definitions:
       - definition:
           source:
-            filesystem:
-              directory: ./specs
+            $ref: "#/components/sources/labsContracts"
           specs:
-            - async.yaml
+            - asyncapi/quick-start/async.yaml
     runOptions:
       asyncapi:
         type: test
