@@ -14,7 +14,7 @@ systemUnderTest:
           source:
             $ref: "#/components/sources/labsContracts"
           specs:
-            - openapi/partial-examples/simple-openapi-spec.yaml
+            - common/openapi/order-api/api_order_v5.yaml
     runOptions:
       openapi:
         type: test
