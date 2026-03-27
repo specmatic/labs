@@ -44,8 +44,8 @@ This lab shows how to express each of those expectations with the right matcher 
 - Do not edit `service/server.py`.
 - Do not edit `docker-compose.yaml`.
 - Edit only these files:
-  - `examples/test/test_finance_user_11.json`
-  - `examples/test/test_support_user_55.json`
+  - `examples/test_finance_user_11.json`
+  - `examples/test_support_user_55.json`
 
 ## Specmatic references
 - Matchers: [https://docs.specmatic.io/features/matchers](https://docs.specmatic.io/features/matchers)
