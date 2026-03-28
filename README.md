@@ -1,7 +1,7 @@
 # Specmatic Workshop Labs
 Contains all the labs used during the Specmatic hands-on workshop.
 
-## Time required to complete this lab:
+## Time required to complete each lab:
 10-15 minutes.
 
 ## Prerequisites
@@ -19,26 +19,27 @@ git clone https://github.com/specmatic/labs
 ## Lab Structure 
 This is a monorepo. Each lab is self-contained and organized in a separate directory, with its own README file containing instructions and code examples.
 
-## 3-Day Workshop Schedule 
+## Workshop Schedule 
 - Overview
   - Independent Development and Deployment 
   - Test Pyramid - Contract Testing, API Testing, Workflow Testing 
   - Various Types of Contract Testing (CDCT, PDCT & API Design First)
   - Specification (OpenAPI, AsyncAPI, ProtoBuf, GraphQL SDL, WSDL, Arazzo)
   - Contract Driven Development (CDD) in Action Demo - Using [Order-BFF](order-bff/README.md) as an example
-- [Contract Testing](quick-start-contract-testing/README.md)
-  - API Contract Test
-  - Using Inline examples as test data
-  - Using External examples as test data
-- [Intelligent service virtualization](quick-start-mock/README.md)
-  - Inline Examples as mock data 
-  - External examples as mock data
-- [API Testing](quick-start-api-testing/README.md)
-  - Using matchers to assert specific values in the API response
-- [API Coverage](api-coverage/README.md)
-  - Using the app's published OpenAPI document to detect implemented routes missing from the checked-in spec
-- [Backward Compatibility Testing](backward-compatibility-testing/README.md)
-  - Ensure changes to your API don't accidentally break your consumers
+- Spec-First Contract-Driven Core Concepts 
+  - [Contract Testing](quick-start-contract-testing/README.md)
+    - API Contract Test
+    - Using Inline examples as test data
+    - Using External examples as test data
+  - [Intelligent service virtualization](quick-start-mock/README.md)
+    - Inline Examples as mock data 
+    - External examples as mock data
+  - [API Testing](quick-start-api-testing/README.md)
+    - Using matchers to assert specific values in the API response
+  - [API Coverage](api-coverage/README.md)
+    - Using the app's published OpenAPI document to detect implemented routes missing from the checked-in spec
+  - [Backward Compatibility Testing](backward-compatibility-testing/README.md)
+    - Ensure changes to your API don't accidentally break your consumers
 - Examples - Simplified Test Data Management
   - [Generate, Validate and Fix examples](external-examples/README.md)
   - [Partial examples](partial-examples/README.md)
