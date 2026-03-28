@@ -53,6 +53,7 @@ jobs:
           docker run --rm \
             -v ~/.specmatic:/root/.specmatic \
             -v ${{ github.workspace }}:/usr/src/app \
+            --user $(id -u):$(id -g) \
             specmatic/enterprise \
             backward-compatibility-check --base-branch origin/${DEFAULT_BRANCH} --target-path contracts
 
@@ -73,6 +74,7 @@ jobs:
             -v ${{ github.workspace }}:/usr/src/app \
             specmatic/enterprise \
             send-report \
+            --metadata build_url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
             --branch-name ${{ github.ref_name }} \
             --repo-name ${{ github.event.repository.name }} \
             --repo-id ${{ github.repository_id }} \
