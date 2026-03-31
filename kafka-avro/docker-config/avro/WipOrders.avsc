@@ -5,7 +5,9 @@
   "fields": [
     {
       "name": "id",
-      "type": "int"
+      "type": "int",
+      "x-minimum": 1,
+      "x-maximum": 100
     },
     {
       "name": "status",

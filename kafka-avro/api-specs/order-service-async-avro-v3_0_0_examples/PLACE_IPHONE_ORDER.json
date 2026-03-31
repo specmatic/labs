@@ -4,13 +4,13 @@
     "topic": "new-orders",
     "key": 1,
     "payload": {
-      "id": 101,
+      "id": 1,
       "orderItems": [
         {
           "id": 1,
-          "name": "iPhone 14 Pro Max",
+          "name": "iPhone",
           "quantity": 10,
-          "price": 500.00
+          "price": 5000.00
         }
       ]
     }
@@ -19,8 +19,8 @@
     "topic": "wip-orders",
     "key": 1,
     "payload": {
-      "id": "$match(exact:101)",
-      "status": "PROCESSING"
+      "id": "$match(exact:1)",
+      "status": "$match(exact:PROCESSING)"
     }
   }
 }
