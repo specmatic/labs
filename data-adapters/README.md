@@ -61,13 +61,16 @@ Run:
 docker compose down -v
 ```
 ## 4. Configure hooks in `specmatic.yaml`
-Add the following block directly under dependencies in `specmatic.yaml`:
+Add the following `data` block under `dependencies` in `specmatic.yaml` so that it sits alongside `services`:
 
 ```yaml
-data:
-  adapters:
-    pre_specmatic_request_processor: ./hooks/pre_specmatic_request_processor.sh
-    post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh
+dependencies:
+  services:
+    # existing service config
+  data:
+    adapters:
+      pre_specmatic_request_processor: ./hooks/pre_specmatic_request_processor.sh
+      post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh
 ```
 
 Why both hooks are needed:
