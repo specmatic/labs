@@ -16,9 +16,9 @@ Understand how you can use Specmatic Dictionary feature to generate deterministi
 - `examples/*.json` - External examples used by tests.
 - `specmatic.yaml` - Specmatic config file that pulls the runtime contract from `labs-contracts` and uses local examples.
 
-## 1. Run loop test using Docker (intentional failure)
+## 1. Run the suite using Docker (intentional failure)
 ```shell
-docker compose up test --abort-on-container-exit
+docker compose up suite --abort-on-container-exit
 ```
 
 Expected output:
@@ -50,9 +50,9 @@ data:
     path: specs/dictionary.yaml
 ```
 
-## 3. Re-run loop test after configuring dictionary
+## 3. Re-run the suite after configuring dictionary
 ```shell
-docker compose up test --abort-on-container-exit
+docker compose up suite --abort-on-container-exit
 ```
 
 Expected output:
