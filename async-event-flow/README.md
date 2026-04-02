@@ -78,7 +78,7 @@ Together, `receive`/`send` plus `before`/`after` fixtures let you express full e
 docker compose up
 ```
    
-2. Open the [specmatic.yaml](specmatic.yaml) file from the left sidebar, click on "Run Suite", and use the checked-out contract under `.specmatic/repos/labs-contracts/asyncapi/async-event-flow/async-order-service.yaml` if you want to inspect the loaded AsyncAPI file in Studio.
+2. Go to [Studio](http://127.0.0.1:9000/_specmatic/studio) and open the [specmatic.yaml](specmatic.yaml) file from the left sidebar, click on "Run Suite", and use the checked-out contract under `.specmatic/repos/labs-contracts/asyncapi/async-event-flow/async-order-service.yaml` if you want to inspect the loaded AsyncAPI file in Studio.
 
 You should first see 2 passing tests and 2 failing tests:
 
@@ -95,7 +95,7 @@ Tests run: 4, Successes: 2, Failures: 2, Errors: 0
     "type": "http",
     "wait": "PT1S",
     "http-request": {
-      "baseUrl": "http://localhost:8080",
+      "baseUrl": "http://sut:8080",
       "path": "/orders",
       "method": "PUT",
       "headers": {

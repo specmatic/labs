@@ -15,7 +15,7 @@
       "type": "http",
       "wait": "PT2S",
       "http-request": {
-        "baseUrl": "http://localhost:8080",
+        "baseUrl": "http://sut:8080",
         "path": "/orders/456?status=SHIPPED",
         "method": "GET"
       },
