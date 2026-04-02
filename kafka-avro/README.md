@@ -88,6 +88,7 @@ The message count report should show:
 ```terminaloutput
 | topic      | Actual | Expected |
 | new-orders |    2   |    2     |
+| wip-orders |    0   |    2     |
 ```
 
 Clean up before making changes:
