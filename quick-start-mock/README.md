@@ -156,3 +156,6 @@ docker compose --profile studio down -v
 - The generated mock is intelligent and resilient to contract changes, so it continues to work as the contract evolves.
 - The generated mock is wire-compatible with the real service, so consumer tests against the mock are valid against the real service.
 - You can quickly switch between unavailable dependency and contract-driven mock without changing consumer code.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

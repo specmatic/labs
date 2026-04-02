@@ -156,3 +156,6 @@ This is not required for the lab goal. It is a follow-up to explore how Specmati
 - Specmatic can test Streamable HTTP MCP servers directly.
 - MCP Auto Test uses tool schemas plus a dictionary file to generate repeatable invocations.
 - Tool execution errors surface quickly when implementation behavior drifts from expected valid inputs.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

@@ -161,3 +161,6 @@ docker compose down -v
 - `pattern` is useful when a response may validly be one of several strings or must follow a format.
 - `dataType` is useful when the exact value does not matter but the type still does.
 - Matchers belong in tests when you want resilient assertions against a real service.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

@@ -184,3 +184,6 @@ docker compose --profile studio down -v
 - Contract testing validates a real implementation against the contract.
 - The contract is the agreed behavior; your service implementation must conform to it.
 - Specmatic gives actionable mismatch feedback to help fix implementation gaps.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

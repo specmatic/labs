@@ -91,3 +91,6 @@ docker compose down -v
 ## Pass criteria
 - Baseline run fails on invalidly modeled optional-group scenario.
 - After schema refactor to `oneOf` + discriminator, all tests pass.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

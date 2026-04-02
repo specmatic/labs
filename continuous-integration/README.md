@@ -197,3 +197,6 @@ Insights note:
 - Provider CI uses `specmatic test` to verify implementations against contracts.
 - Some services, like BFF, can be both consumers and providers, and thus have both mock and test in their CI.
 - Specmatic Insights is typically a post-merge reporting step added after the build and test steps complete on the default branch.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

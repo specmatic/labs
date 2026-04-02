@@ -119,3 +119,6 @@ docker compose --profile studio down -v
 - Contract failures provide precise mismatch diagnostics (rule code + field path).
 - Keeping the contract stable while fixing provider behavior is a practical producer-side workflow.
 - Specmatic gives actionable mismatch feedback for event payloads and headers.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

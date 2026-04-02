@@ -102,3 +102,6 @@ Check out the documentation on [maxTestRequestCombinations](https://docs.specmat
 | 4 enum value                        | non-enum, number, boolean, null | 8               |
 | 1, (1 < random number < 9999), 9999 | 0, 10000, string, boolean, null | 8               |
 | 0.01, random number, null           | 0.00, string, boolean           | 6               |
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

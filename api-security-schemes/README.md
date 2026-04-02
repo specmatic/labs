@@ -151,3 +151,6 @@ Generated test reports:
 - If containers from a previous run are still present, run `docker compose down -v` before retrying.
 - If Keycloak takes a little longer to start, wait for the compose run to finish; the test container already includes readiness checks.
 - If tests still fail after your change, compare the three token fallback values in `specmatic.yaml` against the valid values shown in the lab.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

@@ -227,3 +227,6 @@ Ask the coding agent to add:
 - Specmatic MCP can keep backend implementation aligned with the contract.
 - Specmatic mock lets the frontend move independently before the backend is ready.
 - The same contract can drive generation, mocking, contract checks, and integration verification.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

@@ -110,3 +110,6 @@ docker compose --profile studio down -v
 ## Reference
 - External examples: https://docs.specmatic.io/features/external_examples
 - Specmatic Studio: https://docs.specmatic.io/documentation/specmatic_studio
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

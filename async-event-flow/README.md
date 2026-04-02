@@ -135,3 +135,6 @@ If the suite does not start, retry after pulling the latest images:
 ```shell
 docker compose pull
 ```
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

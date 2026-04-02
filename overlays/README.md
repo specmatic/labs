@@ -128,3 +128,6 @@ docker compose down -v
 - Overlays let you adapt contracts for environment-specific differences.
 - You can patch paths (and other parts of specs) without changing the source contract file.
 - `overlayFilePath` in `specmatic.yaml` is a practical way to apply overlays in a repeatable test setup.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

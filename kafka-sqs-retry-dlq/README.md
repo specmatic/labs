@@ -153,3 +153,6 @@ docker compose --profile studio down -v
   Check that the retry consumer thread is started and polling `place-order-retry-topic`.
 - First run is slow:
   The initial image pull and container startup can take longer than later runs.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

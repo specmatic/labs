@@ -312,3 +312,6 @@ By moving those rules into the `.avsc` files and aligning the executable example
 
 - Add one more example that should pass under the same constraints.
 - Intentionally introduce a bad example and observe whether the failure happens at schema validation time or behavior verification time.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

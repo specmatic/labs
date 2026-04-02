@@ -108,3 +108,6 @@ docker compose down -v
 ## Why this lab matters
 - Filters help teams focus on critical scenarios while they triage known failures.
 - Coverage can look better after exclusions, so filters should be used intentionally and reviewed regularly.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

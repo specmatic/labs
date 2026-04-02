@@ -319,3 +319,6 @@ docker compose --profile studio down -v
 - `429` is a contract-level resilience behavior, not just an implementation detail.
 - `202 Accepted` is useful when work is deferred because a downstream dependency is slow.
 - Specmatic examples can model downstream latency and verify both graceful degradation and recovery without changing application code.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

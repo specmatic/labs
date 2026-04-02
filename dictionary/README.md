@@ -71,3 +71,6 @@ docker compose down -v
 
 ## Additional Resources
 - [Specmatic Dictionary Documentation](https://docs.specmatic.io/features/dictionary)
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

@@ -230,3 +230,6 @@ docker compose --profile studio down -v
 - Contract tests are generated only from the checked-in spec.
 - API coverage can enrich those results using routes discovered from the running application.
 - With `swaggerUrl`, Specmatic can dynamically fetch the app's generated OpenAPI document and identify implemented routes missing from the spec.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

@@ -107,3 +107,6 @@ docker compose down -v
 ## Pass Criteria
 - Validation shows: `3 passed and 0 failed out of 3 total`.
 - Loop test shows: `Tests run: 7, Successes: 7, Failures: 0, Errors: 0`.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

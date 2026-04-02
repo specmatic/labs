@@ -146,3 +146,6 @@ docker compose down -v
 ## Why this lab matters
 - Direct Substitution is best when response fields should echo request values.
 - Data Lookup is best when response values should come from a deterministic business mapping.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

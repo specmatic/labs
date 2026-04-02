@@ -56,3 +56,6 @@ docker compose --profile test down -v
 ```
 
 Also look at the [detailed contract report](build/reports/specmatic/test/html/index.html) to see the details of the tests that were run.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.

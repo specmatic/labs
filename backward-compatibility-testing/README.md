@@ -246,3 +246,6 @@ What was verified in Studio:
 - Backward compatibility can be validated directly from API specifications.
 - Specmatic uses git history to compare your proposed contract change against the tracked baseline on `origin/main`.
 - Safe additive changes pass, while consumer-breaking schema changes are flagged before merge.
+
+## Next step
+If you are doing this lab as part of an eLearning course, return to the eLearning site and continue with the next module.
