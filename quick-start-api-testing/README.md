@@ -23,7 +23,7 @@ This lab shows how to express each of those expectations with the right matcher 
 
 ## Prerequisites
 - Docker is installed and running.
-- You are in `labs/quick-start-api-testing`.
+- You are in the directory `labs/quick-start-api-testing`.
 
 ## Architecture
 - `service/server.py` runs a small Python verification service.
