@@ -47,21 +47,20 @@ docker compose --profile studio up studio
 Open Studio at `http://127.0.0.1:9000/_specmatic/studio`.
 
 ## 3. Apply filters in Studio (guided)
-In Studio, open `specmatic.yaml` from the left sidebar. The suite loads the contract into `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`. Open that checked-out file from the left sidebar if you want to inspect the loaded contract directly.
+In Studio, open `specmatic.yaml` from the left sidebar. Click on the `Run Suite` button.
 
-Go to the Mock tab and click on the "Run" button to start the mock server on port 8080
-
-Then go to the Test tab, set url as `http://localhost:8080`
+In the Active Tabs on the right sidebar, click on `product_search_bff_v6.yaml` under Test to view test results. You should see a large number of failures.
 
 ### Task A: Exclude failing scenarios
 1. Run tests once to view failures.
-2. Click `Failed: 201` to show only failed tests.
+2. Click on the `Failed: 112` result button on the top to show only failed tests.
 3. Select all listed failed tests.
 4. Click `Exclude`.
 5. Click `Total` to return to the full list and confirm excluded tests appear greyed out.
 
 Checkpoint after Task A:
-- Re-run tests from Studio.
+- Restart the Mock by clicking on the `Mock` tab and then click on `Run` button.
+- Come back to the `Test` tab and click on the `Run` button to re-run tests.
 - Expected direction: failures drop sharply and most remaining executed tests are successful.
 
 ### Task B: Exclude uncovered 429 response scenarios
@@ -70,7 +69,7 @@ Checkpoint after Task A:
 3. Re-run tests.
 
 Checkpoint after Task B:
-- You should see Successes: 21, Failures: 0, Errors: 0, Excluded 7 in Studio.
+- You should see Successes: 20, Failures: 0, Errors: 0, Excluded 4 in Studio.
 
 ## 4. Persist filters to config
 In Studio:
