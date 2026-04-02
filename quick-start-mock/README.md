@@ -28,9 +28,9 @@ In real projects, consumer teams are often blocked because a dependency is late,
 4. Run mock from Studio, generate an example, and verify consistent responses from the consumer UI.
 
 ## Lab Rules
-- Do not edit `specs/service.yaml`.
-- Do not edit consumer UI code.
-- Use only commands in this README.
+- Do not edit `specs/service.yaml` - This contract represents the real provider API and should remain unchanged to demonstrate how Specmatic mocks work with existing contracts.
+- Do not edit consumer UI code - The consumer represents an existing application. Modifying it would defeat the purpose of showing how mocks unblock development without consumer changes.
+- Use only commands in this README - This ensures you follow the intended learning path and experience the full educational value of contract-generated mocking.
 
 ## Specmatic references
 - Service virtualization and mocks: [https://docs.specmatic.io/documentation/service_virtualization.html](https://docs.specmatic.io/documentation/service_virtualization.html)
