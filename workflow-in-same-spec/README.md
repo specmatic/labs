@@ -42,13 +42,11 @@ The `workflow` section is intentionally missing under:
 (in `specmatic.yaml`).
 
 Run:
-
 ```bash
 docker compose --profile test up test --build --abort-on-container-exit
 ```
 
 Expected baseline result:
-
 ```text
 Tests run: 4, Successes: 1, Failures: 3, Errors: 0
 ```
@@ -64,7 +62,6 @@ Why it fails:
 - `GET`, `PUT` and `DELETE` examples validate response `id` as the created task ID, so random IDs do not match.
 
 Cleanup:
-
 ```bash
 docker compose --profile test down -v
 ```
@@ -78,12 +75,12 @@ docker compose --profile studio up studio --build
 
 Open Studio:
 1. Open `http://127.0.0.1:9000/_specmatic/studio`,
-2. Open `specmatic.yaml`, go to the `Test` tab, and run the suite. The contract is loaded into `.specmatic/repos/labs-contracts/openapi/workflow-in-same-spec/tasks.yaml`, which you can inspect from the left sidebar if needed.
-3. You should see POST /tasks test pass, but GET/PUT/DELETE tests fail.
-4. Look at the request/response details for the failed GET/PUT/DELETE tests and observe that we are not using the ID created by POST /tasks.
+2. Open `specmatic.yaml` and click on the `Run Suite` button to run the suite. 
+3. In the Active Tabs on the right sidebar, under the `Test` section, click on `tasks.yaml` to view test results.
+4. You should see POST /tasks test pass, but GET/PUT/DELETE tests fail.
+5. Look at the request/response details for the failed GET/PUT/DELETE tests and observe that we are not using the ID created by POST /tasks.
 
 Stop Studio:
-
 ```bash
 docker compose --profile studio down -v
 ```
@@ -105,19 +102,16 @@ workflow:
 ```
 
 Re-run:
-
 ```bash
 docker compose --profile test up test --build --abort-on-container-exit
 ```
 
 Expected passing result:
-
 ```text
 Tests run: 4, Successes: 4, Failures: 0, Errors: 0
 ```
 
 Cleanup:
-
 ```bash
 docker compose --profile test down -v
 ```
