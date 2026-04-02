@@ -1,7 +1,8 @@
 # Request/Response Adapters Lab
 
 ## Objective
-Understand why a client fails against a mock, and how Specmatic data adapters can help you temporarily adapt provider service's interface to the consumer's expected interface till the provider fixes their specification.
+If a client fails against a spec-driven mock, it usually means there is a mismatch between the client's request/response and the provider's expected request/response format. 
+This lab will help you understand how to identify such mismatches and use Specmatic's data adapter to temporarily adapt the provider service's interface to match the consumer's expected interface. This allows you to continue development and testing without waiting for the provider to fix their specification, while still ensuring that your expectations are valid against the specification.
 
 ## Time required to complete this lab:
 10-15 minutes.
