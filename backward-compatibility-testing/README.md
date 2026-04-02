@@ -43,7 +43,7 @@ Keep the newly added `category` field, but make the contract backward compatible
 ## Part A: Create the intentional breaking change
 `products.yaml` currently matches the git-tracked baseline. Edit it so the new version becomes backward incompatible.
 
-Change:
+**Step 1:** First, update the version number at the top of the file:
 
 ```yaml
 info:
@@ -57,28 +57,21 @@ info:
   version: 1.1.0
 ```
 
-Then under the `200` response schema for `GET /products/{id}`, change:
+**Step 2:** Next, find the `GET /products/{id}` endpoint and locate its `200` response. Look for the `properties:` section that defines the response fields. You'll see:
 
 ```yaml
-name:
-  type: string
+properties:
+  name:
+    type: string
+  sku:
+    type: string
 ```
 
-to:
+**Step 3:** Make these changes to the `properties:` section:
+- Change `name` from `type: string` to `type: number` (this creates the breaking change)
+- Add a new `category` field with `type: string`
 
-```yaml
-name:
-  type: number
-```
-
-and add:
-
-```yaml
-category:
-  type: string
-```
-
-Your response schema should now have:
+After your changes, the `properties:` section should look like:
 
 ```yaml
 properties:
