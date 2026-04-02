@@ -171,7 +171,7 @@ docker compose --profile studio down -v
 ```
 
 ## Pass criteria
-- Baseline test run fails with one mismatch.
+- Baseline test run (Part A) fails with one mismatch.
 - After provider fix, test run passes with `1/1` success.
 
 ## Common confusion points
