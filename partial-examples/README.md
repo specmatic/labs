@@ -44,6 +44,7 @@ docker compose --profile studio up studio
 Open `specmatic.yaml` in Studio. The suite loads the contract into `.specmatic/repos/labs-contracts/openapi/partial-examples/simple-openapi-spec.yaml`, and you will see 3 failing external examples. Open that checked-out contract from the left sidebar if you want to inspect it directly.
 
 ## Learner task: fix 3 examples using partial examples
+On studio from the left sidebar navigate into `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`, and you will see that 3 examples have failed validation on the examples tab.
 Please do not click the `Fix` button to make these examples valid. Instead, use [partial examples](https://docs.specmatic.io/contract_driven_development/service_virtualization#partial-examples) to fix them.
 
 ## Re-validate after fixing in Studio

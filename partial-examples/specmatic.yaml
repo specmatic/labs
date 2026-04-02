@@ -14,7 +14,7 @@ systemUnderTest:
           source:
             $ref: "#/components/sources/labsContracts"
           specs:
-            - common/openapi/order-api/api_order_v5.yaml
+            - common/openapi/order-bff/product_search_bff_v6.yaml
     runOptions:
       openapi:
         type: test
