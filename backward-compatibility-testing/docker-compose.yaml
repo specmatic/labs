@@ -1,0 +1,12 @@
+services:
+  studio:
+    container_name: backward-compatibility-testing-studio
+    image: specmatic/enterprise:latest
+    profiles: ["studio"]
+    volumes:
+      - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    command: ["studio"]
+    ports:
+      - "9000:9000"
+      - "9001:9001"

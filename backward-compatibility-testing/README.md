@@ -95,6 +95,7 @@ You now have an uncommitted change in a tracked contract file. Specmatic will co
 ## Part B: Run the backward compatibility check
 Run:
 
+*Unix/Mac:
 ```shell
 docker run --rm \
   -v ..:/workspace \
@@ -104,6 +105,11 @@ docker run --rm \
   backward-compatibility-check \
   --base-branch origin/main \
   --target-path backward-compatibility-testing/products.yaml
+```
+
+Windows (PowerShell/CMD) single-line:
+```shell
+docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
 ```
 
 Why the command is structured this way:
@@ -157,6 +163,7 @@ Keep version `1.1.0`.
 ## Part D: Re-run the check
 Run the same command again:
 
+*Unix/Mac:
 ```shell
 docker run --rm \
   -v ..:/workspace \
@@ -166,6 +173,11 @@ docker run --rm \
   backward-compatibility-check \
   --base-branch origin/main \
   --target-path backward-compatibility-testing/products.yaml
+```
+
+Windows (PowerShell/CMD) single-line:
+```shell
+docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
 ```
 
 Expected passing output:
@@ -186,16 +198,7 @@ git restore products.yaml
 Start Studio from `labs/backward-compatibility-testing`:
 
 ```shell
-docker run --rm \
-  --network host \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  specmatic/enterprise:latest \
-  studio
-```
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm --network host -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest studio
+docker compose --profile studio up
 ```
 
 Open [Specmatic Studio](http://127.0.0.1:9000/_specmatic/studio), then:
@@ -216,6 +219,12 @@ After observing the failure:
 3. Click the **Backward Compatibility** check button again.
 4. Confirm the check passes.
 5. Save the file only after the compatibility result is what you expect.
+
+Clean up:
+
+```shell
+docker compose --profile studio down -v
+```
 
 What was verified in Studio:
 - Opening `products.yaml` from the left file tree activates the live screen for this file.
