@@ -22,10 +22,22 @@ This is a monorepo. Each lab is self-contained and organized in a separate direc
 ## Workshop Schedule 
 - Overview
   - Independent Development and Deployment 
-  - Test Pyramid - Contract Testing, API Testing, Workflow Testing 
-  - Various Types of Contract Testing (CDCT, PDCT & API Design First)
-  - Specification (OpenAPI, AsyncAPI, ProtoBuf, GraphQL SDL, WSDL, Arazzo)
+    - Understand how microservices are meant to reduce dependencies and enable parallel development, 
+    - Why integration environments become bottlenecks, 
+    - How shifting feedback earlier using contract testing and service virtualization can unblock delivery and improve stability.
+  - Test Pyramid - Contract Testing, API Testing, API Workflow Testing
+    - Learn the difference between: 
+      - Contract tests (API standards, structure and schema)
+      - API tests (functional correctness of single API)
+      - API workflow tests (orchestrate integration across multiple APIs) 
+    - Understand how contract testing acts like "compiler safety" for APIs, ensuring systems integrate reliably across services.
+  - Types of Contract Driven Development (Spec-First API Design, PDCT & CDCT)
+    - Contract-Driven Development (CDD) is a software development approach that emphasizes using API specifications as a source of truth for design, development and testing both locally and in CI pipelines. This approach ensures that all stakeholders have a clear understanding of the API's behavior, inputs, outputs, and interactions from the outset. By converting the API Specs into executable contracts this approach enables providers and consumers to work in parallel, reduces integration issues, and improves overall API quality. There are several types of Contract-Testing, including:
+      - Spec-First API Design: Emphasizes designing the API contract first, often using specifications like OpenAPI or AsyncAPI, before any code is written. Then using those specifications to ensure backward compatibility and drive development and testing.
+      - Provider-Driven Contract Testing (PDCT): Focuses on testing the provider's implementation against the defined contract to ensure it meets the specified requirements.
+      - Consumer-Driven Contract Testing (CDCT): Focuses on testing the interactions between a consumer and a provider based on the consumer's expectations.
   - Contract Driven Development (CDD) in Action Demo - Using [Order-BFF](order-bff/README.md) as an example
+    - See how contract-driven development enables teams to test services in isolation using mocks, simulate real-world scenarios, and orchestrate end-to-end API flows without writing single line of test code.
 - Spec-First Contract-Driven Core Concepts 
   - [Contract Testing](quick-start-contract-testing/README.md)
     - API Contract Test
