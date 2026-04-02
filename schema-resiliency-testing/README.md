@@ -15,19 +15,9 @@ Here we'll send contract-invalid requests and ensure the API handles it graceful
 - `examples/*.json` - External examples for the BFF API. These examples have some issues we'll fix them
 - `specmatic.yaml` - Specmatic config file that defines the Spec, and it's example files.
 
-## Start Studio using Docker
+## Start Studio using Docker Compose
 ```shell
-docker run --rm \
-  --name studio \
-  --network host \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  specmatic/enterprise:latest \
-  studio
-```
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm --name studio -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro --network host specmatic/enterprise:latest studio
+docker compose --profile studio up studio
 ```
 
 ## Loop Test
@@ -58,6 +48,11 @@ Tests run: 6, Successes: 6, Failures: 0, Errors: 0
 Clean up
 ```shell
 docker compose down -v
+```
+
+Stop Studio before switching to CLI-only runs:
+```shell
+docker compose --profile studio down -v
 ```
 
 ## Goal of this lab
