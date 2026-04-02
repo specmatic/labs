@@ -41,17 +41,7 @@ docker compose down -v
 ## 2. Start Studio
 Run:
 ```shell
-docker run --rm \
-  --name studio \
-  --network host \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  specmatic/enterprise:latest \
-  studio
-```
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm --name studio --network host -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest studio
+docker compose --profile studio up studio
 ```
 
 Open Studio at `http://127.0.0.1:9000/_specmatic/studio`.
@@ -88,7 +78,11 @@ In Studio:
 2. Click `Export as Config`.
 3. Confirm `specmatic.yaml` now contains the generated filter expression(s).
 
-Stop Studio by pressing `Ctrl+C` in the terminal where it's running.
+Stop Studio:
+
+```shell
+docker compose --profile studio down -v
+```
 
 ## 5. Verify from CLI (with persisted filters)
 Run:
