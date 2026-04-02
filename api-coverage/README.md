@@ -74,7 +74,7 @@ The important point for API coverage is not the specific library. What matters i
 Run:
 
 ```shell
-docker compose up contract-test --build --abort-on-container-exit
+docker compose up test --build --abort-on-container-exit
 ```
 
 Expected behavior:
@@ -150,7 +150,7 @@ Do not change anything else in the operation.
 Run the same command again:
 
 ```shell
-docker compose up contract-test --build --abort-on-container-exit
+docker compose up test --build --abort-on-container-exit
 ```
 
 Expected final result:
@@ -187,34 +187,17 @@ The HTML report is useful both before and after the fix:
 - after the fix, it confirms both paths are covered
 
 ## Short Studio follow-up
-Start only the provider:
+Start Studio and the provider:
 
 ```shell
-docker compose up --build petstore
-```
-
-In another terminal, start Studio:
-
-```shell
-docker run --rm \
-  --network host \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  specmatic/enterprise:latest \
-  studio
-```
-
-Windows (PowerShell/CMD) single-line:
-
-```shell
-docker run --rm --network host -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest studio
+docker compose --profile studio up --build
 ```
 
 Then:
 1. Open [Specmatic Studio](http://127.0.0.1:9000/_specmatic/studio).
 2. Open `specs/service.yaml` from the left file tree.
 3. Go to the **Test** tab.
-4. Set URL to `http://127.0.0.1:8080`.
+4. Set URL to `http://petstore:8080`.
 5. Run the tests.
 
 In a separate browser tab, open:
@@ -225,10 +208,10 @@ What to observe before fixing the checked-in spec:
 - The FastAPI Swagger UI shows that the app actually publishes `GET /pets/find`.
 - That mismatch is why the coverage report marks `/pets/find` as `Missing In Spec` and `/pets/search` as `Not Implemented`.
 
-Stop Studio with `Ctrl+C`, then stop the provider:
+Stop Studio and the provider:
 
 ```shell
-docker compose down -v
+docker compose --profile studio down -v
 ```
 
 ## Pass criteria

@@ -12,8 +12,8 @@ services:
       retries: 30
       start_period: 2s
 
-  contract-test:
-    container_name: api-coverage-openapi-contract-test
+  test:
+    container_name: api-coverage-openapi-test
     image: specmatic/enterprise:latest
     volumes:
       - ./:/usr/src/app
@@ -22,3 +22,18 @@ services:
       petstore:
         condition: service_healthy
     command: ["test"]
+
+  studio:
+    container_name: api-coverage-openapi-studio
+    image: specmatic/enterprise:latest
+    profiles: ["studio"]
+    volumes:
+      - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    depends_on:
+      petstore:
+        condition: service_healthy
+    command: ["studio"]
+    ports:
+      - "9000:9000"
+      - "9001:9001"
