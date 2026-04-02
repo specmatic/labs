@@ -59,7 +59,7 @@ Use Studio to easily fix these spec invalid examples.
 ```shell
 docker compose --profile studio up
 ```
-In Studio, open `specmatic.yaml` from the left sidebar. The suite loads the contract into `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`, and you will see that 3 examples have failed validation. You can inspect that checked-out file from the left sidebar if needed.
+In Studio, open `product_search_bff_v6.yaml` which should be under `.specmatic/repos/labs-contracts/common/openapi/order-bff` from the left sidebar. You will see that 3 examples have failed validation on the `examples` tab.
 
 Click on each failed example to see the validation errors and fix them. You can either fix the examples manually or use the "Fix" button in Studio to automatically fix the issues.
 

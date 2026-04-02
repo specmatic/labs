@@ -12,7 +12,7 @@ Use Specmatic Studio to repair incomplete external examples using partial exampl
 - Ports `9000` and `9001` are available for Studio.
 
 ## Files in this lab
-- `.specmatic/repos/labs-contracts/common/openapi/order-api/api_order_v5.yaml`: OpenAPI contract for the BFF API, loaded by `specmatic.yaml`.
+- `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`: OpenAPI contract for the BFF API, loaded by `specmatic.yaml`.
 - `examples/*.json`: Incomplete external examples that will be fixed using partial examples.
 - `specmatic.yaml`: Specmatic configuration for contract testing and mocking.
 - `docker-compose.yaml`: Suite loop setup.
@@ -32,7 +32,7 @@ docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license
 
 ### Output
 ```terminaloutput
-[OK] Specification simple-openapi-spec.yaml: PASSED
+[OK] Specification product_search_bff_v6.yaml: PASSED
 [FAIL] Examples: 0 passed and 3 failed out of 3 total
 ```
 
@@ -41,10 +41,9 @@ docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license
 docker compose --profile studio up studio
 ```
 
-Open `specmatic.yaml` in Studio. The suite loads the contract into `.specmatic/repos/labs-contracts/openapi/partial-examples/simple-openapi-spec.yaml`, and you will see 3 failing external examples. Open that checked-out contract from the left sidebar if you want to inspect it directly.
-
 ## Learner task: fix 3 examples using partial examples
-On studio from the left sidebar navigate into `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`, and you will see that 3 examples have failed validation on the examples tab.
+In Studio, open `product_search_bff_v6.yaml` which should be under `.specmatic/repos/labs-contracts/common/openapi/order-bff` from the left sidebar. You will see that 3 examples have failed validation on the `examples` tab.
+
 Please do not click the `Fix` button to make these examples valid. Instead, use [partial examples](https://docs.specmatic.io/contract_driven_development/service_virtualization#partial-examples) to fix them.
 
 ## Re-validate after fixing in Studio
