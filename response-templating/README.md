@@ -58,17 +58,7 @@ docker compose down -v
 
 ## 2. Open Studio (Optional)
 ```shell
-docker run --rm \
-  --name studio \
-  --network host \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  specmatic/enterprise:latest \
-  studio
-```
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm --name studio -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro --network host specmatic/enterprise:latest studio
+docker compose --profile studio up studio
 ```
 Open Studio at `http://127.0.0.1:9000/_specmatic/studio`.
 
@@ -94,6 +84,11 @@ Tests run: 4, Successes: 2, Failures: 2, Errors: 0
 Clean up:
 ```shell
 docker compose down -v
+```
+
+If Studio is still running, stop it with:
+```shell
+docker compose --profile studio down -v
 ```
 
 ## 4. Task B: Fix product search using Data Lookup
