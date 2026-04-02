@@ -38,17 +38,7 @@ docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license
 
 ## Start Studio
 ```shell
-docker run --rm \
-  --name studio \
-  --network host \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  specmatic/enterprise:latest \
-  studio
-```
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm --name studio --network host -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest studio
+docker compose --profile studio up studio
 ```
 
 Open `specmatic.yaml` in Studio. The suite loads the contract into `.specmatic/repos/labs-contracts/openapi/partial-examples/simple-openapi-spec.yaml`, and you will see 3 failing external examples. Open that checked-out contract from the left sidebar if you want to inspect it directly.
@@ -88,14 +78,19 @@ In Studio, after examples are valid:
 
 Expected: `7` tests passing and `0` failing.
 
+### Stop Studio
+
+```shell
+docker compose --profile studio down -v
+```
+
 ### Why 7 tests?
 You have 3 external examples, plus additional inline examples in the OpenAPI spec.  
 Specmatic runs tests from both sources, so total generated tests are higher than 3.
 
 ### Loop Test using CLI
 
-Stop Studio and run the following command to start the mock server and run the tests against it using CLI.
-
+Run the following command to start the mock server and run the tests against it using CLI.
 ```shell
 docker compose up --abort-on-container-exit
 ```
