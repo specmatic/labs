@@ -89,7 +89,7 @@ docker compose down -v
 ## 2. Task A: use `pattern` for a valid enum value
 Edit:
 
-- `examples/test/test_finance_user_11.json`
+- `examples/test_finance_user_11.json`
 
 In `http-response.body`, change:
 
@@ -119,7 +119,7 @@ docker compose down -v
 ## 3. Task B: use `dataType` and `pattern` for dynamic values
 Edit:
 
-- `examples/test/test_support_user_55.json`
+- `examples/test_support_user_55.json`
 
 In `http-response.body`, change:
 
