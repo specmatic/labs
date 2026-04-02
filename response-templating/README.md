@@ -5,13 +5,28 @@ Use response templating in Specmatic mocks to make mock responses deterministic 
 
 ## Problem Statement
 
-In service virtualization, static mock responses are often too rigid for real workflows. Teams need mocks that return responses based on incoming request data (for example, echoing identifiers) and also derive related fields from business mappings (for example, department to designation). Without this, contract tests become brittle, scenarios are unrealistic, and teams spend time creating many near-duplicate examples.
-This lab solves that by teaching how to build dynamic, data-aware mock responses computed from request values at runtime using Direct Substitution and Data Lookup in Specmatic.
+In service virtualization, static mock responses are often too rigid for real workflows. Consider these common scenarios:
+
+**Example 1: Order Creation**
+- Request: `POST /orders` with `{"productid": "ABC123", "count": 5}`
+- Static mock always returns: `{"id": 1, "productid": "XYZ789", "count": 10}`
+- **Problem**: The response doesn't reflect the actual request data, making tests unrealistic
+
+**Example 2: Product Search**
+- Request: `GET /findAvailableProducts?type=book`
+- Static mock returns: `{"name": "Harry Potter", "type": "book"}` for all book requests
+- **Problem**: No way to return different books or correlate product details with the search type
+
+Teams need mocks that:
+1. Echo request data back in responses (like returning the same `productid` and `count` that were sent in the order)
+2. Use a lookup to derive correlated response fields (like mapping `type=book` to a specific product name, inventory, and date)
+
+This lab teaches **Direct Substitution** (for echoing values) and **Data Lookup** (for type-driven mappings) to create dynamic, deterministic mock responses that behave more like real services.
 
 Participants will:
 
 * Implement Direct Substitution to capture request values into variables and inject them into responses.
-* Implement Data Lookup to map a request value (like department) to dependent response fields (like designation) using a lookup object.
+* Implement Data Lookup to map a request query value (like `type=book`) to a set of correlated response fields (like product name, inventory, and date).
 * Understand when to use substitution vs lookup, and how both improve contract-test realism with minimal example duplication.
 * By the end, participants will be able to design mocks that are deterministic, reusable, and closer to production-like behavior.
 
@@ -144,7 +159,7 @@ docker compose down -v
 - After Task B, run shows `4` successes and `0` failures.
 
 ## Why this lab matters
-- Direct Substitution is best when response fields should echo request values.
+- Direct Substitution is best when response fields should echo request values (e.g. returning the same `productid` that was sent).
 - Data Lookup is best when response values should come from a deterministic business mapping.
 
 ## Next step
