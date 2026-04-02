@@ -31,3 +31,15 @@ services:
       timeout: 2s
       retries: 20
       start_period: 2s
+
+  studio:
+    container_name: quick-start-mock-studio
+    image: specmatic/enterprise:latest
+    profiles: ["studio"]
+    volumes:
+      - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    command: ["studio"]
+    ports:
+      - "9000:9000"
+      - "9001:9001"

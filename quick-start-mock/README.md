@@ -96,16 +96,7 @@ Expected output:
 Start Studio in a new terminal:
 
 ```shell
-docker run --rm \
-  --network host \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  specmatic/enterprise:latest \
-  studio
-```
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm --network host -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest studio
+docker compose --profile studio up studio
 ```
 
 Open [http://127.0.0.1:9000/_specmatic/studio](http://127.0.0.1:9000/_specmatic/studio).
@@ -152,6 +143,12 @@ docker compose --profile mock down -v
 ```
 
 If consumer is still running in another terminal, stop it with `Ctrl+C`.
+
+If Studio is still running, stop it with:
+
+```shell
+docker compose --profile studio down -v
+```
 
 ## What you learned
 - Mocking lets consumer teams continue independently of dependency readiness.
