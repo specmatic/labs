@@ -49,7 +49,7 @@ Open Studio at `http://127.0.0.1:9000/_specmatic/studio`.
 ## 3. Apply filters in Studio (guided)
 In Studio, open `specmatic.yaml` from the left sidebar. Click on the `Run Suite` button.
 
-In the Active Tabs on the right sidebar, click on `product_search_bff_v6.yaml` under Test to view test results. You should see a large number of failures.
+In the Active Tabs on the right sidebar, under the `Test` section, click on `product_search_bff_v6.yaml` to view test results. You should see a large number of failures.
 
 ### Task A: Exclude failing scenarios
 1. Run tests once to view failures.
