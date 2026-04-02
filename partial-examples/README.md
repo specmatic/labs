@@ -12,7 +12,7 @@ Use Specmatic Studio to repair incomplete external examples using partial exampl
 - Ports `9000` and `9001` are available for Studio.
 
 ## Files in this lab
-- `.specmatic/repos/labs-contracts/openapi/partial-examples/simple-openapi-spec.yaml`: OpenAPI contract for the BFF API, loaded by `specmatic.yaml`.
+- `.specmatic/repos/labs-contracts/common/openapi/order-api/api_order_v5.yaml`: OpenAPI contract for the BFF API, loaded by `specmatic.yaml`.
 - `examples/*.json`: Incomplete external examples that will be fixed using partial examples.
 - `specmatic.yaml`: Specmatic configuration for contract testing and mocking.
 - `docker-compose.yaml`: Suite loop setup.
