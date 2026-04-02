@@ -47,9 +47,9 @@ Tests run: 6, Successes: 6, Failures: 0, Errors: 0
 
 ### 2. Loop Test using CLI
 ```shell
-docker compose up test --abort-on-container-exit
+docker compose up --abort-on-container-exit
 ```
-This will start the mock server and run the tests against it. You should see the same results in the terminal output as you did in Studio:
+This will run the suite, start the dependency mock, and run the tests against it. You should see the same results in the terminal output as you did in Studio:
 
 ```terminaloutput
 Tests run: 6, Successes: 6, Failures: 0, Errors: 0
