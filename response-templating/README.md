@@ -14,14 +14,14 @@ In service virtualization, static mock responses are often too rigid for real wo
 
 **Example 2: Product Search**
 - Request: `GET /findAvailableProducts?type=book`
-- Static mock returns: `{"name": "Harry Potter", "type": "book"}` for all book requests
-- **Problem**: No way to return different books or correlate product details with the search type
+- Static mock returns: `{"name": "Harry Potter", "type": "book"}` for all product requests
+- **Problem**: No way to return different product details based on the search type
 
 Teams need mocks that:
 1. Echo request data back in responses (like returning the same `productid` and `count` that were sent in the order)
 2. Use a lookup to derive correlated response fields (like mapping `type=book` to a specific product name, inventory, and date)
 
-This lab teaches **Direct Substitution** (for echoing values) and **Data Lookup** (for type-driven mappings) to create dynamic, deterministic mock responses that behave more like real services.
+This lab teaches **Direct Substitution** (for echoing values) and **Data Lookup** (for input-based mappings) to create dynamic, deterministic mock responses that behave more like real services.
 
 Participants will:
 
