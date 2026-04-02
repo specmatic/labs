@@ -4,6 +4,10 @@ systemUnderTest:
     $ref: "#/components/services/sqsKafkaService"
     runOptions:
       $ref: "#/components/runOptions/sqsKafkaServiceTest"
+    data:
+      examples:
+        - directories:
+            - spec/order-service-sqs-kafka_examples
     settings:
       strictMode: true
 components:

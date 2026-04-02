@@ -13,6 +13,10 @@ systemUnderTest:
             $ref: "#/components/sources/labsContracts"
           specs:
             - asyncapi/kafka-avro/order-service-async-avro-v3_0_0.yaml
+    data:
+      examples:
+        - directories:
+            - "./api-specs/order-service-async-avro-v3_0_0_examples"
     runOptions:
       asyncapi:
         type: test
