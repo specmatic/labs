@@ -25,7 +25,7 @@ Use Specmatic test filters to temporarily exclude selected failing scenarios and
 ## 1. Baseline run (intentional failure)
 Run:
 ```shell
-docker compose up test --abort-on-container-exit
+docker compose up --abort-on-container-exit
 ```
 
 Expected baseline output:
@@ -93,7 +93,7 @@ Stop Studio by pressing `Ctrl+C` in the terminal where it's running.
 ## 5. Verify from CLI (with persisted filters)
 Run:
 ```shell
-docker compose up test --abort-on-container-exit
+docker compose up --abort-on-container-exit
 ```
 
 Expected output:
