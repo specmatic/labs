@@ -37,7 +37,7 @@ Make contract tests pass by changing provider response field `petType` to `type`
 ## Specmatic references
 - Contract testing overview: [https://docs.specmatic.io/documentation/contract_testing.html](https://docs.specmatic.io/documentation/contract_testing.html)
 - Understanding validation rules and mismatch codes: [https://docs.specmatic.io/rules](https://docs.specmatic.io/rules)
-- Specmatic Studio: [https://docs.specmatic.io/documentation/studio.html](https://docs.specmatic.io/documentation/studio.html)
+- Specmatic Studio: [https://docs.specmatic.io/getting_started/studio_quick_start.html](https://docs.specmatic.io/getting_started/studio_quick_start.html)
 
 ## Part A: Baseline run (intentional failure)
 Run:
