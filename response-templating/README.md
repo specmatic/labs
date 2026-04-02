@@ -38,7 +38,7 @@ Participants will:
 
 ## 1. Run baseline test (intentional failure)
 ```shell
-docker compose up test --abort-on-container-exit
+docker compose up --abort-on-container-exit
 ```
 
 Expected output:
@@ -85,7 +85,7 @@ Keep `id` as-is.
 ### Checkpoint after Task A
 Run:
 ```shell
-docker compose up test --abort-on-container-exit
+docker compose up --abort-on-container-exit
 ```
 Expected checkpoint output:
 ```terminaloutput
@@ -110,7 +110,7 @@ Note:
 ## 5. Final verification
 Run:
 ```shell
-docker compose up test --abort-on-container-exit
+docker compose up --abort-on-container-exit
 ```
 
 Expected final output:
