@@ -27,9 +27,9 @@ Your job is to test the service under test (BFF) matches those resilience expect
 - Ports `8080`, `9000`, and `9001` are available.
 
 ## Architecture
-- `test` is the Specmatic contract-test runner.
+- `suite` is the Specmatic contract-test runner that starts dependency mocks and executes the tests.
 - `order-bff` is the system under test on port `8080`.
-- `mock` is the downstream dependency mock generated from shared contracts in `labs-contracts` (`common/openapi/order-api/api_order_v5.yaml` and `common/asyncapi/product-audits/kafka.yaml`).
+- the dependency mocks are generated from shared contracts in `labs-contracts` (`common/openapi/order-api/api_order_v5.yaml` and `common/asyncapi/product-audits/kafka.yaml`) by the `suite` service.
 - The BFF contract under test is pulled from `labs-contracts` (`openapi/order-bff-resiliency/product_search_bff_v6.yaml`).
 - You will edit only downstream mock examples in `examples/order-service/`.
 
@@ -70,7 +70,7 @@ Your job is to test the service under test (BFF) matches those resilience expect
 Run:
 
 ```shell
-docker compose --profile test up test --abort-on-container-exit
+docker compose --profile test up --abort-on-container-exit
 ```
 
 Expected baseline result:
@@ -111,7 +111,7 @@ Keep:
 Re-run:
 
 ```shell
-docker compose --profile test up test --abort-on-container-exit
+docker compose --profile test up --abort-on-container-exit
 ```
 
 Expected checkpoint result:
@@ -147,7 +147,7 @@ Keep:
 Re-run:
 
 ```shell
-docker compose --profile test up test --abort-on-container-exit
+docker compose --profile test up --abort-on-container-exit
 ```
 
 Expected checkpoint result:
@@ -182,7 +182,7 @@ schemaResiliencyTests: all
 Re-run:
 
 ```shell
-docker compose --profile test up test --abort-on-container-exit
+docker compose --profile test up --abort-on-container-exit
 ```
 
 What changes:
@@ -256,7 +256,7 @@ Keep:
 Re-run again:
 
 ```shell
-docker compose --profile test up test --abort-on-container-exit
+docker compose --profile test up --abort-on-container-exit
 ```
 
 Expected outcome:
@@ -279,7 +279,7 @@ docker compose --profile test down -v
 Start Studio:
 
 ```shell
-docker compose --profile studio up studio --build
+docker compose --profile studio up --build
 ```
 
 Open [http://127.0.0.1:9000/_specmatic/studio](http://127.0.0.1:9000/_specmatic/studio).
