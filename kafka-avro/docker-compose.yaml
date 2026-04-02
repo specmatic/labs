@@ -113,7 +113,6 @@ services:
     command:
       - -c
       - |
-        apk add --no-cache jq && \
         chmod +x /usr/src/app/schemas/register-schemas.sh && \
         sh -c /usr/src/app/schemas/register-schemas.sh
     volumes:
