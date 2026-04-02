@@ -57,17 +57,7 @@ Use Studio to easily fix these spec invalid examples.
 
 ### 2. Start Studio
 ```shell
-docker run --rm \
-  --name studio \
-  --network host \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  specmatic/enterprise:latest \
-  studio
-```
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm --name studio --network host -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest studio
+docker compose --profile studio up
 ```
 In Studio, open `specmatic.yaml` from the left sidebar. The suite loads the contract into `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`, and you will see that 3 examples have failed validation. You can inspect that checked-out file from the left sidebar if needed.
 
@@ -106,6 +96,11 @@ Expected final output:
 ```terminaloutput
 [OK] Specification simple-openapi-spec.yaml: PASSED
 [OK] Examples: 6 passed and 0 failed out of 6 total
+```
+
+Clean up Studio:
+```shell
+docker compose --profile studio down -v
 ```
 
 ## Pass Criteria
