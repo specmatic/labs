@@ -118,3 +118,13 @@ services:
     depends_on:
       database_init:
         condition: service_completed_successfully
+
+  studio:
+    image: specmatic/enterprise:latest
+    profiles: ["studio"]
+    volumes:
+      - ./specs:/usr/src/app
+    command: ["studio"]
+    ports:
+      - "9000:9000"
+      - "9001:9001"

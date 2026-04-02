@@ -9,9 +9,7 @@ info:
     email: specmatic@devs.io
 
 servers:
-  - url: http://host.docker.internal:3000
-    description: Local development server
-  - url: http://localhost:3000
+  - url: http://location:3000
     description: Local development server
 
 tags:

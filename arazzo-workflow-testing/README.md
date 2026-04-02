@@ -43,7 +43,7 @@ This launches the following services:
 
 Start Studio
 ```shell
-docker run --rm --network host -v ./specs:/usr/src/app specmatic/enterprise studio
+docker compose --profile studio up studio
 ```
 
 Open [http://127.0.0.1:9000/_specmatic/studio](http://127.0.0.1:9000/_specmatic/studio).
@@ -76,5 +76,5 @@ Then:
 
 Clean up when done:
 ```shell
-docker compose down -v
+docker compose --profile studio down -v
 ```
