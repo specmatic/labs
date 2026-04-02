@@ -24,7 +24,7 @@ If teams do this continuously, contract breaks are caught before release instead
 ## Files in this lab
 - `specs/service.yaml` - OpenAPI contract (source of truth for this lab).
 - `service/server.py` - Tiny Python service implementation with one intentional mismatch.
-- `docker-compose.yaml` - Runs provider (`petstore`) and test runner (`contract-test`).
+- `docker-compose.yaml` - Runs provider (`petstore`) and test runner (`test`).
 
 ## Learner task
 Make contract tests pass by changing provider response field `petType` to `type` in `service/server.py`.
@@ -43,7 +43,7 @@ Make contract tests pass by changing provider response field `petType` to `type`
 Run:
 
 ```shell
-docker compose up contract-test --build --abort-on-container-exit
+docker compose up test --build --abort-on-container-exit
 ```
 
 ```terminaloutput
@@ -86,7 +86,7 @@ How did Specmatic fail the test? (Expected failure reason:)
 
 Ignore:
 - You may also see `Could not find the Specmatic configuration at path /usr/src/app/specmatic.yaml`.
-  In this lab, that message is expected because `contract-test` runs directly with `./specs/service.yaml`.
+  In this lab, that message is expected because `test` runs directly with `./specs/service.yaml`.
 
 Clean up:
 
@@ -112,7 +112,7 @@ Do not change anything else.
 Run:
 
 ```shell
-docker compose up contract-test --build --abort-on-container-exit
+docker compose up test --build --abort-on-container-exit
 ```
 
 Expected output:
@@ -127,25 +127,10 @@ docker compose down -v
 ```
 
 ## Optional: Run the same check in Studio
-Start provider only:
+Start Studio and the provider:
 
 ```shell
-docker compose up --build petstore
-```
-
-In another terminal, start Studio:
-
-```shell
-docker run --rm \
-  --network host \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  specmatic/enterprise:latest \
-  studio
-```
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm --network host -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest studio
+docker compose --profile studio up --build studio
 ```
 
 Open [Specmatic Studio](http://127.0.0.1:9000/_specmatic/studio), then:
@@ -155,7 +140,7 @@ Open [Specmatic Studio](http://127.0.0.1:9000/_specmatic/studio), then:
 
 ### Studio flow 1: Direct contract test
 1. Go to the **Test** tab.
-2. Set URL to `http://127.0.0.1:8080`.
+2. Set URL to `http://petstore:8080`.
 3. Click **Run**.
 
 You should observe the same fail-then-pass behavior based on whether `petType` is fixed to `type`.
@@ -165,7 +150,7 @@ You should observe the same fail-then-pass behavior based on whether `petType` i
 2. Click **Generate** to generate an example for GET /pets 200.
 3. View the generated request/response payloads by clicking on the example name
 4. Switch to the **Test** tab.
-5. Set URL to `http://127.0.0.1:8080`.
+5. Set URL to `http://petstore:8080`.
 6. Click **Run**.
 
 Expected observations:
@@ -180,16 +165,14 @@ How to inspect the evidence:
 - Provider logs show the `ValueError`.
 - This reproduces a request-handler exception and closed connection for that scenario; do not assume the container always exits completely.
 
-Stop Studio by pressing `Ctrl+C` in the terminal where you started it.
-
 Stop services:
 ```shell
-docker compose down -v
+docker compose --profile studio down -v
 ```
 
 ## Pass criteria
-- Baseline contract-test run fails with one mismatch.
-- After provider fix, contract-test run passes with `1/1` success.
+- Baseline test run fails with one mismatch.
+- After provider fix, test run passes with `1/1` success.
 
 ## Common confusion points
 - Looking for `service/app.py` instead of `service/server.py`.

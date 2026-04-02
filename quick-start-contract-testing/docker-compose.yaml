@@ -12,8 +12,8 @@ services:
       retries: 30
       start_period: 2s
 
-  contract-test:
-    container_name: quick-start-contract-test
+  test:
+    container_name: quick-start-test
     image: specmatic/enterprise:latest
     volumes:
       - ./:/usr/src/app
@@ -22,3 +22,18 @@ services:
       petstore:
         condition: service_healthy
     command: ["test", "./specs/service.yaml", "--testBaseURL=http://petstore:8080"]
+
+  studio:
+    container_name: quick-start-studio
+    image: specmatic/enterprise:latest
+    profiles: ["studio"]
+    volumes:
+      - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    depends_on:
+      petstore:
+        condition: service_healthy
+    command: ["studio"]
+    ports:
+      - "9000:9000"
+      - "9001:9001"
