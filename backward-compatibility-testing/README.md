@@ -199,7 +199,7 @@ Open [Specmatic Studio](http://127.0.0.1:9000/_specmatic/studio), then:
 2. Open `products.yaml`.
 3. Switch to the **Spec** tab.
 4. Make the same breaking changes described in Part A.
-5. Before saving the file, click the **Backward Compatibility** check button on the **Spec** tab.
+5. Before saving the file, click the **Test Backward Compatibility** check button on the **Spec** tab.
 
 Expected Studio behavior:
 - Studio checks the edited in-memory spec against the saved file, even before you save the file.
@@ -209,9 +209,24 @@ Expected Studio behavior:
 After observing the failure:
 1. Change `name` back to `string`.
 2. Keep `category` and version `1.1.0`.
-3. Click the **Backward Compatibility** check button again.
+3. Click the **Test Backward Compatibility** check button again.
 4. Confirm the check passes.
 5. Save the file only after the compatibility result is what you expect.
+
+Optional extension:
+- Remove the `category` key and click the **Save** button, thus bringing the schema back to what it's original form.
+- Add a `WIP` tag to the `get` operation in `products.yaml`, just under the `summary` field:
+  ```yaml
+  get:
+    summary: Get product by id
+    tags:
+      - WIP
+  ```
+- Save the file by pressing the **Save** button.
+- Now, change `name` to `number` and click the **Test Backward Compatibility** button.
+- It's the same breaking change as before, but now you can confirm that the check is not affected by the presence of an additional tag in the operation.
+- Since we have marked the operation as **WIP**, Specmatic knows that it is not yet finalized, and hence the backward compatibility check will not fail despite breaking changes.
+- Try a different additive change, such as adding another optional response field, and confirm that the check still passes.
 
 Clean up:
 
@@ -225,15 +240,11 @@ What was verified in Studio:
 - A breaking unsaved edit returns the expected incompatibility.
 - Fixing the unsaved edit and running the check again returns a passing result.
 
-## Optional extension
-- Add a `WIP` tag to the `get` operation in `products.yaml` and re-run the check to see how Specmatic reports incompatible changes for APIs still in progress.
-- Try a different additive change, such as adding another optional response field, and confirm that the check still passes.
-
 ## Common confusion points
 - Running the command from another directory. The README assumes you are in `labs/backward-compatibility-testing`.
 - Expecting Specmatic to compare two arbitrary files. In this lab it compares your working tree change to the tracked version on `origin/main`.
 - Mounting only the current folder into Docker. Specmatic needs the `labs` repo root mounted so git metadata is available inside the container.
-- In Studio, saving first and checking later. For this workflow, use the **Backward Compatibility** check button on the **Spec** tab before saving.
+- In Studio, saving first and checking later. For this workflow, use the **Test Backward Compatibility** check button on the **Spec** tab before saving.
 
 ## What you learned
 - Backward compatibility can be validated directly from API specifications.
