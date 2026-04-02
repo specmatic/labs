@@ -15,7 +15,7 @@ Use Specmatic Studio to repair incomplete external examples using partial exampl
 - `.specmatic/repos/labs-contracts/openapi/partial-examples/simple-openapi-spec.yaml`: OpenAPI contract for the BFF API, loaded by `specmatic.yaml`.
 - `examples/*.json`: Incomplete external examples that will be fixed using partial examples.
 - `specmatic.yaml`: Specmatic configuration for contract testing and mocking.
-- `docker-compose.yaml`: Mock + test loop setup.
+- `docker-compose.yaml`: Suite loop setup.
 
 ## Validate the examples (intentional failure)
 ```shell
@@ -97,9 +97,9 @@ Specmatic runs tests from both sources, so total generated tests are higher than
 Stop Studio and run the following command to start the mock server and run the tests against it using CLI.
 
 ```shell
-docker compose up test --abort-on-container-exit
+docker compose up --abort-on-container-exit
 ```
-This starts the mock server and runs the tests against it. You should see:
+This runs the suite, starts the dependency mocks, and executes the tests. You should see:
 
 ```terminaloutput
 Tests run: 7, Successes: 7, Failures: 0, Errors: 0
