@@ -15,7 +15,7 @@ from kafka import KafkaConsumer, KafkaProducer
 
 
 CORRELATION_ID_HEADER = "CorrelationId"
-MIN_SQS_SEND_DELAY_MS = 5000
+MIN_SQS_SEND_DELAY_MS = 10000
 
 
 class MessageTransformationException(Exception):
