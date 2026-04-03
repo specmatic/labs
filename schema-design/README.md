@@ -8,7 +8,7 @@ Model mutually exclusive request shapes correctly so Specmatic schema resiliency
 
 ## Prerequisites
 - Docker is installed and running.
-- You are in `labs/schema-oneof-discriminator`.
+- You are in `labs/schema-design`.
 - Port `8080` is available.
 
 ## Files in this lab
