@@ -15,11 +15,11 @@
     "status": 200,
     "body": [
       {
-        "id": "$match(exact:1)",
-        "name": "$match(exact:Harry Potter)",
-        "type": "$match(exact:book)",
-        "inventory": "$match(exact:100)",
-        "createdOn": "$match(exact:2026-02-15)"
+        "id": "$match(productid: number)",
+        "name": "$match(productname: string)",
+        "type": "$match(type: string)",
+        "inventory": "$match(productinventory: number)",
+        "createdOn": "$match(productcreatedon: date)"
       }
     ],
     "status-text": "OK",
