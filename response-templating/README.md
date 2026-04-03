@@ -71,13 +71,7 @@ docker compose down -v
 - `GET /findAvailableProducts (type=book)`: response `name` mismatch (`Harry Potter` vs expected `Larry Potter`).
 - `GET /findAvailableProducts (type=gadget)`: response values are not deterministically mapped for gadget scenario.
 
-## 2. Open Studio (Optional)
-```shell
-docker compose --profile studio up studio
-```
-Open Studio at `http://127.0.0.1:9000/_specmatic/studio`.
-
-## 3. Task A: Fix order response using Direct Substitution
+## 2. Task A: Fix order response using Direct Substitution
 Edit:
 - `examples/mock/test_accepted_order_request.json`
 
@@ -101,12 +95,7 @@ Clean up:
 docker compose down -v
 ```
 
-If Studio is still running, stop it with:
-```shell
-docker compose --profile studio down -v
-```
-
-## 4. Task B: Fix product search using Data Lookup
+## 3. Task B: Fix product search using Data Lookup
 Edit:
 - `examples/mock/test_find_available_products_book_200.json`
 
@@ -117,7 +106,7 @@ Configure lookup logic based on request query `type` so that:
 Note:
 - You can keep this as one lookup-driven mock example instead of creating duplicate mock files.
 
-## 5. Final verification
+## 4. Final verification
 Run:
 ```shell
 docker compose up --abort-on-container-exit
