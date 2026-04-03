@@ -15,6 +15,7 @@ from kafka import KafkaConsumer, KafkaProducer
 
 
 CORRELATION_ID_HEADER = "CorrelationId"
+MIN_SQS_SEND_DELAY_MS = 5000
 
 
 class MessageTransformationException(Exception):
@@ -241,6 +242,10 @@ class BridgeApplication:
         self.logger.info("DLQ Topic: %s", self.config.dlq_topic)
         self.logger.info("Max Retries: %s", self.config.max_retries)
         self.logger.info("SQS Visibility Timeout Seconds: %s", self.config.sqs_visibility_timeout_seconds)
+        self.logger.info(
+            "Effective SQS Send Delay Millis: %s",
+            max(self.config.sqs_send_delay_ms, MIN_SQS_SEND_DELAY_MS),
+        )
         self.logger.info("Startup Timeout Seconds: %s", self.config.startup_timeout_seconds)
         self.logger.info("Kafka Bootstrap Servers: %s", self.config.kafka_bootstrap_servers)
         self.logger.info(
@@ -322,6 +327,17 @@ class BridgeApplication:
 
         self.main_consumer.topics()
         self.retry_consumer.topics()
+        self._wait_for_consumer_assignment(self.main_consumer, self.config.kafka_topic)
+
+    def _wait_for_consumer_assignment(self, consumer: KafkaConsumer, topic: str) -> None:
+        deadline = time.monotonic() + min(self.config.startup_timeout_seconds, 30)
+
+        while time.monotonic() < deadline and self.running.is_set():
+            consumer.poll(timeout_ms=500)
+            if any(partition.topic == topic for partition in consumer.assignment()):
+                return
+
+        raise RuntimeError(f"Kafka consumer did not receive an assignment for {topic}")
 
     def _mark_ready(self) -> None:
         self.ready_file.write_text("ready\n", encoding="utf-8")
@@ -436,8 +452,9 @@ class BridgeApplication:
             self.send_back_to_retry_topic(retryable_message, correlation_id, exc)
 
     def send_to_sqs(self, message: str, message_key: str, correlation_id: str) -> None:
-        if self.config.sqs_send_delay_ms > 0:
-            time.sleep(self.config.sqs_send_delay_ms / 1000)
+        effective_delay_ms = max(self.config.sqs_send_delay_ms, MIN_SQS_SEND_DELAY_MS)
+        if effective_delay_ms > 0:
+            time.sleep(effective_delay_ms / 1000)
 
         request = {
             "QueueUrl": self.config.sqs_queue_url,
