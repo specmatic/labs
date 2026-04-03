@@ -1,6 +1,6 @@
 # API Resiliency Testing with Specmatic
 
-Resilience matters, and yet we still underestimate how fragile the digital world is. A single API failure can cascade across industries: flights delayed, nurses locked out of medication charts, government services unavailable. Recent incidents include a Crowdstrike outage that caused widespread disruption, a Google outage in June 2025 triggered by a null pointer exception, Cloudflare incidents where a frontend retry loop overwhelmed tenant services, and a Tesla API outage that left owners unable to open their cars.
+Resiliency matters, and yet we still underestimate how fragile the digital world is. A single API failure can cascade across industries: flights delayed, nurses locked out of medication charts, government services unavailable. Recent incidents include a Crowdstrike outage that caused widespread disruption, a Google outage in June 2025 triggered by a null pointer exception, Cloudflare incidents where a frontend retry loop overwhelmed tenant services, and a Tesla API outage that left owners unable to open their cars.
 
 At its core, API resiliency testing is about ensuring services are predictable and durable under adverse conditions. It is not just checking happy paths, Specmatic verifies both degraded response and recovery. Resiliency testing spans a spectrum of approaches designed to expose weaknesses before they fail in production.
 
