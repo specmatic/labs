@@ -13,15 +13,7 @@
   },
   "http-response": {
     "status": 200,
-    "body": [
-      {
-        "id": "$match(productid: number)",
-        "name": "$match(productname: string)",
-        "type": "$match(type: string)",
-        "inventory": "$match(productinventory: number)",
-        "createdOn": "$match(productcreatedon: date)"
-      }
-    ],
+    "body": [],
     "status-text": "OK",
     "headers": {
       "Content-Type": "application/json"

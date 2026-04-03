@@ -13,7 +13,7 @@
   "http-response": {
     "status": 201,
     "body": {
-      "id": "$match(productid: number)"
+      "id": "$match(dataType: number)"
     },
     "status-text": "Created",
     "headers": {
