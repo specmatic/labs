@@ -46,7 +46,7 @@ docker compose --profile studio up studio
 
 Open Studio at `http://127.0.0.1:9000/_specmatic/studio`.
 
-## 3. Apply filters in Studio (guided)
+## 3. Run tests in Studio
 In Studio, open `specmatic.yaml` from the left sidebar. Click on the `Run Suite` button.
 
 In the Active Tabs on the right sidebar, under the `Test` section, click on `product_search_bff_v6.yaml` to view test results. You should see a large number of failures.
