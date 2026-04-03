@@ -59,16 +59,66 @@ docker compose down -v
 ## 2. Fix the contract model
 Open `specs/payment-api.yaml` and update `PaymentRequest` to this shape:
 
-1. Create `CardPaymentRequest` with required:
+1. Create `CardPaymentRequest` with following `required` fields:
    - `paymentType` (enum: `card`)
-   - `cardNumber`, `cardExpiry`, `cardCvv`
-2. Create `BankTransferPaymentRequest` with required:
+   - `cardNumber` (type: `string`)
+   - `cardExpiry` (type: `string`)
+   - `cardCvv` (type: `string`)
+2. Create `BankTransferPaymentRequest` with following `required` fields:
    - `paymentType` (enum: `bank_transfer`)
-   - `bankAccountNumber`, `bankRoutingNumber`, `bankAccountHolder`
+   - `bankAccountNumber` (type: `string`)
+   - `bankRoutingNumber` (type: `string`)
+   - `bankAccountHolder` (type: `string`)
 3. Replace `PaymentRequest` with:
    - `oneOf` referencing those two schemas
    - `discriminator.propertyName: paymentType`
-   - mapping for `card` and `bank_transfer`
+   - mapping for `card` to `CardPaymentRequest` and `bank_transfer` to `BankTransferPaymentRequest`
+
+```yaml
+    CardPaymentRequest:
+      type: object
+      required:
+        - paymentType
+        - cardNumber
+        - cardExpiry
+        - cardCvv
+      properties:
+        paymentType:
+          type: string
+          enum: [ card ]
+        cardNumber:
+          type: string
+        cardExpiry:
+          type: string
+        cardCvv:
+          type: string
+    BankTransferPaymentRequest:
+      type: object
+      required:
+        - paymentType
+        - bankAccountNumber
+        - bankRoutingNumber
+        - bankAccountHolder
+      properties:
+        paymentType:
+          type: string
+          enum: [ bank_transfer ]
+        bankAccountNumber:
+          type: string
+        bankRoutingNumber:
+          type: string
+        bankAccountHolder:
+          type: string
+    PaymentRequest:
+      oneOf:
+        - $ref: "#/components/schemas/CardPaymentRequest"
+        - $ref: "#/components/schemas/BankTransferPaymentRequest"
+      discriminator:
+        propertyName: paymentType
+        mapping:
+          card: "#/components/schemas/CardPaymentRequest"
+          bank_transfer: "#/components/schemas/BankTransferPaymentRequest"
+```
 
 ## 3. Re-run contract tests
 Run:
