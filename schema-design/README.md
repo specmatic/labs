@@ -25,7 +25,7 @@ A common antipattern is making both groups optional in one schema:
 - Card fields (`cardNumber`, `cardExpiry`, `cardCvv`)
 - Bank transfer fields (`bankAccountNumber`, `bankRoutingNumber`, `bankAccountHolder`)
 
-When modeled this way, schema resiliency tests can generate requests like `{ "paymentType": "card" }` with no card details. Contract sees it as valid, but implementation rejects it. This creates avoidable test failures.
+When modeled this way, schema resiliency tests can generate requests like `{ "paymentType": "card" }` with no card details. Contract sees it as valid, but implementation rejects it. This creates test failures which could have been avoided with a oneOf schema along with a discriminator in the specification.
 
 ## Lab Rules
 - Do not edit `service/server.py`.
