@@ -32,7 +32,7 @@ Then go to the Test tab, set url as `http://localhost:8080` and click on the "Ru
 You should see 
 
 ```terminaloutput
-Tests run: 6, Successes: 6, Failures: 0, Errors: 0
+Tests run: 3, Successes: 3, Failures: 0, Errors: 0
 ```
 
 ### 2. Loop Test using CLI
@@ -42,7 +42,7 @@ docker compose up --abort-on-container-exit
 This will run the suite, start the dependency mock, and run the tests against it. You should see the same results in the terminal output as you did in Studio:
 
 ```terminaloutput
-Tests run: 6, Successes: 6, Failures: 0, Errors: 0
+Tests run: 3, Successes: 3, Failures: 0, Errors: 0
 ```
 
 Clean up
