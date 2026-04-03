@@ -10,7 +10,7 @@ Learn how to test two resilience behaviors when a downstream dependency is not r
 - Async Create: return `202 Accepted` when product creation is accepted but not completed yet
 
 ## Why this lab matters
-Time to time downstream services might experience issue, however these need to handled gracefully by your service and should not surface as generic timeouts or `500`s.
+Time to time downstream services might experience issue, however these need to be handled gracefully by your service and should not surface as generic timeouts or `500`s.
 
 In this lab, the contract is already the source of truth:
 - `GET /findAvailableProducts` should return `429` with `Retry-After` when the downstream product API times out.
