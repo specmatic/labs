@@ -8,6 +8,7 @@ import uuid
 from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from pathlib import Path
 
 import boto3
 from kafka import KafkaConsumer, KafkaProducer
@@ -57,6 +58,10 @@ class AppConfig:
     direct_dlq_order_ids: list[str]
     kafka_main_group_id: str
     kafka_retry_group_id: str
+    sqs_send_delay_ms: int
+    sqs_visibility_timeout_seconds: int
+    ready_file: str
+    startup_timeout_seconds: int
 
     @classmethod
     def load(cls) -> "AppConfig":
@@ -82,6 +87,10 @@ class AppConfig:
             direct_dlq_order_ids=csv_setting("DIRECT_DLQ_ORDER_IDS", default_direct_dlq_ids),
             kafka_main_group_id=os.getenv("KAFKA_MAIN_GROUP_ID", "kafka-to-sqs-bridge-group"),
             kafka_retry_group_id=os.getenv("KAFKA_RETRY_GROUP_ID", "retry-consumer-group"),
+            sqs_send_delay_ms=int(os.getenv("SQS_SEND_DELAY_MS", "0")),
+            sqs_visibility_timeout_seconds=int(os.getenv("SQS_VISIBILITY_TIMEOUT_SECONDS", "600")),
+            ready_file=os.getenv("READY_FILE", "/tmp/provider-ready"),
+            startup_timeout_seconds=int(os.getenv("STARTUP_TIMEOUT_SECONDS", "60")),
         )
 
 
@@ -209,6 +218,7 @@ class BridgeApplication:
         )
         self.running = threading.Event()
         self.running.set()
+        self.ready_file = Path(self.config.ready_file)
         self.threads: list[threading.Thread] = []
         self.producer: KafkaProducer | None = None
         self.main_consumer: KafkaConsumer | None = None
@@ -230,6 +240,8 @@ class BridgeApplication:
         self.logger.info("Retry Topic: %s", self.config.retry_topic)
         self.logger.info("DLQ Topic: %s", self.config.dlq_topic)
         self.logger.info("Max Retries: %s", self.config.max_retries)
+        self.logger.info("SQS Visibility Timeout Seconds: %s", self.config.sqs_visibility_timeout_seconds)
+        self.logger.info("Startup Timeout Seconds: %s", self.config.startup_timeout_seconds)
         self.logger.info("Kafka Bootstrap Servers: %s", self.config.kafka_bootstrap_servers)
         self.logger.info(
             "Test Failure Scenarios Enabled: %s",
@@ -259,9 +271,8 @@ class BridgeApplication:
         )
 
     def start(self) -> None:
-        self.producer = self.create_producer()
-        self.main_consumer = self.create_consumer(self.config.kafka_topic, self.config.kafka_main_group_id)
-        self.retry_consumer = self.create_consumer(self.config.retry_topic, self.config.kafka_retry_group_id)
+        self._clear_ready_file()
+        self._initialize_dependencies()
 
         self.threads = [
             threading.Thread(target=self._run_main_bridge, name="MainBridge", daemon=True),
@@ -272,17 +283,69 @@ class BridgeApplication:
         for thread in self.threads:
             thread.start()
 
+        self._mark_ready()
+
         while self.running.is_set():
             time.sleep(1)
 
-    def stop(self) -> None:
-        self.running.clear()
+    def _initialize_dependencies(self) -> None:
+        deadline = time.monotonic() + self.config.startup_timeout_seconds
+        last_error: Exception | None = None
+
+        while time.monotonic() < deadline and self.running.is_set():
+            try:
+                self.producer = self.create_producer()
+                self.main_consumer = self.create_consumer(self.config.kafka_topic, self.config.kafka_main_group_id)
+                self.retry_consumer = self.create_consumer(self.config.retry_topic, self.config.kafka_retry_group_id)
+
+                self._wait_for_kafka()
+                self.sqs_client.set_queue_attributes(
+                    QueueUrl=self.config.sqs_queue_url,
+                    Attributes={"VisibilityTimeout": str(self.config.sqs_visibility_timeout_seconds)},
+                )
+                return
+            except Exception as exc:
+                last_error = exc
+                self.logger.warning("Provider dependencies are not ready yet: %s", exc)
+                self._close_kafka_clients()
+                time.sleep(2)
+
+        raise RuntimeError("Provider failed to initialize dependencies") from last_error
+
+    def _wait_for_kafka(self) -> None:
+        assert self.producer is not None
+        assert self.main_consumer is not None
+        assert self.retry_consumer is not None
+
+        if not self.producer.bootstrap_connected():
+            raise RuntimeError("Kafka producer is not connected")
+
+        self.main_consumer.topics()
+        self.retry_consumer.topics()
+
+    def _mark_ready(self) -> None:
+        self.ready_file.write_text("ready\n", encoding="utf-8")
+
+    def _clear_ready_file(self) -> None:
+        self.ready_file.unlink(missing_ok=True)
+
+    def _close_kafka_clients(self) -> None:
         for consumer in (self.main_consumer, self.retry_consumer):
             if consumer is not None:
                 consumer.close()
+        self.main_consumer = None
+        self.retry_consumer = None
+
+        if self.producer is not None:
+            self.producer.close()
+        self.producer = None
+
+    def stop(self) -> None:
+        self.running.clear()
+        self._clear_ready_file()
         if self.producer is not None:
             self.producer.flush()
-            self.producer.close()
+        self._close_kafka_clients()
         for thread in self.threads:
             thread.join(timeout=5)
 
@@ -373,6 +436,9 @@ class BridgeApplication:
             self.send_back_to_retry_topic(retryable_message, correlation_id, exc)
 
     def send_to_sqs(self, message: str, message_key: str, correlation_id: str) -> None:
+        if self.config.sqs_send_delay_ms > 0:
+            time.sleep(self.config.sqs_send_delay_ms / 1000)
+
         request = {
             "QueueUrl": self.config.sqs_queue_url,
             "MessageBody": message,

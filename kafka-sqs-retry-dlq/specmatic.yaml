@@ -28,6 +28,7 @@ components:
     sqsKafkaServiceTest:
       asyncapi:
         type: test
+        replyTimeout: 30000
         servers:
           - host: http://localstack:4566/000000000000
             protocol: sqs

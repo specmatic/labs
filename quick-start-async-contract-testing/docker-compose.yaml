@@ -21,7 +21,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
       interval: 2s
-      timeout: 2s
+      timeout: 5s
       retries: 10
       start_period: 1s
 
@@ -31,7 +31,7 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-    entrypoint: ["/bin/sh", "-c", "chmod +x /specmatic/create-topics.sh && /specmatic/create-topics.sh"]
+    entrypoint: ["/bin/sh", "-c", "sh /specmatic/create-topics.sh"]
     volumes:
       - ./create-topics.sh:/specmatic/create-topics.sh
     restart: "no"
