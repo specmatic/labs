@@ -72,7 +72,7 @@ Then:
 13. Click on the `Test` tab and then click on the `Run` button to run the workflow test. This will execute the entire workflow with the provided input data and validate the interactions between the services based on the defined Arazzo specification.
 14. On a fresh stack boot, the first run may fail at `createOrderReceive` due to async startup warm-up. If that happens, rerun the workflow once.
 15. You should then see `11 successful` assertions in the workflow test results, indicating that the workflow executed successfully.
-16. You might see, in the CLI the following `Tests run: 17, Successes: 9, Failures: 0, Errors: 8` - this is an expected discrepancy. The result on the UI is correct.
+16. In the CLI, you might see different counts. This is an expected discrepancy as CLI shows cumulative counts. The result on the UI is correct.
 17. You can click on the `Flow Chart` button to visualize the workflow execution and see the interactions between the services.
 
 Clean up when done:
