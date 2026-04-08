@@ -39,7 +39,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
       interval: 2s
-      timeout: 2s
+      timeout: 5s
       retries: 20
       start_period: 5s
 
@@ -48,7 +48,7 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-    entrypoint: ["/bin/sh", "-c", "chmod +x /app/create-topics.sh && /app/create-topics.sh"]
+    entrypoint: ["/bin/sh", "-c", "sh /app/create-topics.sh"]
     volumes:
       - ./create-topics.sh:/app/create-topics.sh
     restart: "no"

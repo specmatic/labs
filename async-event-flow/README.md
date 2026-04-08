@@ -116,7 +116,12 @@ Tests run: 4, Successes: 2, Failures: 2, Errors: 0
 ```
 - In `examples/async-order-service/outForDeliveryOrder.json`, fix the `after` fixture so we expect the TaxService example to be invoked once instead of twice.
 
-4. Re-run the suite from Studio.
+4. Restart Docker Containers
+```shell
+docker compose down -v && docker compose up
+```
+
+5. Re-run the suite from Studio.
 
 You should now see:
 
@@ -124,7 +129,7 @@ You should now see:
 Tests run: 4, Successes: 4, Failures: 0, Errors: 0
 ```
 
-5. Bring down the Kafka broker after the tests are done.
+6. Bring down the Kafka broker after the tests are done.
 ```shell
 docker compose down -v
 ```
