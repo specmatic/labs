@@ -6,8 +6,6 @@ Contains all the labs used during the Specmatic hands-on workshop.
 
 ## Prerequisites
 - Docker Engine installed and running on your machine
-- Ensure host networking is enabled in Docker Desktop on your machine. In Docker Desktop, go to Settings > Resources > Network and enable `Enable Host Networking`. This allows the containers to access services running in Docker using `localhost`
-![Docker Config](assets/docker-desktop-host-networking.png) 
 - An IDE (IntelliJ, VS Code, etc.) 
 
 ## Getting Started
