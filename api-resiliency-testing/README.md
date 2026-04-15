@@ -75,7 +75,7 @@ docker compose --profile test up --abort-on-container-exit
 
 Expected baseline result:
 
-```text
+```terminaloutput
 Tests run: 5, Successes: 3, Failures: 2, Errors: 0
 ```
 
@@ -116,7 +116,7 @@ docker compose --profile test up --abort-on-container-exit
 
 Expected checkpoint result:
 
-```text
+```terminaloutput
 Tests run: 5, Successes: 4, Failures: 1, Errors: 0
 ```
 
@@ -152,7 +152,7 @@ docker compose --profile test up --abort-on-container-exit
 
 Expected checkpoint result:
 
-```text
+```terminaloutput
 Tests run: 5, Successes: 5, Failures: 0, Errors: 0
 ```
 
@@ -201,7 +201,7 @@ Expected failure direction:
 
 Expected Task C checkpoint result before the matcher fix:
 
-```text
+```terminaloutput
 Tests run: 209, Successes: 198, Failures: 11, Errors: 0
 ```
 
@@ -265,7 +265,7 @@ Expected outcome:
 
 Final expected result:
 
-```text
+```terminaloutput
 Tests run: 209, Successes: 209, Failures: 0, Errors: 0
 ```
 

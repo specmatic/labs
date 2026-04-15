@@ -47,7 +47,7 @@ docker compose --profile test up test --build --abort-on-container-exit
 ```
 
 Expected baseline result:
-```text
+```terminaloutput
 Tests run: 4, Successes: 1, Failures: 3, Errors: 0
 ```
 
@@ -107,7 +107,7 @@ docker compose --profile test up test --build --abort-on-container-exit
 ```
 
 Expected passing result:
-```text
+```terminaloutput
 Tests run: 4, Successes: 4, Failures: 0, Errors: 0
 ```
 
