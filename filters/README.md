@@ -30,7 +30,7 @@ docker compose up --abort-on-container-exit
 
 Expected baseline output:
 ```terminaloutput
-Tests run: 134, Successes: 20, Failures: 112, Errors: 2
+Tests run: 136, Successes: 20, Failures: 114, Errors: 2
 ```
 
 Clean up:
@@ -53,7 +53,7 @@ In the Active Tabs on the right sidebar, under the `Test` section, click on `pro
 
 ### Task A: Exclude failing scenarios
 1. Run tests once to view failures.
-2. Click on the `Failed: 112` result button on the top to show only failed tests.
+2. Click on the `Failed: 114` result button on the top to show only failed tests.
 3. Select all listed failed tests.
 4. Click `Exclude`.
 5. Click `Total` to return to the full list and confirm excluded tests appear greyed out.

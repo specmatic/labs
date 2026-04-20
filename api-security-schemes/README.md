@@ -138,7 +138,7 @@ docker compose up specmatic-test --abort-on-container-exit
 
 Expected passing result:
 
-- All 167 tests pass.
+- All 171 tests pass.
 - The compose command exits with code `0`.
 - Specmatic output ends with `Failures: 0`.
 

@@ -202,7 +202,7 @@ Expected failure direction:
 Expected Task C checkpoint result before the matcher fix:
 
 ```terminaloutput
-Tests run: 209, Successes: 198, Failures: 11, Errors: 0
+Tests run: 211, Successes: 198, Failures: 13, Errors: 0
 ```
 
 Why this is useful:
@@ -266,7 +266,7 @@ Expected outcome:
 Final expected result:
 
 ```terminaloutput
-Tests run: 209, Successes: 209, Failures: 0, Errors: 0
+Tests run: 211, Successes: 211, Failures: 0, Errors: 0
 ```
 
 Clean up:

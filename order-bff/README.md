@@ -50,7 +50,7 @@ docker compose --profile test up --abort-on-container-exit
 In the logs, you should see the following lines indicating that the contract tests run successfully:
 
 ```terminaloutput
-Tests run: 227, Successes: 223, Failures: 0, Errors: 4
+Tests run: 231, Successes: 227, Failures: 0, Errors: 4
 ```
 
 ```shell
