@@ -41,6 +41,7 @@ paths:
     post:
       summary: POST /products
       requestBody:
+        required: true
         content:
           application/json:
             schema:
