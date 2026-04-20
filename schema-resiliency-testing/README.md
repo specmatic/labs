@@ -32,7 +32,12 @@ Then go to the Test tab, set url as `http://localhost:8080` and click on the "Ru
 You should see 
 
 ```terminaloutput
-Tests run: 6, Successes: 6, Failures: 0, Errors: 0
+Tests run: 3, Successes: 3, Failures: 0, Errors: 0
+```
+
+Stop Studio before moving to the next steps:
+```shell
+docker compose --profile studio down -v
 ```
 
 ### 2. Loop Test using CLI
@@ -42,7 +47,7 @@ docker compose up --abort-on-container-exit
 This will run the suite, start the dependency mock, and run the tests against it. You should see the same results in the terminal output as you did in Studio:
 
 ```terminaloutput
-Tests run: 6, Successes: 6, Failures: 0, Errors: 0
+Tests run: 3, Successes: 3, Failures: 0, Errors: 0
 ```
 
 Clean up
@@ -50,16 +55,16 @@ Clean up
 docker compose down -v
 ```
 
-Stop Studio before switching to CLI-only runs:
-```shell
-docker compose --profile studio down -v
-```
-
 ## Goal of this lab
 The goal of this lab is to try different schema resiliency testing levels and see how the number of tests varies and how coverage changes.
 
 ### Positive Only Tests
-By setting the level to `positiveOnly` you should see
+In `specmatic.yaml` change `schemaResiliencyTests: none` to `schemaResiliencyTests: positiveOnly`
+
+#### Run Positive only Tests
+```shell
+docker compose up --abort-on-container-exit
+```
 
 ```terminaloutput
 Tests run: 42, Successes: 42, Failures: 0, Errors: 0
@@ -71,10 +76,15 @@ docker compose down -v
 ```
 
 ### Positive and Negative Tests (ALL)
-By setting the level to `all` you should see
+In `specmatic.yaml` change `schemaResiliencyTests: positiveOnly` to `schemaResiliencyTests: all`
+
+#### Run Positive only Tests
+```shell
+docker compose up --abort-on-container-exit
+```
 
 ```terminaloutput
-Tests run: 596, Successes: 596, Failures: 0, Errors: 0
+Tests run: 600, Successes: 299, Failures: 301, Errors: 0
 ```
 
 Clean up
@@ -83,11 +93,11 @@ docker compose down -v
 ```
 
 ### Out of License Limit
-You might see issues because of the license limit of 500 tests. Without enterprise license, you won't face this issue. However, this brings up an interesting topic: how do I can control or reduce the number of generated tests?
+You might see issues because of the license limit of 600 tests. With non-trail enterprise license, you won't face this issue. However, this brings up an interesting topic: how do I can control or reduce the number of generated tests?
 
 Check out the documentation on [maxTestRequestCombinations](https://docs.specmatic.io/contract_driven_development/contract_testing#limiting-the-count-of-tests)
 
-### Computation - How did Specmatic generate 148 tests?
+### Computation - How did Specmatic generate so many tests?
 
 | Fields    | Data Types | Required | Nullable | Constraints | Values                    |
 |-----------|------------|----------|----------|-------------|---------------------------|
