@@ -30,7 +30,7 @@ services:
 
   order-bff-studio-sut:
     image: specmaticdemo/specmatic-order-bff-java:latest
-    container_name: order-bff-studio
+    container_name: order-bff-studio-sut
     profiles: ["studio"]
     ports:
       - "8080:8080"
