@@ -1,4 +1,4 @@
-# Studio Lab: Dictionary to Generate Domain-Aware Request/Response Payloads
+# Specmatic Lab: Dictionary to Generate Domain-Aware Request/Response Payloads
 
 ## Objective
 Understand how you can use Specmatic Dictionary feature to generate deterministic, domain-aware request payloads from contract testing and response from service virtualization.
