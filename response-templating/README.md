@@ -1,4 +1,4 @@
-# Studio Lab: Response Templating via Direct Substitution and Data Lookup
+# Specmatic Lab: Response Templating via Direct Substitution and Data Lookup
 
 ## Objective
 Use response templating in Specmatic mocks to make mock responses deterministic and correlated with request data.

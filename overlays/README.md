@@ -1,4 +1,4 @@
-# Studio Lab: Fix Path Mismatch Using Overlays
+# Specmatic Lab: Fix Path Mismatch Using Overlays
 
 ## Objective
 Use a Specmatic overlay to patch a contract path mismatch at test time, without modifying the source contract.
