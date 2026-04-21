@@ -100,7 +100,7 @@ docker compose down -v
 ```
 
 ## Pass Criteria
-- Baseline run shows `224` tests with many failures.
+- Baseline run shows `136` tests with many failures.
 - After applying and exporting filters, CLI run shows:
   - `Tests run: 20, Successes: 20, Failures: 0, Errors: 0`
 
