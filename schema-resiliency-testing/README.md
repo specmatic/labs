@@ -78,13 +78,13 @@ docker compose down -v
 ### Positive and Negative Tests (ALL)
 In `specmatic.yaml` change `schemaResiliencyTests: positiveOnly` to `schemaResiliencyTests: all`
 
-#### Run Positive only Tests
+#### Run all Tests
 ```shell
 docker compose up --abort-on-container-exit
 ```
 
 ```terminaloutput
-Tests run: 600, Successes: 299, Failures: 301, Errors: 0
+Tests run: 600, Successes: 600, Failures: 0
 ```
 
 Clean up
