@@ -49,6 +49,11 @@ Expected failure signal:
 - Contract test fails due to a mismatch in the provider's response event payload.
 - Failure points to `status`, where actual is `"STARTED"` and expected is one of the enum values in the contract (including `"INITIATED"`).
 
+
+```terminaloutput
+Tests run: 1, Successes: 0, Failures: 1, Errors: 0
+```
+
 Then clean up:
 
 ```shell
