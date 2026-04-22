@@ -96,7 +96,7 @@ specs:
 
 Because the OUATH token name and the default values for the BASIC_AUTH_TOKEN and API_KEY in `specmatic.yaml` are intentionally wrong, the protected endpoints return `401 Unauthorized`.
 
-## Baseline run - Failing tests
+## Run the failing tests
 
 From `labs/api-security-schemes`, run:
 
@@ -109,10 +109,6 @@ Expected failing result:
 - The compose command exits with a non-zero code.
 - Specmatic reports failures against secured endpoints.
 - The failures include `401 Unauthorized` responses.
-
-```terminalOutput
-Tests run: 171, Successes: 0, Failures: 171, Errors: 0
-```
 
 Since OUATH token name and the default values for the BASIC_AUTH_TOKEN and API_KEY in [`specmatic.yaml`](specmatic.yaml) is invalid, Specmatic sends invalid credentials and the protected endpoints return `401 Unauthorized`.
 
