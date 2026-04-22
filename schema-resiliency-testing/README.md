@@ -41,10 +41,15 @@ docker compose --profile studio down -v
 ```
 
 ### 2. Loop Test using CLI
+
+Start docker containers
+
 ```shell
 docker compose up --abort-on-container-exit
 ```
 This will run the suite, start the dependency mock, and run the tests against it. You should see the same results in the terminal output as you did in Studio:
+
+Expected console output:
 
 ```terminaloutput
 Tests run: 3, Successes: 3, Failures: 0, Errors: 0
@@ -62,9 +67,14 @@ The goal of this lab is to try different schema resiliency testing levels and se
 In `specmatic.yaml` change `schemaResiliencyTests: none` to `schemaResiliencyTests: positiveOnly`
 
 #### Run Positive only Tests
+
+Start docker containers
+
 ```shell
 docker compose up --abort-on-container-exit
 ```
+
+Expected console output:
 
 ```terminaloutput
 Tests run: 42, Successes: 42, Failures: 0, Errors: 0
@@ -79,9 +89,14 @@ docker compose down -v
 In `specmatic.yaml` change `schemaResiliencyTests: positiveOnly` to `schemaResiliencyTests: all`
 
 #### Run all Tests
+
+Start docker containers
+
 ```shell
 docker compose up --abort-on-container-exit
 ```
+
+Expected console output:
 
 ```terminaloutput
 Tests run: 600, Successes: 600, Failures: 0
