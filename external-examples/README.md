@@ -49,7 +49,7 @@ docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license
 
 Expected output:
 ```terminaloutput
-[OK] Specification simple-openapi-spec.yaml: PASSED
+[OK] Specification product_search_bff_v6.yaml: PASSED
 [FAIL] Examples: 1 passed and 3 failed out of 4 total
 ```
 
@@ -94,7 +94,7 @@ docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license
 
 Expected final output:
 ```terminaloutput
-[OK] Specification simple-openapi-spec.yaml: PASSED
+[OK] Specification product_search_bff_v6.yaml: PASSED
 [OK] Examples: 6 passed and 0 failed out of 6 total
 ```
 
