@@ -212,7 +212,7 @@ Replace `api-specs/order-service-async-avro-v3_0_0_examples/PLACE_IPHONE_ORDER.j
           "id": 1,
           "name": "iPhone",
           "quantity": 10,
-          "price": 5000.00
+          "price": 5000
         }
       ]
     }
@@ -243,7 +243,7 @@ Replace `api-specs/order-service-async-avro-v3_0_0_examples/PLACE_MACBOOK_ORDER.
           "id": 1,
           "name": "Macbook",
           "quantity": 50,
-          "price": 6000.00
+          "price": 6000
         }
       ]
     }
