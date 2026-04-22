@@ -72,7 +72,66 @@ Together, `receive`/`send` plus `before`/`after` fixtures let you express full e
 
 ![Event flow Verification](assets/async-interaction-validation.gif)
 
-## Run the contract tests using Specmatic Studio
+## Baseline
+
+* Start docker containers - macOS / Linux / Windows (PowerShell)
+
+```shell
+docker compose up -d
+```
+
+* Verify containers have started
+
+```terminalOutput
+[containers start successfully]
+```
+
+* Run the contract tests from the CLI
+
+```shell
+docker compose run --rm studio test
+```
+
+* Expected console output
+
+```terminalOutput
+Tests run: 4, Successes: 2, Failures: 2, Errors: 0
+```
+
+## Apply fix
+
+Update the async examples so the contract expectations match the intended flow.
+
+* In `examples/async-order-service/acceptOrder.json`, add the missing before section.
+* In `examples/async-order-service/outForDeliveryOrder.json`, change the expected count from $match(exact: 2) to $match(exact: 1).
+
+## Verify fix
+
+* Start docker containers - macOS / Linux / Windows (PowerShell)
+
+```shell
+docker compose up -d
+```
+
+* Verify containers have started
+
+```terminalOutput
+[containers start successfully]
+```
+
+* Run the contract tests from the CLI
+
+```shell
+docker compose run --rm studio test
+```
+
+* Expected console output
+
+```terminalOutput
+Tests run: 4, Successes: 4, Failures: 0, Errors: 0
+```
+
+### Run the contract tests using Specmatic Studio
 1. Start Kafka, the sample service, and Specmatic Studio.
 ```shell
 docker compose up
@@ -129,7 +188,10 @@ You should now see:
 Tests run: 4, Successes: 4, Failures: 0, Errors: 0
 ```
 
-6. Bring down the Kafka broker after the tests are done.
+### Cleanup
+
+Bring down the Kafka broker after the tests are done.
+
 ```shell
 docker compose down -v
 ```
