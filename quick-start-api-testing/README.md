@@ -1,13 +1,7 @@
 # Quick Start API Testing Lab
 
-## Contract Testing vs API Testing
-- In Contract Testing, we verify that the provider service adheres to the contract (interface), which is a formal agreement on the expected interactions.
-- In API Testing, we validate the actual values of the API against specific test cases, often using real data and scenarios.
-
 ## Objective
-In Specmatic, we use matchers to assert specific values in the response. This lab teaches you how to use matchers in your API test so you can assert exact response values based on your business behavior/logic.
-
-![API Testing](assets/api-testing.gif)
+Use Specmatic matchers in API tests so the examples assert exact business values where needed, while still staying resilient to valid runtime variation.
 
 ## Why this lab matters
 Real services often return a mix of stable and unstable values:
@@ -28,8 +22,8 @@ This lab shows how to express each of those expectations with the right matcher 
 ## Architecture
 - `service/server.py` runs a small Python verification service.
 - `.specmatic/repos/labs-contracts/openapi/verification/verification-api.yaml` defines the contract loaded by `specmatic.yaml`.
-- `specmatic.yaml` points Specmatic at the spec and external test examples.
-- `examples/*.json` contains the test requests and expected responses.
+- `specmatic.yaml` points Specmatic at the contract and the external test examples.
+- `examples/*.json` contains the test requests and expected responses that you will update in this lab.
 
 ## Files in this lab
 - `.specmatic/repos/labs-contracts/openapi/verification/verification-api.yaml` - OpenAPI contract for the verification service.
@@ -60,11 +54,6 @@ Your verification service returns:
 - `processedOn`, which is generated at runtime
 - `referenceCode`, which follows the pattern `VRF-######`
 
-The service is already contract-compliant. The problem is in the test examples:
-- one example is too strict about a valid enum value
-- another example is too strict about a runtime timestamp and a patterned code
-- another example is too strict about a runtime date and a patterned code
-
 Run:
 
 ```shell
@@ -87,9 +76,13 @@ Clean up:
 docker compose down -v
 ```
 
-### Why the baseline fails
-- `test_finance_user_11.json` expects `decision` to be exactly `approved`, but the service may return `approved` or `verified` for that request.
-- `test_support_user_55.json` expects one hardcoded date and one exact reference code, but the service generates fresh valid values every time.
+Expected cleanup output:
+
+```terminaloutput
+Container quick-start-api-testing-api-test-1  Removed
+Container quick-start-api-testing-service-1  Removed
+Network quick-start-api-testing_default  Removed
+```
 
 ### Intermediate Phase: Task A
 Edit `examples/test_finance_user_11.json`.
@@ -115,6 +108,14 @@ Clean up:
 
 ```shell
 docker compose down -v
+```
+
+Expected cleanup output:
+
+```terminaloutput
+Container quick-start-api-testing-api-test-1  Removed
+Container quick-start-api-testing-service-1  Removed
+Network quick-start-api-testing_default  Removed
 ```
 
 ### Final Phase
@@ -144,6 +145,14 @@ Clean up:
 
 ```shell
 docker compose down -v
+```
+
+Expected cleanup output:
+
+```terminaloutput
+Container quick-start-api-testing-api-test-1  Removed
+Container quick-start-api-testing-service-1  Removed
+Network quick-start-api-testing_default  Removed
 ```
 
 ## Pass Criteria
