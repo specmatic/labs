@@ -1,0 +1,32 @@
+version: 2
+contracts:
+  - filesystem:
+      directory: .
+    provides:
+      - specs:
+        - product_search_bff_v5.yaml
+        baseUrl: http://order-bff:8080
+    consumes:
+      - port: 9090
+        specs:
+        - proxy_generated.yaml
+      - port: 9092
+        specs:
+        - kafka.yaml
+      - port: 8095
+        specs:
+          - inventory.wsdl
+#hooks:
+#  post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh
+report:
+  formatters:
+    - type: text
+      layout: table
+    - type: ctrf
+  types:
+    APICoverage:
+      OpenAPI:
+        successCriteria:
+          minThresholdPercentage: 70
+          maxMissedEndpointsInSpec: 0
+          enforce: true
