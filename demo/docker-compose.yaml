@@ -11,7 +11,7 @@ services:
       - "9090:9090"
     volumes:
       - ./specs:/usr/src/app
-      - ../license.txt:/usr/src/app/specmatic-license.txt
+      - ../license.txt:/specmatic/specmatic-license.txt
     environment:
       STUDIO_MAX_TEST_COUNT: 1000
       KAFKA_PROPERTIES: |
@@ -19,7 +19,7 @@ services:
         listeners=PLAINTEXT://0.0.0.0:9092
         listener.security.protocol.map=PLAINTEXT:PLAINTEXT
         inter.broker.listener.name=PLAINTEXT
-      SPECMATIC_LICENSE_PATH: /usr/src/app/specmatic-license.txt
+      SPECMATIC_LICENSE_PATH: /specmatic/specmatic-license.txt
 
   order-bff:
     image: specmatic/specmatic-order-bff-java:latest
