@@ -24,14 +24,18 @@ Teams often keep executable examples outside the OpenAPI file so domain teams ca
 
 ## Architecture
 - `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml` is the shared OpenAPI contract loaded through `specmatic.yaml`.
-- `examples/*.json` contains external examples that Specmatic validates against that contract.
 - `docker run ... validate` checks the examples from the CLI.
 - `docker compose --profile studio up` starts Studio so you can inspect, fix, and generate examples interactively.
 
 ## Files in this lab
 - `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml` - shared OpenAPI contract for the BFF API, loaded by `specmatic.yaml` after checkout.
-- `examples/*.json` - external examples validated against the contract.
 - `specmatic.yaml` - Specmatic config that points to the contract and the examples directory.
+- book_200: `examples/test_find_available_products_book_200.json`
+- accepted_product: `examples/test_accepted_product_request.json`
+- accepted_order: `examples/test_accepted_order_request.json`
+- too_many: `examples/test_products_too_many_requests.json`
+- created_product: `examples/test_created_product_request_201.json`
+- created_order: `examples/test_created_order_request_201.json`
 
 ## Lab Rules
 - Do not edit the shared contract in `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`.
