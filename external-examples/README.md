@@ -1,10 +1,18 @@
 ---
 lab_schema: v2
+required_phases:
+  - studio
 reports:
   ctrf: false
   html: false
   readme_summary: true
   console_summary: true
+  ctrf:
+    expected_failure: true
+  html:
+    expected_failure: true
+optional_components:
+  overview_video: true
 ---
 # Studio Lab: Validate, Fix, and Generate External Examples
 
