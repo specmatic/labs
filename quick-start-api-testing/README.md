@@ -20,6 +20,10 @@ Real services often return a mix of stable and unstable values:
 
 This lab shows how to express each of those expectations with the right matcher on the test side.
 
+### Overview Video
+
+Learn API testing fundamentals with Specmatic: [API Testing Overview](https://www.youtube.com/watch?v=PLACEHOLDER)
+
 ![API Testing](assets/api-testing.gif)
 
 ## Time required
