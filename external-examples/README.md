@@ -1,7 +1,5 @@
 ---
 lab_schema: v2
-required_phases:
-  - studio
 reports:
   ctrf: false
   html: false
