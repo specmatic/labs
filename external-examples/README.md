@@ -2,7 +2,6 @@
 reports:
   ctrf: false
   html: false
-<<<<<<< HEAD
 --->
 # Studio Lab: Validate, Fix, and Generate External Examples
 
@@ -50,6 +49,7 @@ Teams often keep executable examples outside the OpenAPI file so domain teams ca
 <!--
 phase-meta
 id: baseline
+test_counts: false
 setup_cmd: false (default is true)
 setup_output: uses the same value as setup_cmd
 test_run_cmd: allOS (default), windows, linux/mac
@@ -84,8 +84,6 @@ Expected output:
 [FAIL] Examples: 1 passed and 3 failed out of 4 total
 ```
 
-<<<<<<< HEAD
-=======
 #### Test Run Cmd (Windows PowerShell or CMD)
 
 ```powershell
@@ -100,9 +98,7 @@ Expected output:
 [FAIL] Examples: 1 passed and 3 failed out of 4 total
 ```
 
->>>>>>> 5523a3c (Readme changes for h4s inside each phase")
 ### Studio Phase
-
 Start Studio:
 
 ```shell
@@ -149,15 +145,13 @@ Network external-examples_default  Removed
 <!--
 phase-meta
 id: final
-kind: final
 docker_cmd: true
-validates_test_counts: true
+test_counts: true
 expected_reports:
   readme_summary: true
   console_summary: true
   ctrf: false
   html: false
-os_scope: all
 -->
 Re-run validation:
 
