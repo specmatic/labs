@@ -1,7 +1,5 @@
 ---
 lab_schema: v2
-required_phases:
-  - studio
 reports:
   ctrf: false
   html: false
@@ -59,6 +57,7 @@ Teams often keep executable examples outside the OpenAPI file so domain teams ca
 <!--
 phase-meta
 id: baseline
+test_counts: false
 setup_cmd: false (default is true)
 setup_output: uses the same value as setup_cmd
 test_run_cmd: allOS (default), windows, linux/mac
@@ -110,15 +109,13 @@ Expected output:
 ### Studio Phase
 <!--
 phase-meta
-id: studio-fix
-kind: studio
-validates_test_counts: false
+id: studio
+test_counts: false
 expected_reports:
   readme_summary: false
   console_summary: false
   ctrf: false
   html: false
-os_scope: all
 -->
 Start Studio:
 
@@ -164,15 +161,13 @@ Network external-examples_default  Removed
 <!--
 phase-meta
 id: final
-kind: final
 docker_cmd: true
-validates_test_counts: true
+test_counts: true
 expected_reports:
   readme_summary: true
   console_summary: true
   ctrf: false
   html: false
-os_scope: all
 -->
 Re-run validation:
 

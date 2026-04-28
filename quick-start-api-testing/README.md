@@ -61,14 +61,12 @@ This lab shows how to express each of those expectations with the right matcher 
 <!--
 phase-meta
 id: baseline
-kind: baseline
-validates_test_counts: true
+test_counts: true
 expected_reports:
   readme_summary: true
   console_summary: true
   ctrf: true
   html: true
-os_scope: all
 -->
 The verification service is already contract-compliant. The intentional problem is in the test examples:
 - `handledBy` is always `verification-service`
@@ -109,15 +107,13 @@ Network quick-start-api-testing_default  Removed
 ### Intermediate Phase: Task A
 <!--
 phase-meta
-id: task-a
-kind: intermediate
-validates_test_counts: true
+id: intermediate
+test_counts: true
 expected_reports:
   readme_summary: true
   console_summary: true
   ctrf: true
   html: true
-os_scope: all
 -->
 Edit `examples/test_finance_user_11.json`.
 
@@ -156,14 +152,12 @@ Network quick-start-api-testing_default  Removed
 <!--
 phase-meta
 id: final
-kind: final
-validates_test_counts: true
+test_counts: true
 expected_reports:
   readme_summary: true
   console_summary: true
   ctrf: true
   html: true
-os_scope: all
 -->
 Edit `examples/test_support_user_55.json`.
 
