@@ -19,6 +19,10 @@ Use Specmatic Studio and `validate` to reproduce failing external examples, fix 
 ## Why this lab matters
 Teams often keep executable examples outside the OpenAPI file so domain teams can update test cases without editing the contract itself. This lab shows how Specmatic validates those external examples and catches drift early.
 
+### Overview Video
+
+Watch the external video -[Watch the external examples overview](https://www.youtube.com/watch?v=TcNayIEP4sw)
+
 ## Time required
 10-15 minutes.
 
@@ -49,7 +53,6 @@ Teams often keep executable examples outside the OpenAPI file so domain teams ca
 ## Specmatic references
 - External examples: [https://docs.specmatic.io/features/external_examples](https://docs.specmatic.io/features/external_examples)
 - Specmatic Studio: [https://docs.specmatic.io/getting_started/studio_quick_start.html](https://docs.specmatic.io/getting_started/studio_quick_start.html)
-- Overview video: [Watch the external examples overview](https://www.youtube.com/watch?v=TcNayIEP4sw)
 
 ## Lab Implementation Phases
 
