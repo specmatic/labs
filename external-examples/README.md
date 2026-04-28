@@ -11,8 +11,7 @@ reports:
     expected_failure: true
   html:
     expected_failure: true
-optional_components:
-  overview_video: true
+overview_video: false
 ---
 # Studio Lab: Validate, Fix, and Generate External Examples
 
@@ -60,16 +59,20 @@ Teams often keep executable examples outside the OpenAPI file so domain teams ca
 <!--
 phase-meta
 id: baseline
-kind: baseline
-validates_test_counts: true
+setup_cmd: false (default is true)
+setup_output: uses the same value as setup_cmd
+test_run_cmd: allOS (default), windows, linux/mac
+test_run_cmd_output: uses the same value as test_run_cmd
+cleanup: false (default is true)
 expected_reports:
   readme_summary: true
   console_summary: true
   ctrf: false
   html: false
-os_scope: all
 -->
 Bring the current examples to a fully valid state and ensure all required create-scenario examples are present.
+
+#### Test Run Cmd (Linux/Mac OSX)
 
 Run:
 
@@ -81,6 +84,8 @@ docker run --rm \
   validate
 ```
 
+#### Test Run Cmd Output (Linux/Mac OSX)
+
 Expected output:
 
 ```terminaloutput
@@ -88,12 +93,13 @@ Expected output:
 [FAIL] Examples: 1 passed and 3 failed out of 4 total
 ```
 
-Windows (PowerShell or CMD):
+#### Test Run Cmd (Windows PowerShell or CMD)
 
 ```powershell
 docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
 ```
 
+#### Test Run Cmd Output (Windows PowerShell or CMD)
 Expected output:
 
 ```terminaloutput
@@ -159,6 +165,7 @@ Network external-examples_default  Removed
 phase-meta
 id: final
 kind: final
+docker_cmd: true
 validates_test_counts: true
 expected_reports:
   readme_summary: true
