@@ -106,6 +106,10 @@ docker compose up specmatic-test --abort-on-container-exit
 
 Expected failing result:
 
+```terminalOutput
+Tests run: 171, Successes: 0, Failures: 171, Errors: 0
+```
+
 - The compose command exits with a non-zero code.
 - Specmatic reports failures against secured endpoints.
 - The failures include `401 Unauthorized` responses.

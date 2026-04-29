@@ -78,6 +78,11 @@ Run:
 docker compose up api-test --build --abort-on-container-exit
 ```
 
+* Expected console output
+
+```terminalOutput
+Tests run: 4, Successes: 2, Failures: 2, Errors: 0
+```
 
 Why the baseline fails:
 - `test_finance_user_11.json` expects `decision` to be exactly `approved`, but the service may return `approved` or `verified` for that request.
