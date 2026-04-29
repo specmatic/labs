@@ -5,6 +5,10 @@ reports:
   html: true
   readme_summary: true
   console_summary: true
+phases:
+  - baseline
+  - intermediate
+  - final
 ---
 # Quick Start API Testing Lab
 
@@ -62,16 +66,6 @@ Learn API testing fundamentals with Specmatic: [API Testing Overview](https://ww
 ## Lab Implementation Phases
 
 ### Baseline Phase
-<!--
-phase-meta
-id: baseline
-test_counts: true
-expected_reports:
-  readme_summary: true
-  console_summary: true
-  ctrf: true
-  html: true
--->
 The verification service is already contract-compliant. The intentional problem is in the test examples:
 - `handledBy` is always `verification-service`
 - `decision` may be `approved` or `verified`
@@ -84,11 +78,6 @@ Run:
 docker compose up api-test --build --abort-on-container-exit
 ```
 
-Expected output:
-
-```terminaloutput
-Tests run: 4, Successes: 2, Failures: 2, Errors: 0
-```
 
 Why the baseline fails:
 - `test_finance_user_11.json` expects `decision` to be exactly `approved`, but the service may return `approved` or `verified` for that request.
@@ -109,16 +98,6 @@ Network quick-start-api-testing_default  Removed
 ```
 
 ### Intermediate Phase: Task A
-<!--
-phase-meta
-id: intermediate
-test_counts: true
-expected_reports:
-  readme_summary: true
-  console_summary: true
-  ctrf: true
-  html: true
--->
 Edit `examples/test_finance_user_11.json`.
 
 In `http-response.body`, change:
@@ -153,16 +132,6 @@ Network quick-start-api-testing_default  Removed
 ```
 
 ### Final Phase
-<!--
-phase-meta
-id: final
-test_counts: true
-expected_reports:
-  readme_summary: true
-  console_summary: true
-  ctrf: true
-  html: true
--->
 Edit `examples/test_support_user_55.json`.
 
 In `http-response.body`, change:
