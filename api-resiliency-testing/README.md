@@ -1,3 +1,8 @@
+---
+expected_failure_mismatch: true
+expected_failure_mismatch_reason: "Pass/fail counts differ due to license or Specmatic version differences."
+---
+
 # API Resiliency Testing with Specmatic
 
 Resiliency matters, and yet we still underestimate how fragile the digital world is. A single API failure can cascade across industries: flights delayed, nurses locked out of medication charts, government services unavailable. Recent incidents include a Crowdstrike outage that caused widespread disruption, a Google outage in June 2025 triggered by a null pointer exception, Cloudflare incidents where a frontend retry loop overwhelmed tenant services, and a Tesla API outage that left owners unable to open their cars.

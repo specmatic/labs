@@ -1,3 +1,8 @@
+---
+expected_failure_mismatch: true
+expected_failure_mismatch_reason: "Pass/fail counts differ due to license or Specmatic version differences."
+---
+
 # Studio Lab: Schema Resiliency Testing
 
 This lab demonstrates how to use Specmatic's schema resiliency testing features to ensure your API operates as expected by HTTP standards. 
