@@ -1,3 +1,8 @@
+---
+expected_failure_mismatch: true
+expected_failure_mismatch_reason: "Pass/fail counts differ due to license or Specmatic version differences."
+---
+
 # Kafka to SQS Retry and DLQ
 
 This lab shows a common async implementation drift problem: the AsyncAPI contract already describes retry and dead-letter behavior, but the service does not fully handle the retry and DLQ behavior.
