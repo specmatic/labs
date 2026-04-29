@@ -65,26 +65,18 @@ docker run --rm \
   validate
 ```
 
-#### Test Run Cmd Output (Linux/Mac OSX)
-
-Expected output:
-
-```terminaloutput
-[OK] Specification product_search_bff_v6.yaml: PASSED
-[FAIL] Examples: 1 passed and 3 failed out of 4 total
-```
-
-#### Test Run Cmd (Windows PowerShell or CMD)
+Test Run Cmd (Windows PowerShell or CMD)
 
 ```powershell
 docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
 ```
 
-#### Test Run Cmd Output (Windows PowerShell or CMD)
+#### Test Run Cmd Output
+
 Expected output:
 
 ```terminaloutput
-[OK] Specification simple-openapi-spec.yaml: PASSED
+[OK] Specification product_search_bff_v6.yaml: PASSED
 [FAIL] Examples: 1 passed and 3 failed out of 4 total
 ```
 
@@ -124,7 +116,6 @@ Stop Studio after the fixes and generated examples are saved:
 docker compose --profile studio down -v
 ```
 
-Expected output:
 
 ```terminaloutput
 Container external-examples-studio-1  Removed
@@ -132,12 +123,6 @@ Network external-examples_default  Removed
 ```
 
 ### Final Phase
-Expected output:
-
-```terminaloutput
-[OK] Specification product_search_bff_v6.yaml: PASSED
-[OK] Examples: 6 passed and 0 failed out of 6 total
-```
 
 Windows (PowerShell or CMD):
 
@@ -148,13 +133,12 @@ docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license
 Expected output:
 
 ```terminaloutput
-[OK] Specification simple-openapi-spec.yaml: PASSED
+[OK] Specification product_search_bff_v6.yaml: PASSED
 [OK] Examples: 6 passed and 0 failed out of 6 total
 ```
 
 ## Pass Criteria
 - Baseline validation reports `1 passed and 3 failed out of 4 total`.
-- After the Studio fixes and generated examples, validation reports `6 passed and 0 failed out of 6 total`.
 - Overall validation result is `PASSED`.
 
 ## Troubleshooting
