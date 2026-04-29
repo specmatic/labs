@@ -10,6 +10,7 @@ reports:
   html:
     expected_failure: true
 overview_video: false
+test_counts: true
 ---
 # Studio Lab: Validate, Fix, and Generate External Examples
 
