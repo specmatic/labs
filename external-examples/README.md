@@ -58,21 +58,7 @@ Watch the external video -[Watch the external examples overview](https://www.you
 ## Lab Implementation Phases
 
 ### Baseline Phase
-<!--
-phase-meta
-id: baseline
-test_counts: false
-setup_cmd: false (default is true)
-setup_output: uses the same value as setup_cmd
-test_run_cmd: allOS (default), windows, linux/mac
-test_run_cmd_output: uses the same value as test_run_cmd
-cleanup: false (default is true)
-expected_reports:
-  readme_summary: true
-  console_summary: true
-  ctrf: false
-  html: false
--->
+
 Bring the current examples to a fully valid state and ensure all required create-scenario examples are present.
 
 #### Test Run Cmd (Linux/Mac OSX)
@@ -111,16 +97,6 @@ Expected output:
 ```
 
 ### Studio Phase
-<!--
-phase-meta
-id: studio
-test_counts: false
-expected_reports:
-  readme_summary: false
-  console_summary: false
-  ctrf: false
-  html: false
--->
 Start Studio:
 
 ```powershell
@@ -162,27 +138,6 @@ Network external-examples_default  Removed
 ```
 
 ### Final Phase
-<!--
-phase-meta
-id: final
-docker_cmd: true
-test_counts: true
-expected_reports:
-  readme_summary: true
-  console_summary: true
-  ctrf: false
-  html: false
--->
-Re-run validation:
-
-```shell
-docker run --rm \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
-  specmatic/enterprise:latest \
-  validate
-```
-
 Expected output:
 
 ```terminaloutput
