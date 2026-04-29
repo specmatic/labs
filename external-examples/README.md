@@ -2,6 +2,7 @@
 reports:
   ctrf: false
   html: false
+<<<<<<< HEAD
 --->
 # Studio Lab: Validate, Fix, and Generate External Examples
 
