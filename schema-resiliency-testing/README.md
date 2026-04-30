@@ -1,6 +1,3 @@
----
----
-
 # Studio Lab: Schema Resiliency Testing
 
 This lab demonstrates how to use Specmatic's schema resiliency testing features to ensure your API operates as expected by HTTP standards. 

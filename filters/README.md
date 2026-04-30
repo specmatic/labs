@@ -1,7 +1,3 @@
----
-passcount_match_only: true
----
-
 # Studio Lab: Test Filters
 
 ## Objective
