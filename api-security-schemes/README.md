@@ -1,3 +1,8 @@
+---
+expected_missing_test_counts: true
+expected_missing_test_counts_reason: "This lab validates security-scheme auth behavior and mismatch details, but it does not emit README/console/CTRF/HTML test-count summaries."
+---
+
 # Specmatic Sample Application to demonstrate OpenAPI Multiple Security Schemes Support
 ![Specmatic Sample Application to demonstrate OpenAPI OAuth2 security scheme support](assets/SpecmaticOAuth.gif)
 

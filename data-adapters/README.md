@@ -1,3 +1,8 @@
+---
+expected_missing_test_counts: true
+expected_missing_test_counts_reason: "This lab validates HTTP response behavior from the UI flow and does not emit README/console/CTRF/HTML test-count summaries."
+---
+
 # Request/Response Adapters Lab
 
 ## Objective
