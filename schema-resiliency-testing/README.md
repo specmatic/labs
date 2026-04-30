@@ -1,6 +1,4 @@
 ---
-expected_failure_mismatch: true
-expected_failure_mismatch_reason: "Pass/fail counts differ due to license or Specmatic version differences."
 ---
 
 # Studio Lab: Schema Resiliency Testing
