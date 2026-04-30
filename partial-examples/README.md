@@ -42,6 +42,7 @@ Some APIs may have a lot of transient, but mandatory fields which does not matte
 Validate the original incomplete examples and observe the intentional failures.
 
 Test Run Cmd (Linux/Mac OSX)
+## Validate the examples (intentional failure)
 
 ```shell
 docker run --rm \
@@ -56,11 +57,13 @@ docker run --rm \
 [FAIL] Examples: 0 passed and 3 failed out of 3 total
 ```
 
-Windows (PowerShell/CMD) single-line
+Windows (PowerShell/CMD) single-line:
 
 ```shell
 docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
 ```
+
+### Output
 
 ```terminaloutput
 [OK] Specification product_search_bff_v6.yaml: PASSED
@@ -75,11 +78,16 @@ Start Studio:
 docker compose --profile studio up studio
 ```
 
+```terminaloutput
+Attaching to studio-1
+```
+
 ## Learner task: fix 3 examples using partial examples
 In Studio, open `product_search_bff_v6.yaml` which should be under `.specmatic/repos/labs-contracts/common/openapi/order-bff` from the left sidebar. You will see that 3 examples have failed validation on the `examples` tab.
 
 **Please do not click the `Fix` button to make these examples valid. Instead, use [partial examples](https://docs.specmatic.io/contract_driven_development/service_virtualization#partial-examples) to fix them.**
 
+<<<<<<< HEAD
 Fix the examples using partial examples:
 - Convert `examples/test_accepted_order_request.json` into a partial example for the create-order flow.
 - Convert `examples/test_accepted_product_request.json` into a partial example for the create-product flow.
@@ -105,15 +113,17 @@ Re-run validation with the Windows single-line command after the Studio fixes ar
 Windows (PowerShell/CMD) single-line
 
 ```shell
-docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
+docker run --rm \
+  -v .:/usr/src/app \
+  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
+  specmatic/enterprise:latest \
+  validate
 ```
 
 ```terminaloutput
-[OK] Specification product_search_bff_v6.yaml: PASSED
+[OK] Specification simple-openapi-spec.yaml: PASSED
 [OK] Examples: 3 passed and 0 failed out of 3 total
 ```
-
-## Loop Test
 
 ### Loop Test in Studio
 In Studio, after examples are valid:

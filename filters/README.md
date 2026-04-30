@@ -48,6 +48,10 @@ Run:
 docker compose --profile studio up studio
 ```
 
+```terminaloutput
+Attaching to studio-1
+```
+
 Open Studio at `http://127.0.0.1:9000/_specmatic/studio`.
 
 ## 3. Run tests in Studio

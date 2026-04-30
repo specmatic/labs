@@ -48,6 +48,10 @@ Start only the consumer:
 docker compose up consumer --build
 ```
 
+```terminaloutput
+Attaching to consumer-1
+```
+
 Open [http://127.0.0.1:8081](http://127.0.0.1:8081).
 
 In the UI:
@@ -67,6 +71,10 @@ Keep Part A terminal running. In a second terminal, run:
 
 ```shell
 docker compose --profile mock up mock
+```
+
+```terminaloutput
+Attaching to mock-1
 ```
 
 Go back to consumer UI and click **Load Pet** again.
@@ -92,6 +100,10 @@ Clean up:
 docker compose --profile mock stop mock
 ```
 
+```terminaloutput
+Container quick-start-mock-mock-1  Stopped
+```
+
 Go back to consumer UI and click **Load Pet** again.
 
 Expected output:
@@ -102,6 +114,10 @@ Start Studio in a new terminal:
 
 ```shell
 docker compose --profile studio up studio
+```
+
+```terminaloutput
+Attaching to studio-1
 ```
 
 Open [http://127.0.0.1:9000/_specmatic/studio](http://127.0.0.1:9000/_specmatic/studio).

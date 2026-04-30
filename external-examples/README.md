@@ -64,10 +64,20 @@ docker run --rm \
   validate
 ```
 
+```terminaloutput
+[OK] Specification product_search_bff_v6.yaml: PASSED
+[FAIL] Examples: 1 passed and 3 failed out of 4 total
+```
+
 Test Run Cmd (Windows PowerShell or CMD)
 
-```powershell
+```shell
 docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
+```
+
+```terminaloutput
+[OK] Specification product_search_bff_v6.yaml: PASSED
+[FAIL] Examples: 1 passed and 3 failed out of 4 total
 ```
 
 #### Test Run Cmd Output
@@ -115,7 +125,6 @@ Stop Studio after the fixes and generated examples are saved:
 docker compose --profile studio down -v
 ```
 
-
 ```terminaloutput
 Container external-examples-studio-1  Removed
 Network external-examples_default  Removed
@@ -131,7 +140,7 @@ After applying the Studio fixes and generating the missing `201` examples, the e
 
 Windows (PowerShell or CMD):
 
-```powershell
+```shell
 docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
 ```
 

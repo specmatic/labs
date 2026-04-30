@@ -21,6 +21,10 @@ Here we'll send contract-invalid requests and ensure the API handles it graceful
 docker compose --profile studio up studio
 ```
 
+```terminaloutput
+Attaching to studio-1
+```
+
 ## Loop Test
 
 ### 1. Loop Test in Studio
