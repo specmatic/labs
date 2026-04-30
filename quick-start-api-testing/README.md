@@ -80,7 +80,7 @@ docker compose up api-test --build --abort-on-container-exit
 
 * Expected console output
 
-```terminalOutput
+```terminaloutput
 Tests run: 4, Successes: 2, Failures: 2, Errors: 0
 ```
 

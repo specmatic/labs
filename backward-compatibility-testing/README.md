@@ -105,9 +105,17 @@ docker run --rm \
   --target-path backward-compatibility-testing/products.yaml
 ```
 
+```terminaloutput
+(INCOMPATIBLE) This spec contains breaking changes to the API
+```
+
 Windows (PowerShell/CMD) single-line:
 ```shell
 docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
+```
+
+```terminaloutput
+(INCOMPATIBLE) This spec contains breaking changes to the API
 ```
 
 Why the command is structured this way:
@@ -173,9 +181,19 @@ docker run --rm \
   --target-path backward-compatibility-testing/products.yaml
 ```
 
+```terminaloutput
+Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
+  (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
+```
+
 Windows (PowerShell/CMD) single-line:
 ```shell
 docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
+```
+
+```terminaloutput
+Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
+  (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
 ```
 
 Expected passing output:
@@ -192,11 +210,19 @@ Restore the tracked file:
 git restore products.yaml
 ```
 
+```terminaloutput
+products.yaml restored.
+```
+
 ## Check backward compatibility in Specmatic Studio before saving
 Start Studio from `labs/backward-compatibility-testing`:
 
 ```shell
 docker compose --profile studio up
+```
+
+```terminaloutput
+Attaching to studio-1
 ```
 
 Open [Specmatic Studio](http://127.0.0.1:9000/_specmatic/studio), then:

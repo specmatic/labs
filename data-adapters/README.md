@@ -41,13 +41,23 @@ This lab will help you understand how to identify such mismatches and use Specma
 
 ## 1. Start mock + UI
 Run:
-```bash
+
+```shell
 docker compose up
 ```
 
+```terminaloutput
+[containers start successfully]
+```
+
 Check services:
-```bash
+
+```shell
 docker compose ps
+```
+
+```terminaloutput
+[mock and ui services are running]
 ```
 
 ## 2. Trigger the mismatch from browser (intentional failure)
@@ -63,9 +73,11 @@ This fail-first behavior is expected in this lab.
 
 ## 3. Cleanup
 Run:
+
 ```bash
 docker compose down -v
 ```
+
 ## 4. Configure hooks in `specmatic.yaml`
 Add the following `data` block under `dependencies` in `specmatic.yaml` so that it sits alongside `services`:
 
@@ -85,14 +97,24 @@ Why both hooks are needed:
 
 ## 5. Ensure hook scripts are executable
 Run:
-```bash
+
+```shell
 chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
+```
+
+```terminaloutput
+[hook scripts are executable]
 ```
 
 ## 6. Restart mock + UI
 Run:
-```bash
+
+```shell
 docker compose up
+```
+
+```terminaloutput
+[containers start successfully]
 ```
 
 ## 7. Trigger the matching request/response from browser
@@ -102,26 +124,43 @@ docker compose up
 
 ## 8. Cleanup
 Run:
-```bash
+
+```shell
 docker compose down -v
 ```
 
 ## Windows Notes
 - If you use PowerShell or CMD, `chmod` may not work. Use Git Bash for this step, or run:
-```powershell
+
+```shell
 git update-index --chmod=+x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
 ```
+
+```terminaloutput
+[hook scripts are executable]
+```
 - Ensure hook files use LF line endings (not CRLF). In Git Bash:
-```bash
+
+```shell
 sed -i 's/\r$//' hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
+```
+
+```terminaloutput
+[hook files now use LF line endings]
 ```
 - If the test still fails with the same `RequestQuery/requestQuery` mismatch after adding adapters, it usually means hook scripts were not executed. Re-check execute bit and LF line endings.
 
 ## 9. Verify in Studio (Optional)
 Start Studio:
-```bash
+
+```shell
 docker compose --profile studio up -d studio ui
 ```
+
+```terminaloutput
+[studio and ui services are running]
+```
+
 1. Open `http://127.0.0.1:9000/_specmatic/studio`, 
 2. Open `specmatic.yaml`, run the suite or start the mock from the `Mock` tab, and use port `9090`. If you want to inspect the contract file in Studio, open `.specmatic/repos/labs-contracts/openapi/data-adapters/camelCase.yaml` from the left panel after the repo is checked out.
 3. Open `http://127.0.0.1:8080`.

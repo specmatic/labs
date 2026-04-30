@@ -111,7 +111,7 @@ docker compose up specmatic-test --abort-on-container-exit
 
 Expected failing result:
 
-```terminalOutput
+```terminaloutput
 Tests run: 171, Successes: 0, Failures: 171, Errors: 0
 ```
 

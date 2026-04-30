@@ -82,7 +82,7 @@ docker compose up -d
 
 * Verify containers have started
 
-```terminalOutput
+```terminaloutput
 [containers start successfully]
 ```
 
@@ -94,7 +94,7 @@ docker compose run --rm studio test
 
 * Expected console output
 
-```terminalOutput
+```terminaloutput
 Tests run: 4, Successes: 2, Failures: 2, Errors: 0
 ```
 
@@ -115,7 +115,7 @@ docker compose up -d
 
 * Verify containers have started
 
-```terminalOutput
+```terminaloutput
 [containers start successfully]
 ```
 
@@ -127,7 +127,7 @@ docker compose run --rm studio test
 
 * Expected console output
 
-```terminalOutput
+```terminaloutput
 Tests run: 4, Successes: 4, Failures: 0, Errors: 0
 ```
 

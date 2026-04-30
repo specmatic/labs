@@ -42,11 +42,13 @@ The `workflow` section is intentionally missing under:
 (in `specmatic.yaml`).
 
 Run:
-```bash
+
+```shell
 docker compose --profile test up test --build --abort-on-container-exit
 ```
 
 Expected baseline result:
+
 ```terminaloutput
 Tests run: 4, Successes: 1, Failures: 3, Errors: 0
 ```
@@ -62,14 +64,15 @@ Why it fails:
 - `GET`, `PUT` and `DELETE` examples validate response `id` as the created task ID, so random IDs do not match.
 
 Cleanup:
-```bash
+
+```shell
 docker compose --profile test down -v
 ```
 
 ## Check in Studio
 Run Studio with the provider service:
 
-```bash
+```shell
 docker compose --profile studio up studio --build
 ```
 
@@ -81,7 +84,8 @@ Open Studio:
 5. Look at the request/response details for the failed GET/PUT/DELETE tests and observe that we are not using the ID created by POST /tasks.
 
 Stop Studio:
-```bash
+
+```shell
 docker compose --profile studio down -v
 ```
 
@@ -102,17 +106,20 @@ workflow:
 ```
 
 Re-run:
-```bash
+
+```shell
 docker compose --profile test up test --build --abort-on-container-exit
 ```
 
 Expected passing result:
+
 ```terminaloutput
 Tests run: 4, Successes: 4, Failures: 0, Errors: 0
 ```
 
 Cleanup:
-```bash
+
+```shell
 docker compose --profile test down -v
 ```
 

@@ -110,6 +110,7 @@ overlayFilePath: ./overlays/path-prefix.overlay.yaml
 
 ## Pass verification
 Run:
+
 ```shell
 docker compose up test --abort-on-container-exit
 ```

@@ -16,8 +16,13 @@ Here we'll send contract-invalid requests and ensure the API handles it graceful
 - `specmatic.yaml` - Specmatic config file that defines the Spec, and it's example files.
 
 ## Start Studio using Docker Compose
+
 ```shell
 docker compose --profile studio up studio
+```
+
+```terminaloutput
+Attaching to studio-1
 ```
 
 ## Loop Test
@@ -47,6 +52,7 @@ Start docker containers
 ```shell
 docker compose up --abort-on-container-exit
 ```
+
 This will run the suite, start the dependency mock, and run the tests against it. You should see the same results in the terminal output as you did in Studio:
 
 Expected console output:
@@ -56,6 +62,7 @@ Tests run: 3, Successes: 3, Failures: 0, Errors: 0
 ```
 
 Clean up
+
 ```shell
 docker compose down -v
 ```
@@ -81,6 +88,7 @@ Tests run: 42, Successes: 42, Failures: 0, Errors: 0
 ```
 
 Clean up
+
 ```shell
 docker compose down -v
 ```
@@ -103,6 +111,7 @@ Tests run: 600, Successes: 600, Failures: 0
 ```
 
 Clean up
+
 ```shell
 docker compose down -v
 ```
