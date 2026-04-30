@@ -1,6 +1,13 @@
 ---
-expected_failure_mismatch: true
-expected_failure_mismatch_reason: "Pass/fail counts differ due to license or Specmatic version differences."
+lab_schema: v2
+reports:
+  ctrf: true
+  html: true
+  readme_summary: true
+  console_summary: true
+phases:
+  - baseline
+passcount_match_only: true
 ---
 
 # Sample Contract Testing and API Mocking Demo
@@ -28,7 +35,7 @@ Following are the specifications used in this project:
 - Docker is installed and running.
 - You are in `labs/order-bff`.
 
-## Run Contract Tests
+## Lab Implementation Phases 
 
 ### 1. Using Specmatic Studio (Recommended for Local Development)
 
@@ -51,7 +58,8 @@ In the Studio UI, you might see 2 more Excluded tests. Total: 233.
 docker compose --profile studio down -v --remove-orphans
 ```
 
-### 2. Using Docker (Recommended for CI)
+### Baseline Phase 
+
 ```shell
 docker compose --profile test up --abort-on-container-exit
 ```
