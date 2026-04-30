@@ -7,7 +7,6 @@ reports:
   console_summary: true
 phases:
   - baseline
-passcount_match_only: true
 ---
 
 # Sample Contract Testing and API Mocking Demo
