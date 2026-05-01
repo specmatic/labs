@@ -24,7 +24,7 @@ services:
     restart: on-failure
 
   specmatic-test:
-    image: specmatic/specmatic:latest
+    image: specmatic/enterprise:latest
     depends_on:
       order-api:
         condition: service_started
