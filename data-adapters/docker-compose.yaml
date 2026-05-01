@@ -32,6 +32,25 @@ services:
       retries: 30
       start_period: 2s
 
+  verifier:
+    image: specmatic/enterprise:latest
+    profiles: ["test"]
+    depends_on:
+      camelCaseService:
+        condition: service_healthy
+    entrypoint: ["curl"]
+    command:
+      - -i
+      - -X
+      - POST
+      - "http://camelCaseService:9090/test?RequestQuery=books"
+      - -H
+      - "Content-Type: application/json"
+      - -H
+      - "RequestHeader: header-value"
+      - -d
+      - '{"RequestKey":"request-value"}'
+
   studio:
     container_name: specmatic-studio
     image: specmatic/enterprise:latest
