@@ -15,7 +15,6 @@ services:
     environment:
       APP_URL: http://api-resiliency-testing-studio-sut:8080
       STUDIO_MAX_TEST_COUNT: 1000
-      SPECMATIC_LICENSE_PATH: /specmatic/specmatic-license.txt
       KAFKA_PROPERTIES: |
         advertised.listeners=PLAINTEXT://studio:9092
         listeners=PLAINTEXT://0.0.0.0:9092
