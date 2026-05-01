@@ -220,10 +220,6 @@ Start Studio from `labs/backward-compatibility-testing`:
 docker compose --profile studio up
 ```
 
-```terminaloutput
-Attaching to studio-1
-```
-
 Open [Specmatic Studio](http://127.0.0.1:9000/_specmatic/studio), then:
 1. Hover the small chevron on the left edge to open the file tree.
 2. Open `products.yaml`.

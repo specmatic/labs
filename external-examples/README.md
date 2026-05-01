@@ -100,10 +100,6 @@ In Studio, open `product_search_bff_v6.yaml` which should be under `.specmatic/r
 
 Expected output:
 
-```terminaloutput
-Attaching to studio-1
-```
-
 In Studio, open `product_search_bff_v6.yaml` from `.specmatic/repos/labs-contracts/common/openapi/order-bff`. You should see three failed examples in the **Examples** tab.
 
 Update the failing examples:
