@@ -39,20 +39,18 @@ Fix the provider so the emitted response event matches the contract's allowed `s
   3. Specmatic validates emitted payload and headers against `.specmatic/repos/labs-contracts/asyncapi/quick-start/async.yaml`.
 
 ## Intentional failure (baseline run)
-From this folder, run:
 
 ```shell
 docker compose up contract-test --build --abort-on-container-exit
 ```
 
-Expected failure signal:
-- Contract test fails due to a mismatch in the provider's response event payload.
-- Failure points to `status`, where actual is `"STARTED"` and expected is one of the enum values in the contract (including `"INITIATED"`).
-
-
 ```terminaloutput
 Tests run: 1, Successes: 0, Failures: 1, Errors: 0
 ```
+
+Expected failure signal:
+- Contract test fails due to a mismatch in the provider's response event payload.
+- Failure points to `status`, where actual is `"STARTED"` and expected is one of the enum values in the contract (including `"INITIATED"`).
 
 Then clean up:
 
