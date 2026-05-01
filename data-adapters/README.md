@@ -41,12 +41,6 @@ Run:
 docker compose up
 ```
 
-Check services:
-
-```shell
-docker compose ps
-```
-
 ## 2. Trigger the mismatch from browser (intentional failure)
 1. Open `http://127.0.0.1:8080`.
 2. Keep default values and click **Submit** button.
