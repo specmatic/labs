@@ -94,14 +94,6 @@ Clean up:
 docker compose down -v
 ```
 
-Expected cleanup output:
-
-```terminaloutput
-Container quick-start-api-testing-api-test-1  Removed
-Container quick-start-api-testing-service-1  Removed
-Network quick-start-api-testing_default  Removed
-```
-
 ### Intermediate Phase: Task A
 Edit `examples/test_finance_user_11.json`.
 
@@ -126,14 +118,6 @@ Clean up:
 
 ```shell
 docker compose down -v
-```
-
-Expected cleanup output:
-
-```terminaloutput
-Container quick-start-api-testing-api-test-1  Removed
-Container quick-start-api-testing-service-1  Removed
-Network quick-start-api-testing_default  Removed
 ```
 
 ### Final Phase
