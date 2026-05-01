@@ -480,8 +480,7 @@ class BridgeApplication:
 
     @staticmethod
     def calculate_backoff(retry_count: int) -> int:
-        # Keep retry processing responsive so one long retry chain does not block later retry records.
-        return min(100 * (2 ** min(retry_count, 5)), 1000)
+        return min(1000 * (2 ** min(retry_count, 5)), 30000)
 
 
 def main() -> None:
