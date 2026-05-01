@@ -63,8 +63,6 @@ Windows (PowerShell/CMD) single-line:
 docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
 ```
 
-### Output
-
 ```terminaloutput
 [OK] Specification product_search_bff_v6.yaml: PASSED
 [FAIL] Examples: 0 passed and 3 failed out of 3 total
@@ -72,18 +70,12 @@ docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license
 
 ### Studio Phase
 
-Start Studio:
-
 ```shell
 docker compose --profile studio up studio
 ```
 
-## Learner task: fix 3 examples using partial examples
 In Studio, open `product_search_bff_v6.yaml` which should be under `.specmatic/repos/labs-contracts/common/openapi/order-bff` from the left sidebar. You will see that 3 examples have failed validation on the `examples` tab.
 
-**Please do not click the `Fix` button to make these examples valid. Instead, use [partial examples](https://docs.specmatic.io/contract_driven_development/service_virtualization#partial-examples) to fix them.**
-
-<<<<<<< HEAD
 Fix the examples using partial examples:
 - Convert `examples/test_accepted_order_request.json` into a partial example for the create-order flow.
 - Convert `examples/test_accepted_product_request.json` into a partial example for the create-product flow.
