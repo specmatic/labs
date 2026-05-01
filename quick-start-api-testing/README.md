@@ -30,7 +30,7 @@ Learn API testing fundamentals with Specmatic: [API Testing Overview](https://ww
 
 ![API Testing](assets/api-testing.gif)
 
-## Time required
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites

@@ -3,7 +3,7 @@
 This lab demonstrates how to use Specmatic's schema resiliency testing features to ensure your API operates as expected by HTTP standards. 
 Here we'll send contract-invalid requests and ensure the API handles it gracefully.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites

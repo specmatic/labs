@@ -15,7 +15,7 @@ This project includes a consumer (`OrderService`) that implements the following 
 
 ![Order Application Workflow](assets/order-application-workflow.gif)
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Objective

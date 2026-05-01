@@ -18,7 +18,7 @@ Teams often keep executable examples outside the OpenAPI file so domain teams ca
 
 Watch the external video -[Watch the external examples overview](https://www.youtube.com/watch?v=TcNayIEP4sw)
 
-## Time required
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites

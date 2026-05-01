@@ -13,7 +13,7 @@ This is the core contract-driven development loop:
 
 If teams do this continuously, contract breaks are caught before release instead of in integration or production.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites

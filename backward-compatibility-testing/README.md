@@ -16,7 +16,7 @@ Backward compatibility checks shift API governance left:
 
 This helps teams detect consumer-impacting contract changes during design and code review, instead of during regression testing or after release.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites

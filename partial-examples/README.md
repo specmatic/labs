@@ -3,7 +3,7 @@
 ## Objective
 Use Specmatic Studio to repair incomplete external examples using partial examples, then verify behavior using validation and loop testing.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites

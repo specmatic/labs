@@ -3,7 +3,7 @@
 ## Objective
 Use a Specmatic overlay to patch a contract path mismatch at test time, without modifying the source contract.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites

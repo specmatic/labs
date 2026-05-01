@@ -3,7 +3,7 @@
 ## Objective
 Use Specmatic test filters to temporarily exclude selected failing scenarios and understand the impact on test results and coverage.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites

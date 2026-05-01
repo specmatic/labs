@@ -3,7 +3,7 @@
 ## Objective
 Understand how you can use Specmatic Dictionary feature to generate deterministic, domain-aware request payloads from contract testing and response from service virtualization.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites

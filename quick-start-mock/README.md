@@ -13,7 +13,7 @@ Use a contract-generated Specmatic mock to keep a consumer app moving even when 
 ## Why this lab matters
 In real projects, consumer teams are often blocked because a dependency is late, unstable, or not accessible in local environments. This lab shows how to remove that dependency bottleneck by generating a mock directly from the contract.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites

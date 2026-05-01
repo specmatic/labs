@@ -9,7 +9,6 @@ Your job is to make those hidden rules explicit in the Avro schemas and then upd
 Run the async contract tests, observe the intentional failure, update the Avro schemas and examples, and verify a passing run.
 
 ## Time required to complete this lab
-
 15-20 minutes.
 
 ## Prerequisites
