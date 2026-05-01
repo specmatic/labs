@@ -70,10 +70,6 @@ Keep Part A terminal running. In a second terminal, run:
 docker compose --profile mock up mock
 ```
 
-```terminaloutput
-Attaching to mock-1
-```
-
 Go back to consumer UI and click **Load Pet** again.
 
 Expected output:
@@ -95,10 +91,6 @@ Clean up:
 
 ```shell
 docker compose --profile mock stop mock
-```
-
-```terminaloutput
-Container quick-start-mock-mock-1  Stopped
 ```
 
 Go back to consumer UI and click **Load Pet** again.
