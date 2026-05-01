@@ -117,10 +117,6 @@ Start Studio in a new terminal:
 docker compose --profile studio up studio
 ```
 
-```terminaloutput
-Attaching to studio-1
-```
-
 Open [http://127.0.0.1:9000/_specmatic/studio](http://127.0.0.1:9000/_specmatic/studio).
 
 In Studio:
