@@ -46,16 +46,24 @@ Run:
 docker compose up
 ```
 
-Check services:
-
-```shell
-docker compose ps
-```
-
 ## 2. Trigger the mismatch from browser (intentional failure)
 1. Open `http://127.0.0.1:8080`.
 2. Keep default values and click **Submit** button.
 3. Observe a 400 bad-request response in the result panel.
+
+You can verify the same failure directly against the service running on 9090:
+
+```shell
+docker compose --profile test run --rm verifier
+```
+
+```terminaloutput
+HTTP/1.1 400 Bad Request
+```
+
+Expected result:
+- The response status should be `400 Bad Request`.
+- This confirms that, before adapters are configured, the service on `9090` rejects the PascalCase request because the service expects camelCase fields.
 
 Why it fails:
 - The UI sends PascalCase fields (`RequestQuery`, `RequestHeader`, `RequestKey`).
@@ -106,7 +114,22 @@ docker compose up
 2. Keep default values and click **Submit** button.
 3. Observe a 200 response in the result panel.
 
-## 8. Cleanup
+## 8. Verify the service call directly via Curl
+Run:
+
+```shell
+docker compose --profile test run --rm verifier
+```
+
+```terminaloutput
+HTTP/1.1 200 OK
+```
+
+Expected result:
+- The response status should be `200 OK`.
+- The response should include the adapted response fields, showing that the mock on `9090` is now accepting the PascalCase request and returning a successful response through the configured adapters.
+
+## 9. Cleanup
 Run:
 
 ```shell
@@ -128,7 +151,7 @@ sed -i 's/\r$//' hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_r
 
 - If the test still fails with the same `RequestQuery/requestQuery` mismatch after adding adapters, it usually means hook scripts were not executed. Re-check execute bit and LF line endings.
 
-## 9. Verify in Studio (Optional)
+## 10. Verify in Studio (Optional)
 Start Studio:
 
 ```shell
@@ -142,7 +165,7 @@ docker compose --profile studio up -d studio ui
 5. Observe a 200 response in the result panel.
 6. Go to the `Mock` tab and look at the request and response payloads. You should see how the data adapters have transformed the field names in both directions.
 
-## 10. Cleanup
+## 11. Cleanup
 Run:
 
 ```shell

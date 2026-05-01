@@ -342,8 +342,6 @@ class BridgeApplication:
         retryable_message = json.loads(record.value)
         correlation_id = correlation_id_from(record.headers)
         retry_count = retryable_message["retryCount"]
-        delay_ms = self.calculate_backoff(retry_count)
-        time.sleep(delay_ms / 1000)
 
         if retry_count >= self.config.max_retries:
             self.logger.warning(
@@ -352,6 +350,9 @@ class BridgeApplication:
             )
             self.send_retryable_to_dlq(retryable_message, correlation_id)
             return
+
+        delay_ms = self.calculate_backoff(retry_count)
+        time.sleep(delay_ms / 1000)
 
         try:
             transformed_message = self.transformer.transform_message(
