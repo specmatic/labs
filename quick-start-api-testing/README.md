@@ -163,14 +163,6 @@ Clean up:
 docker compose down -v
 ```
 
-Expected cleanup output:
-
-```terminaloutput
-Container quick-start-api-testing-api-test-1  Removed
-Container quick-start-api-testing-service-1  Removed
-Network quick-start-api-testing_default  Removed
-```
-
 ## Pass Criteria
 - Baseline run shows `2` failures.
 - After Task A, only `1` failure remains.
