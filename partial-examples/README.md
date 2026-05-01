@@ -17,6 +17,9 @@ Use Specmatic Studio to repair incomplete external examples using partial exampl
 - `specmatic.yaml`: Specmatic configuration for contract testing and mocking.
 - `docker-compose.yaml`: Suite loop setup.
 
+## Reference
+- Partial examples docs: [https://docs.specmatic.io/contract_driven_development/service_virtualization#partial-examples](https://docs.specmatic.io/contract_driven_development/service_virtualization#partial-examples)
+
 ## Validate the examples (intentional failure)
 
 ```shell
@@ -37,13 +40,6 @@ Windows (PowerShell/CMD) single-line:
 ```shell
 docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
 ```
-
-```terminaloutput
-[OK] Specification product_search_bff_v6.yaml: PASSED
-[FAIL] Examples: 0 passed and 3 failed out of 3 total
-```
-
-### Output
 
 ```terminaloutput
 [OK] Specification product_search_bff_v6.yaml: PASSED
@@ -86,16 +82,6 @@ docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license
 [OK] Specification simple-openapi-spec.yaml: PASSED
 [OK] Examples: 3 passed and 0 failed out of 3 total
 ```
-
-### Output
-
-```terminaloutput
-[OK] Specification simple-openapi-spec.yaml: PASSED
-[OK] Examples: 3 passed and 0 failed out of 3 total
-```
-
-## Reference
-- Partial examples docs: [https://docs.specmatic.io/contract_driven_development/service_virtualization#partial-examples](https://docs.specmatic.io/contract_driven_development/service_virtualization#partial-examples)
 
 ## Loop Test
 
