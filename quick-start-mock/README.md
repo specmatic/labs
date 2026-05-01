@@ -49,10 +49,6 @@ Start only the consumer:
 docker compose up consumer --build
 ```
 
-```terminaloutput
-Attaching to consumer-1
-```
-
 Open [http://127.0.0.1:8081](http://127.0.0.1:8081).
 
 In the UI:
