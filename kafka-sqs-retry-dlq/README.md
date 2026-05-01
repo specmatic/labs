@@ -1,6 +1,3 @@
----
----
-
 # Kafka to SQS Retry and DLQ
 
 This lab shows a common async implementation drift problem: the AsyncAPI contract already describes retry and dead-letter behavior, but the service does not fully handle the retry and DLQ behavior.
