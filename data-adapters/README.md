@@ -4,7 +4,7 @@
 If a client fails against a spec-driven mock, it usually means there is a mismatch between the client's request/response and the provider's expected request/response format. 
 This lab will help you understand how to identify such mismatches and use Specmatic's data adapter to temporarily adapt the provider service's interface to match the consumer's expected interface. This allows you to continue development and testing without waiting for the provider to fix their specification, while still ensuring that your expectations are valid against the specification.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
@@ -36,12 +36,14 @@ This lab will help you understand how to identify such mismatches and use Specma
 
 ## 1. Start mock + UI
 Run:
-```bash
+
+```shell
 docker compose up
 ```
 
 Check services:
-```bash
+
+```shell
 docker compose ps
 ```
 
@@ -58,9 +60,11 @@ This fail-first behavior is expected in this lab.
 
 ## 3. Cleanup
 Run:
-```bash
+
+```shell
 docker compose down -v
 ```
+
 ## 4. Configure hooks in `specmatic.yaml`
 Add the following `data` block under `dependencies` in `specmatic.yaml` so that it sits alongside `services`:
 
@@ -80,13 +84,15 @@ Why both hooks are needed:
 
 ## 5. Ensure hook scripts are executable
 Run:
-```bash
+
+```shell
 chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
 ```
 
 ## 6. Restart mock + UI
 Run:
-```bash
+
+```shell
 docker compose up
 ```
 
@@ -97,24 +103,28 @@ docker compose up
 
 ## 8. Cleanup
 Run:
-```bash
+
+```shell
 docker compose down -v
 ```
 
 ## Windows Notes
 - If you use PowerShell or CMD, `chmod` may not work. Use Git Bash for this step, or run:
-```powershell
+
+```shell
 git update-index --chmod=+x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
 ```
 - Ensure hook files use LF line endings (not CRLF). In Git Bash:
-```bash
+
+```shell
 sed -i 's/\r$//' hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
 ```
 - If the test still fails with the same `RequestQuery/requestQuery` mismatch after adding adapters, it usually means hook scripts were not executed. Re-check execute bit and LF line endings.
 
 ## 9. Verify in Studio (Optional)
 Start Studio:
-```bash
+
+```shell
 docker compose --profile studio up -d studio ui
 ```
 1. Open `http://127.0.0.1:9000/_specmatic/studio`, 
@@ -126,7 +136,8 @@ docker compose --profile studio up -d studio ui
 
 ## 10. Cleanup
 Run:
-```bash
+
+```shell
 docker compose --profile studio down -v
 ```
 

@@ -9,7 +9,6 @@ Your job is to fix the service so it matches the retry and DLQ behavior already 
 Run the async contract tests, observe the intentional failure, update the Python provider so it handles retry and DLQ correctly, and verify a passing run.
 
 ## Time required to complete this lab
-
 15-20 minutes.
 
 ## Prerequisites

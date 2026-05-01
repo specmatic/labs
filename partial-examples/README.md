@@ -3,7 +3,7 @@
 ## Objective
 Use Specmatic Studio to repair incomplete external examples using partial examples, then verify behavior using validation and loop testing.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
@@ -18,6 +18,7 @@ Use Specmatic Studio to repair incomplete external examples using partial exampl
 - `docker-compose.yaml`: Suite loop setup.
 
 ## Validate the examples (intentional failure)
+
 ```shell
 docker run --rm \
   -v .:/usr/src/app \
@@ -25,18 +26,32 @@ docker run --rm \
   specmatic/enterprise:latest \
   validate
 ```
+
+```terminaloutput
+[OK] Specification product_search_bff_v6.yaml: PASSED
+[FAIL] Examples: 0 passed and 3 failed out of 3 total
+```
+
 Windows (PowerShell/CMD) single-line:
+
 ```shell
 docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
 ```
 
+```terminaloutput
+[OK] Specification product_search_bff_v6.yaml: PASSED
+[FAIL] Examples: 0 passed and 3 failed out of 3 total
+```
+
 ### Output
+
 ```terminaloutput
 [OK] Specification product_search_bff_v6.yaml: PASSED
 [FAIL] Examples: 0 passed and 3 failed out of 3 total
 ```
 
 ## Start Studio
+
 ```shell
 docker compose --profile studio up studio
 ```
@@ -47,6 +62,7 @@ In Studio, open `product_search_bff_v6.yaml` which should be under `.specmatic/r
 Please do not click the `Fix` button to make these examples valid. Instead, use [partial examples](https://docs.specmatic.io/contract_driven_development/service_virtualization#partial-examples) to fix them.
 
 ## Re-validate after fixing in Studio
+
 ```shell
 docker run --rm \
   -v .:/usr/src/app \
@@ -54,12 +70,25 @@ docker run --rm \
   specmatic/enterprise:latest \
   validate
 ```
+
+```terminaloutput
+[OK] Specification simple-openapi-spec.yaml: PASSED
+[OK] Examples: 3 passed and 0 failed out of 3 total
+```
+
 Windows (PowerShell/CMD) single-line:
+
 ```shell
 docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
 ```
 
+```terminaloutput
+[OK] Specification simple-openapi-spec.yaml: PASSED
+[OK] Examples: 3 passed and 0 failed out of 3 total
+```
+
 ### Output
+
 ```terminaloutput
 [OK] Specification simple-openapi-spec.yaml: PASSED
 [OK] Examples: 3 passed and 0 failed out of 3 total
@@ -91,9 +120,11 @@ Specmatic runs tests from both sources, so total generated tests are higher than
 ### Loop Test using CLI
 
 Run the following command to start the mock server and run the tests against it using CLI.
+
 ```shell
 docker compose up --abort-on-container-exit
 ```
+
 This runs the suite, starts the dependency mocks, and executes the tests. You should see:
 
 ```terminaloutput

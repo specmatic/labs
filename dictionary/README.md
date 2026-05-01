@@ -3,7 +3,7 @@
 ## Objective
 Understand how you can use Specmatic Dictionary feature to generate deterministic, domain-aware request payloads from contract testing and response from service virtualization.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
@@ -17,11 +17,13 @@ Understand how you can use Specmatic Dictionary feature to generate deterministi
 - `specmatic.yaml` - Specmatic config file that pulls the runtime contract from `labs-contracts` and uses local examples.
 
 ## 1. Run the suite using Docker (intentional failure)
+
 ```shell
 docker compose up suite --abort-on-container-exit
 ```
 
 Expected output:
+
 ```terminaloutput
 Tests run: 3, Successes: 0, Failures: 3, Errors: 0
 ```
@@ -31,19 +33,26 @@ Tests expect specific response values, but the mock generates random valid value
 We will fix this by configuring dictionary-driven mock generation, not by editing the example test files.
 
 Clean up before the next step:
+
 ```shell
 docker compose down -v
 ```
 
 ## 2. Learner task: configure dictionary-based mock data
 Generate dictionary data from existing examples:
+
 ```shell
 docker run --rm -v .:/usr/src/app specmatic/enterprise examples dictionary --examples-dir examples --spec-file specs/simple-openapi-spec.yaml --out specs/dictionary.yaml
+```
+
+```terminaloutput
+Generated dictionary file at specs/dictionary.yaml
 ```
 
 Open and understand the [generated dictionary file](specs/dictionary.yaml)
 
 Update `specmatic.yaml` under `dependencies.services[0].service` to add:
+
 ```yaml
 data:
   dictionary:
@@ -51,16 +60,19 @@ data:
 ```
 
 ## 3. Re-run the suite after configuring dictionary
+
 ```shell
 docker compose up suite --abort-on-container-exit
 ```
 
 Expected output:
+
 ```terminaloutput
 Tests run: 3, Successes: 3, Failures: 0, Errors: 0
 ```
 
 Clean up:
+
 ```shell
 docker compose down -v
 ```

@@ -15,7 +15,7 @@ Use Specmatic Studio (and `validate`) to:
 ## Prerequisites
 - Docker is installed and running.
 - You are in `labs/external-examples`.
-- Ports `9000` and `9001` are free (for Studio).
+- Ports `9000` and `9001` are free for Studio.
 
 ## External Examples Overview Video
 [![Watch the video](https://img.youtube.com/vi/TcNayIEP4sw/hqdefault.jpg)](https://www.youtube.com/watch?v=TcNayIEP4sw)

@@ -3,7 +3,7 @@
 ## Objective
 Use Specmatic test filters to temporarily exclude selected failing scenarios and understand the impact on test results and coverage.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
@@ -24,22 +24,26 @@ Use Specmatic test filters to temporarily exclude selected failing scenarios and
 
 ## 1. Baseline run (intentional failure)
 Run:
+
 ```shell
 docker compose up --abort-on-container-exit
 ```
 
 Expected baseline output:
+
 ```terminaloutput
 Tests run: 136, Successes: 20, Failures: 114, Errors: 2
 ```
 
 Clean up:
+
 ```shell
 docker compose down -v
 ```
 
 ## 2. Start Studio
 Run:
+
 ```shell
 docker compose --profile studio up studio
 ```
@@ -85,16 +89,19 @@ docker compose --profile studio down -v
 
 ## 5. Verify from CLI (with persisted filters)
 Run:
+
 ```shell
 docker compose up --abort-on-container-exit
 ```
 
 Expected output:
+
 ```terminaloutput
 Tests run: 20, Successes: 20, Failures: 0, Errors: 0
 ```
 
 Clean up:
+
 ```shell
 docker compose down -v
 ```

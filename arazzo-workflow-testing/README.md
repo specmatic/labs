@@ -12,7 +12,7 @@ More details: https://docs.specmatic.io/supported_protocols/arazzo
 
 ![Sequence Diagram](./assets/arazzo-flow.svg)
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites

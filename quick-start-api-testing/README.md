@@ -70,11 +70,15 @@ Run:
 docker compose up api-test --build --abort-on-container-exit
 ```
 
-Expected output:
+* Expected console output
 
 ```terminaloutput
 Tests run: 4, Successes: 2, Failures: 2, Errors: 0
 ```
+
+Why the baseline fails:
+- `test_finance_user_11.json` expects `decision` to be exactly `approved`, but the service may return `approved` or `verified` for that request.
+- `test_support_user_55.json` expects one hardcoded date and one exact reference code, but the service generates fresh valid values every time.
 
 Clean up:
 
@@ -147,7 +151,7 @@ Clean up:
 docker compose down -v
 ```
 
-## Pass criteria
+## Pass Criteria
 - Baseline run shows `2` failures.
 - After Task A, only `1` failure remains.
 - After Task B, all `4` tests pass.
@@ -155,6 +159,9 @@ docker compose down -v
 ## Troubleshooting
 - If you get a stale result after changing the test examples, rerun with `--build` and then `docker compose down -v`.
 - If all tests pass on the first run, confirm you only edited the two allowed test files and did not save the matcher fixes already.
+
+## Cleanup
+Each implementation phase already ends with `docker compose down -v`, so no additional cleanup is required after the final phase.
 
 ## What you learned
 - `exact` is good when one business value must stay fixed.

@@ -11,7 +11,7 @@ Backward compatibility checks shift API governance left:
 
 This helps teams detect consumer-impacting contract changes during design and code review, instead of during regression testing or after release.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
@@ -100,9 +100,17 @@ docker run --rm \
   --target-path backward-compatibility-testing/products.yaml
 ```
 
+```terminaloutput
+(INCOMPATIBLE) This spec contains breaking changes to the API
+```
+
 Windows (PowerShell/CMD) single-line:
 ```shell
 docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
+```
+
+```terminaloutput
+(INCOMPATIBLE) This spec contains breaking changes to the API
 ```
 
 Why the command is structured this way:
@@ -168,9 +176,19 @@ docker run --rm \
   --target-path backward-compatibility-testing/products.yaml
 ```
 
+```terminaloutput
+Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
+  (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
+```
+
 Windows (PowerShell/CMD) single-line:
 ```shell
 docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
+```
+
+```terminaloutput
+Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
+  (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
 ```
 
 Expected passing output:
@@ -185,6 +203,10 @@ Restore the tracked file:
 
 ```shell
 git restore products.yaml
+```
+
+```terminaloutput
+products.yaml restored.
 ```
 
 ## Check backward compatibility in Specmatic Studio before saving
