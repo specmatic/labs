@@ -74,7 +74,7 @@ This fail-first behavior is expected in this lab.
 ## 3. Cleanup
 Run:
 
-```bash
+```shell
 docker compose down -v
 ```
 
@@ -170,7 +170,8 @@ docker compose --profile studio up -d studio ui
 
 ## 10. Cleanup
 Run:
-```bash
+
+```shell
 docker compose --profile studio down -v
 ```
 
