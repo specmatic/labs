@@ -20,7 +20,7 @@ Use Specmatic Studio to repair incomplete external examples using partial exampl
 ## Reference
 - Partial examples docs: [https://docs.specmatic.io/contract_driven_development/service_virtualization#partial-examples](https://docs.specmatic.io/contract_driven_development/service_virtualization#partial-examples)
 
-## Validate the examples (intentional failure)
+## Baseline phase (intentional failure)
 
 ```shell
 docker run --rm \
