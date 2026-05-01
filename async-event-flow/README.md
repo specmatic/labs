@@ -80,12 +80,6 @@ Together, `receive`/`send` plus `before`/`after` fixtures let you express full e
 docker compose up -d
 ```
 
-* Verify containers have started
-
-```terminaloutput
-[containers start successfully]
-```
-
 * Run the contract tests from the CLI
 
 ```shell
@@ -111,12 +105,6 @@ Update the async examples so the contract expectations match the intended flow.
 
 ```shell
 docker compose up -d
-```
-
-* Verify containers have started
-
-```terminaloutput
-[containers start successfully]
 ```
 
 * Run the contract tests from the CLI
