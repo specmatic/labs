@@ -122,7 +122,7 @@ Still in Studio, generate examples for:
 
 Stop Studio after the fixes and generated examples are saved:
 
-```powershell
+```shell
 docker compose --profile studio down -v
 ```
 
