@@ -39,11 +39,6 @@ Some APIs may have a lot of transient, but mandatory fields which does not matte
 
 ### Baseline Phase
 
-Validate the original incomplete examples and observe the intentional failures.
-
-Test Run Cmd (Linux/Mac OSX)
-## Validate the examples (intentional failure)
-
 ```shell
 docker run --rm \
   -v .:/usr/src/app \
