@@ -122,11 +122,6 @@ Stop Studio after the fixes and generated examples are saved:
 docker compose --profile studio down -v
 ```
 
-```terminaloutput
-Container external-examples-studio-1  Removed
-Network external-examples_default  Removed
-```
-
 After applying the Studio fixes and generating the missing `201` examples, the expected validation state is:
 
 ```terminaloutput
