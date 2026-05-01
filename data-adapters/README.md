@@ -46,18 +46,10 @@ Run:
 docker compose up
 ```
 
-```terminaloutput
-[containers start successfully]
-```
-
 Check services:
 
 ```shell
 docker compose ps
-```
-
-```terminaloutput
-[mock and ui services are running]
 ```
 
 ## 2. Trigger the mismatch from browser (intentional failure)
@@ -102,19 +94,11 @@ Run:
 chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
 ```
 
-```terminaloutput
-[hook scripts are executable]
-```
-
 ## 6. Restart mock + UI
 Run:
 
 ```shell
 docker compose up
-```
-
-```terminaloutput
-[containers start successfully]
 ```
 
 ## 7. Trigger the matching request/response from browser
@@ -136,18 +120,12 @@ docker compose down -v
 git update-index --chmod=+x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
 ```
 
-```terminaloutput
-[hook scripts are executable]
-```
 - Ensure hook files use LF line endings (not CRLF). In Git Bash:
 
 ```shell
 sed -i 's/\r$//' hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
 ```
 
-```terminaloutput
-[hook files now use LF line endings]
-```
 - If the test still fails with the same `RequestQuery/requestQuery` mismatch after adding adapters, it usually means hook scripts were not executed. Re-check execute bit and LF line endings.
 
 ## 9. Verify in Studio (Optional)
@@ -155,10 +133,6 @@ Start Studio:
 
 ```shell
 docker compose --profile studio up -d studio ui
-```
-
-```terminaloutput
-[studio and ui services are running]
 ```
 
 1. Open `http://127.0.0.1:9000/_specmatic/studio`, 
