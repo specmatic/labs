@@ -1,14 +1,5 @@
 ---
 lab_schema: v2
-reports:
-  ctrf: true
-  html: true
-  readme_summary: true
-  console_summary: true
-phases:
-  - baseline
-  - intermediate
-  - final
 ---
 # Quick Start API Testing Lab
 
