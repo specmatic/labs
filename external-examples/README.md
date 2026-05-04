@@ -52,9 +52,7 @@ Watch the external video -[Watch the external examples overview](https://www.you
 
 Bring the current examples to a fully valid state and ensure all required create-scenario examples are present.
 
-#### Test Run Cmd (Linux/Mac OSX)
-
-Run:
+Test Run Cmd (Linux/Mac OSX)
 
 ```shell
 docker run --rm \
@@ -75,13 +73,6 @@ Test Run Cmd (Windows PowerShell or CMD)
 docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
 ```
 
-```terminaloutput
-[OK] Specification product_search_bff_v6.yaml: PASSED
-[FAIL] Examples: 1 passed and 3 failed out of 4 total
-```
-
-#### Test Run Cmd Output
-
 Expected output:
 
 ```terminaloutput
@@ -90,15 +81,12 @@ Expected output:
 ```
 
 ### Studio Phase
+
 Start Studio:
 
 ```shell
 docker compose --profile studio up
 ```
-
-In Studio, open `product_search_bff_v6.yaml` which should be under `.specmatic/repos/labs-contracts/common/openapi/order-bff` from the left sidebar. You will see that 3 examples have failed validation on the `examples` tab.
-
-Expected output:
 
 In Studio, open `product_search_bff_v6.yaml` from `.specmatic/repos/labs-contracts/common/openapi/order-bff`. You should see three failed examples in the **Examples** tab.
 
@@ -115,16 +103,17 @@ Still in Studio, generate examples for:
 - `POST /products` with response `201`
 - `POST /orders` with response `201`
 
+Expected output:
+After applying the Studio fixes and generating the missing `201` examples, the following should be seen:
+
+```terminaloutput
+[OK] Examples: 6 passed and 0 failed out of 6 total
+```
+
 Stop Studio after the fixes and generated examples are saved:
 
 ```shell
 docker compose --profile studio down -v
-```
-
-After applying the Studio fixes and generating the missing `201` examples, the expected validation state is:
-
-```terminaloutput
-[OK] Examples: 6 passed and 0 failed out of 6 total
 ```
 
 ### Final Phase
