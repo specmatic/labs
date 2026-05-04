@@ -1,6 +1,5 @@
 ---
-expected_missing_test_counts: true
-expected_missing_test_counts_reason: "This lab validates CI gate pass/fail behavior and compatibility messages, but it does not emit README/console/CTRF/HTML test-count summaries."
+test_counts: false
 ---
 
 # Running Contract Tests and Mocks in CI

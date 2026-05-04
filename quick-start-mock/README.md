@@ -1,6 +1,5 @@
 ---
-expected_missing_test_counts: true
-expected_missing_test_counts_reason: "This lab validates consumer and mock interaction behavior, but it does not emit README/console/CTRF/HTML test-count summaries."
+test_counts: false
 ---
 
 # Quick Start Mock: Unblock Consumer Development
