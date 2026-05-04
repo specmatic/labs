@@ -3,7 +3,6 @@ reports:
   ctrf: false
   html: false
 --->
-
 # Studio Lab: Partial Examples
 
 ## Objective
