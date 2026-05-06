@@ -1,8 +1,9 @@
----
+<!---
 reports:
   ctrf: false
   html: false
----
+--->
+
 # Studio Lab: Validate, Fix, and Generate External Examples
 
 ## Objective
