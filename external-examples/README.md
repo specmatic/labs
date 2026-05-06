@@ -134,7 +134,7 @@ Expected output:
 ```
 
 ## Pass Criteria
-- Baseline validation reports `1 passed and 3 failed out of 4 total`.
+- `validate` reports `6 passed and 0 failed out of 6 total`.
 - Overall validation result is `PASSED`.
 
 ## Troubleshooting
