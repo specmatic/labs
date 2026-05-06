@@ -3,6 +3,10 @@
 ## Objective
 Use Specmatic matchers in API tests so the examples assert exact business values where needed, while still staying resilient to valid runtime variation.
 
+### Contract Testing vs API Testing
+- In Contract Testing, we verify that the provider service adheres to the contract (interface), which is a formal agreement on the expected interactions.
+- In API Testing, we validate the actual values of the API against specific test cases, often using real data and scenarios.
+
 ## Why this lab matters
 Real services often return a mix of stable and unstable values:
 - one field may always be the same
