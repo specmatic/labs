@@ -1,5 +1,4 @@
 ---
-lab_schema: v2
 reports:
   ctrf: false
   html: false

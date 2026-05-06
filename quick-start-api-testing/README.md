@@ -1,6 +1,3 @@
----
-lab_schema: v2
----
 # Quick Start API Testing Lab
 
 ## Objective
