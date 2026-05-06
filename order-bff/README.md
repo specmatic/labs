@@ -1,13 +1,3 @@
----
-reports:
-  ctrf: true
-  html: true
-  readme_summary: true
-  console_summary: true
-phases:
-  - baseline
----
-
 # Sample Contract Testing and API Mocking Demo
 
 ## Background
@@ -33,7 +23,7 @@ Following are the specifications used in this project:
 - Docker is installed and running.
 - You are in `labs/order-bff`.
 
-## Lab Implementation Phases 
+## Run Contract Tests
 
 ### 1. Using Specmatic Studio (Recommended for Local Development)
 
@@ -56,8 +46,7 @@ In the Studio UI, you might see 2 more Excluded tests. Total: 233.
 docker compose --profile studio down -v
 ```
 
-### Baseline Phase 
-
+### 2. Using Docker (Recommended for CI)
 ```shell
 docker compose --profile test up --abort-on-container-exit
 ```
