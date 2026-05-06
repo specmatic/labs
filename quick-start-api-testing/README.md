@@ -111,6 +111,8 @@ docker compose down -v
 ```
 
 ### Final Phase
+Use `dataType` and `pattern` for dynamic values
+
 Edit `examples/test_support_user_55.json`.
 
 In `http-response.body`, change:
