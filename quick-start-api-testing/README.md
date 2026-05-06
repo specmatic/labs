@@ -1,7 +1,7 @@
 # Quick Start API Testing Lab
 
 ## Objective
-Use Specmatic matchers in API tests so the examples assert exact business values where needed, while still staying resilient to valid runtime variation.
+In Specmatic, we use matchers to assert specific values in the response. This lab teaches you how to use matchers in your API test so you can assert exact response values based on your business behavior/logic.
 
 ### Contract Testing vs API Testing
 - In Contract Testing, we verify that the provider service adheres to the contract (interface), which is a formal agreement on the expected interactions.
