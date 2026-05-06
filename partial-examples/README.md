@@ -84,6 +84,8 @@ docker compose --profile studio up studio
 
 In Studio, open `product_search_bff_v6.yaml` from `.specmatic/repos/labs-contracts/common/openapi/order-bff` in the left sidebar. You should see three failed examples on the **Examples** tab.
 
+**Please do not click the `Fix` button to make these examples valid. Instead, use [partial examples](https://docs.specmatic.io/contract_driven_development/service_virtualization#partial-examples) to fix them.**
+
 Fix the examples using partial examples:
 - Convert `examples/test_accepted_order_request.json` into a partial example for the create-order flow.
 - Convert `examples/test_accepted_product_request.json` into a partial example for the create-product flow.

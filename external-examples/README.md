@@ -90,6 +90,8 @@ docker compose --profile studio up
 
 In Studio, open `product_search_bff_v6.yaml` from `.specmatic/repos/labs-contracts/common/openapi/order-bff`. You should see three failed examples in the **Examples** tab.
 
+Click on each failed example to see the validation errors and fix them. You can either use the "Fix" button in Studio to automatically fix the issues, or fix the examples manually as shown below.
+
 Update the failing examples:
 1. `examples/test_find_available_products_book_200.json`
    - Change `query.to-date` from `"today"` to a valid ISO date, for example `"2025-11-28"`.
