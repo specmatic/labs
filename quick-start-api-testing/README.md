@@ -58,11 +58,16 @@ Learn API testing fundamentals with Specmatic: [API Testing Overview](https://ww
 ## Lab Implementation Phases
 
 ### Baseline Phase
-The verification service is already contract-compliant. The intentional problem is in the test examples:
-- `handledBy` is always `verification-service`
-- `decision` may be `approved` or `verified`
-- `processedOn` is generated at runtime
-- `referenceCode` follows the pattern `VRF-######`
+Your verification service returns:
+- `handledBy`, which is always `verification-service`
+- `decision`, which may be `approved` or `verified`
+- `processedOn`, which is generated at runtime
+- `referenceCode`, which follows the pattern `VRF-######`
+
+The service is already contract-compliant. The problem is in the test examples:
+- one example is too strict about a valid enum value
+- another example is too strict about a runtime timestamp and a patterned code
+- another example is too strict about a runtime date and a patterned code
 
 Run:
 
