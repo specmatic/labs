@@ -97,7 +97,17 @@ Tests run: 4, Successes: 2, Failures: 2, Errors: 0
 Update the async examples so the contract expectations match the intended flow.
 
 * In `examples/async-order-service/acceptOrder.json`, add the missing before section.
-* In `examples/async-order-service/outForDeliveryOrder.json`, change the expected count from $match(exact: 2) to $match(exact: 1).
+* In `examples/async-order-service/outForDeliveryOrder.json`, make this exact change:
+
+```json
+"tax-invoice-for-order-456": "$match(exact: 2)"
+```
+
+To:
+
+```json
+"tax-invoice-for-order-456": "$match(exact: 1)"
+```
 
 ## Verify fix
 
@@ -161,7 +171,17 @@ Tests run: 4, Successes: 2, Failures: 2, Errors: 0
   }
 ],
 ```
-- In `examples/async-order-service/outForDeliveryOrder.json`, fix the `after` fixture so we expect the TaxService example to be invoked once instead of twice.
+- In `examples/async-order-service/outForDeliveryOrder.json`, fix the `after` fixture by changing:
+
+```json
+"tax-invoice-for-order-456": "$match(exact: 2)"
+```
+
+To:
+
+```json
+"tax-invoice-for-order-456": "$match(exact: 1)"
+```
 
 4. Restart Docker Containers
 ```shell
