@@ -1,6 +1,6 @@
----
+<!---
 test_counts: false
----
+--->
 
 # Request/Response Adapters Lab
 
