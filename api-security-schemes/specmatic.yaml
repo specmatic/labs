@@ -12,6 +12,8 @@ specmatic:
       minCoveragePercentage: 70
       maxMissedOperationsInSpec: 4
       enforce: true
+  license:
+    path: /specmatic/specmatic-license.txt
 components:
   sources:
     labsContracts:

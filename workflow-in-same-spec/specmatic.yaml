@@ -29,3 +29,5 @@ specmatic:
   settings:
     general:
       ignoreInlineExamples: true
+  license:
+    path: /specmatic/specmatic-license.txt

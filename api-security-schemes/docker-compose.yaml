@@ -33,6 +33,7 @@ services:
       APP_BASE_URL: http://order-api:8080
     volumes:
       - .:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
     entrypoint: ["/bin/bash"]
     command:
       - -ec
