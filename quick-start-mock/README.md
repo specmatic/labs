@@ -144,7 +144,7 @@ To inspect mock traffic in Studio:
 From lab folder:
 
 ```shell
-docker compose --profile mock down -v
+docker compose --profile mock down -v --remove-orphans
 ```
 
 If consumer is still running in another terminal, stop it with `Ctrl+C`.
@@ -152,7 +152,7 @@ If consumer is still running in another terminal, stop it with `Ctrl+C`.
 If Studio is still running, stop it with:
 
 ```shell
-docker compose --profile studio down -v
+docker compose --profile studio down -v --remove-orphans
 ```
 
 ## What you learned

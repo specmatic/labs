@@ -74,7 +74,7 @@ This fail-first behavior is expected in this lab.
 Run:
 
 ```shell
-docker compose down -v
+docker compose down -v --remove-orphans
 ```
 
 ## 4. Configure hooks in `specmatic.yaml`
@@ -132,7 +132,7 @@ Expected result:
 Run:
 
 ```shell
-docker compose down -v
+docker compose down -v --remove-orphans
 ```
 
 ## Windows Notes
@@ -168,7 +168,7 @@ docker compose --profile studio up -d studio ui
 Run:
 
 ```shell
-docker compose --profile studio down -v
+docker compose --profile studio down -v --remove-orphans
 ```
 
 ## Next step

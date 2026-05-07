@@ -66,7 +66,7 @@ Why it fails:
 Cleanup:
 
 ```shell
-docker compose --profile test down -v
+docker compose --profile test down -v --remove-orphans
 ```
 
 ## Check in Studio
@@ -86,7 +86,7 @@ Open Studio:
 Stop Studio:
 
 ```shell
-docker compose --profile studio down -v
+docker compose --profile studio down -v --remove-orphans
 ```
 
 ## Fix path
@@ -120,7 +120,7 @@ Tests run: 4, Successes: 4, Failures: 0, Errors: 0
 Cleanup:
 
 ```shell
-docker compose --profile test down -v
+docker compose --profile test down -v --remove-orphans
 ```
 
 ## Next step

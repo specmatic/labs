@@ -91,7 +91,7 @@ Why they fail:
 Clean up:
 
 ```shell
-docker compose --profile test down -v
+docker compose --profile test down -v --remove-orphans
 ```
 
 ## Task A: Add a transient delay for the `429` scenario
@@ -127,7 +127,7 @@ At this point:
 Clean up:
 
 ```shell
-docker compose --profile test down -v
+docker compose --profile test down -v --remove-orphans
 ```
 
 ## Task B: Add a transient delay for the `202` scenario
@@ -163,7 +163,7 @@ At this point:
 Clean up:
 
 ```shell
-docker compose --profile test down -v
+docker compose --profile test down -v --remove-orphans
 ```
 
 ## Task C: Enable full schema resiliency for `202`
@@ -272,7 +272,7 @@ Tests run: 249, Successes: 249, Failures: 0, Errors: 0
 Clean up:
 
 ```shell
-docker compose --profile test down -v
+docker compose --profile test down -v --remove-orphans
 ```
 
 ## Run the same flow in Studio
@@ -299,7 +299,7 @@ Then:
 Stop Studio:
 
 ```shell
-docker compose --profile studio down -v
+docker compose --profile studio down -v --remove-orphans
 ```
 
 ## Troubleshooting
