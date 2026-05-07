@@ -4,6 +4,7 @@ services:
     image: specmatic/enterprise:latest
     volumes:
       - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
     command: ["mock"]
     ports:
       - "9090:9090"
@@ -57,6 +58,9 @@ services:
     profiles: ["studio"]
     volumes:
       - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    environment:
+      SPECMATIC_LICENSE_PATH: /specmatic/specmatic-license.txt
     command: ["studio"]
     ports:
       - "9000:9000"

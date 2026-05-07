@@ -1,3 +1,9 @@
+<!---
+reports:
+  ctrf: false
+  html: false
+--->
+
 # Studio Lab: Validate, Fix, and Generate External Examples
 
 Teams often keep executable examples outside the OpenAPI file so domain teams can update test cases without editing the contract itself. This lab shows how Specmatic validates those external examples and catches drift early.
@@ -48,17 +54,20 @@ docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license
 ```
 
 Expected output:
+
 ```terminaloutput
 [OK] Specification product_search_bff_v6.yaml: PASSED
 [FAIL] Examples: 1 passed and 3 failed out of 4 total
 ```
 
-Use Studio to easily fix these spec invalid examples.
+### Studio Phase
 
-### 2. Start Studio
+Start Studio:
+
 ```shell
 docker compose --profile studio up
 ```
+
 In Studio, open `product_search_bff_v6.yaml` which should be under `.specmatic/repos/labs-contracts/common/openapi/order-bff` from the left sidebar. You will see that 3 examples have failed validation on the `examples` tab.
 
 Click on each failed example to see the validation errors and fix them. You can either fix the examples manually or use the "Fix" button in Studio to automatically fix the issues.

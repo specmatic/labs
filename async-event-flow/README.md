@@ -114,7 +114,17 @@ Tests run: 4, Successes: 2, Failures: 2, Errors: 0
   }
 ],
 ```
-- In `examples/async-order-service/outForDeliveryOrder.json`, fix the `after` fixture so we expect the TaxService example to be invoked once instead of twice.
+- In `examples/async-order-service/outForDeliveryOrder.json`, fix the `after` fixture by changing:
+
+```json
+"tax-invoice-for-order-456": "$match(exact: 2)"
+```
+
+To:
+
+```json
+"tax-invoice-for-order-456": "$match(exact: 1)"
+```
 
 4. Restart Docker Containers
 ```shell
@@ -129,7 +139,10 @@ You should now see:
 Tests run: 4, Successes: 4, Failures: 0, Errors: 0
 ```
 
-6. Bring down the Kafka broker after the tests are done.
+### Cleanup
+
+Bring down the Kafka broker after the tests are done.
+
 ```shell
 docker compose down -v
 ```

@@ -1,3 +1,7 @@
+<!---
+test_counts: false
+--->
+
 # Request/Response Adapters Lab
 
 ## Objective
@@ -137,11 +141,13 @@ docker compose down -v
 ```shell
 git update-index --chmod=+x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
 ```
+
 - Ensure hook files use LF line endings (not CRLF). In Git Bash:
 
 ```shell
 sed -i 's/\r$//' hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
 ```
+
 - If the test still fails with the same `RequestQuery/requestQuery` mismatch after adding adapters, it usually means hook scripts were not executed. Re-check execute bit and LF line endings.
 
 ## 10. Verify in Studio (Optional)
@@ -150,6 +156,7 @@ Start Studio:
 ```shell
 docker compose --profile studio up -d studio ui
 ```
+
 1. Open `http://127.0.0.1:9000/_specmatic/studio`, 
 2. Open `specmatic.yaml`, run the suite or start the mock from the `Mock` tab, and use port `9090`. If you want to inspect the contract file in Studio, open `.specmatic/repos/labs-contracts/openapi/data-adapters/camelCase.yaml` from the left panel after the repo is checked out.
 3. Open `http://127.0.0.1:8080`.

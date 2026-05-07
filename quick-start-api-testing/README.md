@@ -18,7 +18,7 @@ Real services often return a mix of stable and unstable values:
 
 This lab shows how to express each of those expectations with the right matcher on the test side.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
@@ -51,7 +51,9 @@ This lab shows how to express each of those expectations with the right matcher 
 - Matchers: [https://docs.specmatic.io/features/matchers](https://docs.specmatic.io/features/matchers)
 - Contract testing overview: [https://docs.specmatic.io/documentation/contract_testing.html](https://docs.specmatic.io/documentation/contract_testing.html)
 
-## Problem context
+## Lab Implementation Phases
+
+### Baseline Phase
 Your verification service returns:
 - `handledBy`, which is always `verification-service`
 - `decision`, which may be `approved` or `verified`
@@ -63,7 +65,6 @@ The service is already contract-compliant. The problem is in the test examples:
 - another example is too strict about a runtime timestamp and a patterned code
 - another example is too strict about a runtime date and a patterned code
 
-## 1. Run the baseline contract tests (intentional failure)
 Run:
 
 ```shell
@@ -90,19 +91,15 @@ docker compose down -v
 - `test_finance_user_11.json` expects `decision` to be exactly `approved`, but the service may return `approved` or `verified` for that request.
 - `test_support_user_55.json` expects one hardcoded date and one exact reference code, but the service generates fresh valid values every time.
 
-## 2. Task A: use `pattern` for a valid enum value
-Edit:
-
-- `examples/test_finance_user_11.json`
+### Intermediate Phase: Task A
+Edit `examples/test_finance_user_11.json`.
 
 In `http-response.body`, change:
-
 - `decision` from `$match(exact: approved)` to `$match(pattern: approved|verified)`
 
 Do not change any other fields.
 
-### Checkpoint after Task A
-Run:
+Re-run:
 
 ```shell
 docker compose up api-test --build --abort-on-container-exit
@@ -120,19 +117,17 @@ Clean up:
 docker compose down -v
 ```
 
-## 3. Task B: use `dataType` and `pattern` for dynamic values
-Edit:
+### Final Phase
+Use `dataType` and `pattern` for dynamic values
 
-- `examples/test_support_user_55.json`
+Edit `examples/test_support_user_55.json`.
 
 In `http-response.body`, change:
-
 - `processedOn` from the exact date to `$match(dataType: date)`
 - `referenceCode` from the exact code to `$match(pattern: VRF-[0-9]{6})`
 
 Keep `handledBy` and `decision` as exact matches.
 
-## 4. Final verification
 Run:
 
 ```shell

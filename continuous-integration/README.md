@@ -1,3 +1,7 @@
+<!---
+test_counts: false
+--->
+
 # Running Contract Tests and Mocks in CI
 
 ## Objective

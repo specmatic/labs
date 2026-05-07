@@ -1,3 +1,7 @@
+<!---
+test_counts: false
+--->
+
 # Quick Start Mock: Unblock Consumer Development
 
 ## Objective
