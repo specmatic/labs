@@ -90,6 +90,11 @@ Still in Studio, generate examples for:
 - `POST /products` with response `201`
 - `POST /orders` with response `201`
 
+Expected output:
+```terminaloutput
+[OK] Examples: 6 passed and 0 failed out of 6 total
+```
+
 ### Final Phase
 
 #### 5. Re-run validation and verify pass state
