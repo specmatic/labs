@@ -72,64 +72,7 @@ Together, `receive`/`send` plus `before`/`after` fixtures let you express full e
 
 ![Event flow Verification](assets/async-interaction-validation.gif)
 
-## Baseline
-
-* Start docker containers - macOS / Linux / Windows (PowerShell)
-
-```shell
-docker compose up -d
-```
-
-* Run the contract tests from the CLI
-
-```shell
-docker compose run --rm studio test
-```
-
-* Expected console output
-
-```terminaloutput
-Tests run: 4, Successes: 2, Failures: 2, Errors: 0
-```
-
-## Apply fix
-
-Update the async examples so the contract expectations match the intended flow.
-
-* In `examples/async-order-service/acceptOrder.json`, add the missing before section.
-* In `examples/async-order-service/outForDeliveryOrder.json`, make this exact change:
-
-```json
-"tax-invoice-for-order-456": "$match(exact: 2)"
-```
-
-To:
-
-```json
-"tax-invoice-for-order-456": "$match(exact: 1)"
-```
-
-## Verify fix
-
-* Start docker containers - macOS / Linux / Windows (PowerShell)
-
-```shell
-docker compose up -d
-```
-
-* Run the contract tests from the CLI
-
-```shell
-docker compose run --rm studio test
-```
-
-* Expected console output
-
-```terminaloutput
-Tests run: 4, Successes: 4, Failures: 0, Errors: 0
-```
-
-### Run the contract tests using Specmatic Studio
+## Run the contract tests using Specmatic Studio
 1. Start Kafka, the sample service, and Specmatic Studio.
 ```shell
 docker compose up
