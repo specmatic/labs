@@ -38,8 +38,11 @@ Bring external examples to a fully valid state and ensure all required create-sc
 - Do not edit the shared contract in `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`.
 - Edit only files under `examples/`.
 
-## 1. Intentional failure (baseline run)
-Run:
+## Lab Implementation Phases
+
+### Baseline Phase
+
+Test Run Cmd (Linux/Mac OSX)
 
 ```shell
 docker run --rm \
@@ -47,6 +50,10 @@ docker run --rm \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
   specmatic/enterprise:latest \
   validate
+```
+Windows (PowerShell/CMD) single-line:
+```shell
+docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
 ```
 Expected output:
 
@@ -67,6 +74,8 @@ In Studio, open `product_search_bff_v6.yaml` which should be under `.specmatic/r
 
 Click on each failed example to see the validation errors and fix them. You can either fix the examples manually or use the "Fix" button in Studio to automatically fix the issues.
 
+### Studio Phase
+
 ### 3. Auto-Fix the 3 failing external examples (tiny actions)
 In Studio, update the failing examples:
 
@@ -83,6 +92,8 @@ Still in Studio, generate examples for:
 - `POST /products` with response `201`
 - `POST /orders` with response `201`
 
+### Final Phase
+
 ### 5. Re-run validation and verify pass state
 ```shell
 docker run --rm \
@@ -90,6 +101,10 @@ docker run --rm \
   -v ../license.txt:/specmatic/specmatic-license.txt:ro \
   specmatic/enterprise:latest \
   validate
+```
+Windows (PowerShell or CMD):
+```shell
+docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
 ```
 Expected final output:
 ```terminaloutput
