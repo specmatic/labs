@@ -51,10 +51,18 @@ docker run --rm \
   specmatic/enterprise:latest \
   validate
 ```
+
+```terminaloutput
+[OK] Specification product_search_bff_v6.yaml: PASSED
+[FAIL] Examples: 1 passed and 3 failed out of 4 total
+```
+
 Windows (PowerShell/CMD) single-line:
+
 ```shell
 docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
 ```
+
 Expected output:
 
 ```terminaloutput
@@ -98,6 +106,7 @@ Expected output:
 ### Final Phase
 
 #### 5. Re-run validation and verify pass state
+
 ```shell
 docker run --rm \
   -v .:/usr/src/app \
@@ -105,11 +114,7 @@ docker run --rm \
   specmatic/enterprise:latest \
   validate
 ```
-Windows (PowerShell or CMD):
-```shell
-docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
-```
-Expected final output:
+
 ```terminaloutput
 [OK] Specification product_search_bff_v6.yaml: PASSED
 [OK] Examples: 6 passed and 0 failed out of 6 total
