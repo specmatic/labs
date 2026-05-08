@@ -48,11 +48,6 @@ docker run --rm \
   specmatic/enterprise:latest \
   validate
 ```
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
-```
-
 Expected output:
 
 ```terminaloutput
@@ -96,11 +91,6 @@ docker run --rm \
   specmatic/enterprise:latest \
   validate
 ```
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
-```
-
 Expected final output:
 ```terminaloutput
 [OK] Specification product_search_bff_v6.yaml: PASSED
