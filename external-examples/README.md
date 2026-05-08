@@ -74,9 +74,7 @@ In Studio, open `product_search_bff_v6.yaml` which should be under `.specmatic/r
 
 Click on each failed example to see the validation errors and fix them. You can either fix the examples manually or use the "Fix" button in Studio to automatically fix the issues.
 
-### Studio Phase
-
-### 3. Auto-Fix the 3 failing external examples (tiny actions)
+#### 3. Auto-Fix the 3 failing external examples (tiny actions)
 In Studio, update the failing examples:
 
 1. `examples/test_find_available_products_book_200.json`
@@ -87,14 +85,14 @@ In Studio, update the failing examples:
 3. `examples/test_accepted_order_request.json`
    - Add missing required property `count` (for example `2`) in request body.
 
-### 4. Generate missing examples in the same Studio flow
+#### 4. Generate missing examples in the same Studio flow
 Still in Studio, generate examples for:
 - `POST /products` with response `201`
 - `POST /orders` with response `201`
 
 ### Final Phase
 
-### 5. Re-run validation and verify pass state
+#### 5. Re-run validation and verify pass state
 ```shell
 docker run --rm \
   -v .:/usr/src/app \
