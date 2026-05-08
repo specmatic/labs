@@ -17,38 +17,32 @@ This lab will help you understand how to identify such mismatches and use Specma
 
 ## Architecture
 - `camel-case-service` (Specmatic mock): serves the contract from `.specmatic/repos/labs-contracts/openapi/data-adapters/camelCase.yaml` on `http://127.0.0.1:9090`
-                                         - `ui` service (Nginx): serves a small web page on `http://127.0.0.1:8080`
-                                                                 - Browser UI sends a PascalCase request to camel-case-service, which expects request in camelCase
+- `ui` service (Nginx): serves a small web page on `http://127.0.0.1:8080`
+- Browser UI sends a PascalCase request to camel-case-service, which expects request in camelCase
 
 ## Files in this lab
-                                                                 - `.specmatic/repos/labs-contracts/openapi/data-adapters/camelCase.yaml`: Provider contract used by `specmatic.yaml` to start the mock service after the contracts repo is checked out.
-                                                                 - `specmatic.yaml`: Specmatic configuration.
-                                                                 - `ui/index.html`: Simple UI that sends PascalCase query/header/body fields.
-                                                                 - `ui/default.conf`: Nginx config that serves UI and proxies `/test` to the mock.
-                                                                 - `hooks/pre_specmatic_request_processor.sh`: Converts outgoing request keys from PascalCase to camelCase.
-                                                                 - `hooks/post_specmatic_response_processor.sh`: Converts incoming response keys from camelCase to PascalCase.
+- `.specmatic/repos/labs-contracts/openapi/data-adapters/camelCase.yaml`: Provider contract used by `specmatic.yaml` to start the mock service after the contracts repo is checked out.
+- `specmatic.yaml`: Specmatic configuration.
+- `ui/index.html`: Simple UI that sends PascalCase query/header/body fields.
+- `ui/default.conf`: Nginx config that serves UI and proxies `/test` to the mock.
+- `hooks/pre_specmatic_request_processor.sh`: Converts outgoing request keys from PascalCase to camelCase.
+- `hooks/post_specmatic_response_processor.sh`: Converts incoming response keys from camelCase to PascalCase.
 
 ## Reference
-                                                                 - Processor hooks configuration: [https://docs.specmatic.io/documentation/configuration.html#hooks](https://docs.specmatic.io/documentation/configuration.html#hooks)
-                                                                 - Processor hooks concept: [https://docs.specmatic.io/features/hooks/processor_hooks](https://docs.specmatic.io/features/hooks/processor_hooks)
+- Processor hooks configuration: [https://docs.specmatic.io/documentation/configuration.html#hooks](https://docs.specmatic.io/documentation/configuration.html#hooks)
+- Processor hooks concept: [https://docs.specmatic.io/features/hooks/processor_hooks](https://docs.specmatic.io/features/hooks/processor_hooks)
 
 ## Lab Rules
-                                                                 - Do not edit the spec in `.specmatic/repos/labs-contracts/openapi/data-adapters/camelCase.yaml`.
-                                                                 - Do not change `docker-compose.yaml`.
-                                                                 - Do not touch the `ui/index.html`.
-                                                                 - Fix the mismatch only by wiring the existing hook scripts in `specmatic.yaml`.
+- Do not edit the spec in `.specmatic/repos/labs-contracts/openapi/data-adapters/camelCase.yaml`.
+- Do not change `docker-compose.yaml`.
+- Do not touch the `ui/index.html`.
+- Fix the mismatch only by wiring the existing hook scripts in `specmatic.yaml`.
 
 ## 1. Start mock + UI
-                                                                 Run:
+Run:
 
 ```shell
 docker compose up
-```
-
-Check services:
-
-```shell
-docker compose ps
 ```
 
 ## 2. Trigger the mismatch from browser (intentional failure)
@@ -123,7 +117,6 @@ docker compose up
 Run:
 
 ```shell
-<<<<<<< HEAD
 docker compose --profile test run --rm verifier
 ```
 
