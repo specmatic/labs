@@ -38,8 +38,11 @@ Bring external examples to a fully valid state and ensure all required create-sc
 - Do not edit the shared contract in `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`.
 - Edit only files under `examples/`.
 
-## 1. Intentional failure (baseline run)
-Run:
+## Lab Implementation Phases
+
+### Baseline Phase
+
+Test Run Cmd (Linux/Mac OSX)
 
 ```shell
 docker run --rm \
@@ -48,7 +51,14 @@ docker run --rm \
   specmatic/enterprise:latest \
   validate
 ```
+
+```terminaloutput
+[OK] Specification product_search_bff_v6.yaml: PASSED
+[FAIL] Examples: 1 passed and 3 failed out of 4 total
+```
+
 Windows (PowerShell/CMD) single-line:
+
 ```shell
 docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
 ```
@@ -72,7 +82,7 @@ In Studio, open `product_search_bff_v6.yaml` which should be under `.specmatic/r
 
 Click on each failed example to see the validation errors and fix them. You can either fix the examples manually or use the "Fix" button in Studio to automatically fix the issues.
 
-### 3. Auto-Fix the 3 failing external examples (tiny actions)
+#### 3. Auto-Fix the 3 failing external examples (tiny actions)
 In Studio, update the failing examples:
 
 1. `examples/test_find_available_products_book_200.json`
@@ -83,12 +93,22 @@ In Studio, update the failing examples:
 3. `examples/test_accepted_order_request.json`
    - Add missing required property `count` (for example `2`) in request body.
 
-### 4. Generate missing examples in the same Studio flow
+#### 4. Generate missing examples in the same Studio flow
 Still in Studio, generate examples for:
 - `POST /products` with response `201`
 - `POST /orders` with response `201`
 
-### 5. Re-run validation and verify pass state
+Expected output:
+```terminaloutput
+[OK] Examples: 6 passed and 0 failed out of 6 total
+```
+
+### Final Phase
+
+#### 5. Re-run validation and verify pass state
+
+Test Run Cmd (Linux/Mac OSX)
+
 ```shell
 docker run --rm \
   -v .:/usr/src/app \
@@ -96,16 +116,25 @@ docker run --rm \
   specmatic/enterprise:latest \
   validate
 ```
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
-```
 
-Expected final output:
 ```terminaloutput
 [OK] Specification product_search_bff_v6.yaml: PASSED
 [OK] Examples: 6 passed and 0 failed out of 6 total
 ```
+
+Windows (PowerShell/CMD) single-line:
+
+```shell
+docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
+```
+
+Expected output:
+
+```terminaloutput
+[OK] Specification product_search_bff_v6.yaml: PASSED
+[OK] Examples: 6 passed and 0 failed out of 6 total
+```
+
 
 Clean up Studio:
 ```shell

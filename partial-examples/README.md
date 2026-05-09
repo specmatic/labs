@@ -75,7 +75,7 @@ Start Studio:
 docker compose --profile studio up studio
 ```
 
-## Learner task: fix 3 examples using partial examples
+#### Learner task: fix 3 examples using partial examples
 In Studio, open `product_search_bff_v6.yaml` which should be under `.specmatic/repos/labs-contracts/common/openapi/order-bff` from the left sidebar. You will see that 3 examples have failed validation on the `examples` tab.
 
 **Please do not click the `Fix` button to make these examples valid. Instead, use [partial examples](https://docs.specmatic.io/contract_driven_development/service_virtualization#partial-examples) to fix them.**
