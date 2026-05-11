@@ -53,7 +53,7 @@ This lab shows how to express each of those expectations with the right matcher 
 
 ## Lab Implementation Phases
 
-### Baseline Phase
+## Baseline Phase
 Your verification service returns:
 - `handledBy`, which is always `verification-service`
 - `decision`, which may be `approved` or `verified`
@@ -91,7 +91,7 @@ docker compose down -v
 - `test_finance_user_11.json` expects `decision` to be exactly `approved`, but the service may return `approved` or `verified` for that request.
 - `test_support_user_55.json` expects one hardcoded date and one exact reference code, but the service generates fresh valid values every time.
 
-### Intermediate Phase: Task A
+## Task A: Use pattern for flexible decision values
 Edit `examples/test_finance_user_11.json`.
 
 In `http-response.body`, change:
@@ -117,7 +117,8 @@ Clean up:
 docker compose down -v
 ```
 
-### Final Phase
+## Task B: Use dataType and pattern for dynamic values
+
 Use `dataType` and `pattern` for dynamic values
 
 Edit `examples/test_support_user_55.json`.
@@ -127,6 +128,8 @@ In `http-response.body`, change:
 - `referenceCode` from the exact code to `$match(pattern: VRF-[0-9]{6})`
 
 Keep `handledBy` and `decision` as exact matches.
+
+## Final Phase
 
 Run:
 
