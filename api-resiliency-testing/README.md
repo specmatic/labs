@@ -76,7 +76,7 @@ docker compose --profile test up --abort-on-container-exit
 Expected baseline result:
 
 ```terminaloutput
-Tests run: 5, Successes: 3, Failures: 2, Errors: 0
+Tests run: 4, Successes: 3, Failures: 2, Errors: 0
 ```
 
 The two failing scenarios should be:
