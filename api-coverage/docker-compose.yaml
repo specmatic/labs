@@ -14,7 +14,7 @@ services:
 
   test:
     container_name: api-coverage-openapi-test
-    image: specmatic/enterprise:latest
+    image: ${SPECMATIC_ENTERPRISE_IMAGE:-specmatic/enterprise:latest}
     volumes:
       - ./:/usr/src/app
       - ../license.txt:/specmatic/specmatic-license.txt:ro
@@ -25,7 +25,7 @@ services:
 
   studio:
     container_name: api-coverage-openapi-studio
-    image: specmatic/enterprise:latest
+    image: ${SPECMATIC_ENTERPRISE_IMAGE:-specmatic/enterprise:latest}
     profiles: ["studio"]
     volumes:
       - ./:/usr/src/app

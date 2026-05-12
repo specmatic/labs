@@ -12,7 +12,7 @@ services:
 
   api-test:
     container_name: api-test
-    image: specmatic/enterprise:latest
+    image: ${SPECMATIC_ENTERPRISE_IMAGE:-specmatic/enterprise:latest}
     volumes:
       - ./:/usr/src/app
       - ../license.txt:/specmatic/specmatic-license.txt:ro
