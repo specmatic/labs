@@ -108,6 +108,12 @@ with:
 
 Do not change anything else.
 
+Alternative run command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i 's#\"petType\": \"Golden Retriever\"#\"type\": \"Golden Retriever\"#' service/server.py"
+```
+
 ## Part C: Re-run tests (expected to pass)
 Run:
 

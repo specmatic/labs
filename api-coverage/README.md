@@ -146,6 +146,12 @@ Change it to:
 
 Do not change anything else in the operation.
 
+Alternative run command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i 's#/pets/search:$#/pets/find:#' specs/service.yaml"
+```
+
 ## 3. Re-run the tests and coverage check
 Run the same command again:
 

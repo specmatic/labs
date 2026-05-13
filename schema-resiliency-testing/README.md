@@ -69,6 +69,12 @@ The goal of this lab is to try different schema resiliency testing levels and se
 ### Positive Only Tests
 In `specmatic.yaml` change `schemaResiliencyTests: none` to `schemaResiliencyTests: positiveOnly`
 
+Alternative run command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i 's#schemaResiliencyTests: none#schemaResiliencyTests: positiveOnly#' specmatic.yaml"
+```
+
 #### Run Positive only Tests
 
 Start docker containers
@@ -91,6 +97,12 @@ docker compose down -v
 
 ### Positive and Negative Tests (ALL)
 In `specmatic.yaml` change `schemaResiliencyTests: positiveOnly` to `schemaResiliencyTests: all`
+
+Alternative run command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i 's#schemaResiliencyTests: positiveOnly#schemaResiliencyTests: all#' specmatic.yaml"
+```
 
 #### Run all Tests
 
