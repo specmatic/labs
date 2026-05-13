@@ -11,12 +11,12 @@ on:
         required: false
         type: string
       labs_tests_branch:
-        description: "Branch of specmatic/labs-tests whose workflow should run. Defaults to main."
+        description: "Branch of specmatic/labs-tests whose workflows should run. Defaults to main."
         required: false
         default: "main"
         type: string
       labs:
-        description: "Optional space-separated list of labs to run in labs-tests. Leave empty to run the full suite."
+        description: "Optional space-separated list of labs to run in the main labs-tests workflow. Leave empty to run the full suite."
         required: false
         type: string
 
@@ -27,10 +27,21 @@ jobs:
   dispatch-labs-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - workflow_id: labs-tests.yml
+            workflow_label: Main labs-tests workflow
+            artifact_name: specmatic-labs-reports
+            accepts_labs_input: true
+          - workflow_id: labs-tests-readme-pilot.yml
+            workflow_label: README-driven pilot workflow
+            artifact_name: specmatic-labs-readme-pilot-reports
+            accepts_labs_input: false
     env:
       TARGET_OWNER: specmatic
       TARGET_REPO: labs-tests
-      TARGET_WORKFLOW_ID: labs-tests.yml
       EFFECTIVE_LABS_BRANCH: ${{ github.event.inputs.labs_branch || github.ref_name }}
       EFFECTIVE_LABS_TESTS_BRANCH: ${{ github.event.inputs.labs_tests_branch || 'main' }}
       SELECTED_LABS: ${{ github.event.inputs.labs || '' }}
@@ -44,21 +55,31 @@ jobs:
             exit 1
           fi
 
-      - name: Dispatch labs-tests workflow
+      - name: Dispatch downstream workflow
         id: dispatch
         uses: actions/github-script@v7
+        env:
+          TARGET_WORKFLOW_ID: ${{ matrix.workflow_id }}
+          WORKFLOW_LABEL: ${{ matrix.workflow_label }}
+          ACCEPTS_LABS_INPUT: ${{ matrix.accepts_labs_input }}
         with:
           github-token: ${{ secrets.SPECMATIC_GITHUB_TOKEN }}
           script: |
             const owner = process.env.TARGET_OWNER;
             const repo = process.env.TARGET_REPO;
             const workflow_id = process.env.TARGET_WORKFLOW_ID;
+            const workflowLabel = process.env.WORKFLOW_LABEL;
             const ref = process.env.EFFECTIVE_LABS_TESTS_BRANCH;
             const labsBranch = process.env.EFFECTIVE_LABS_BRANCH;
             const selectedLabs = process.env.SELECTED_LABS;
+            const acceptsLabsInput = process.env.ACCEPTS_LABS_INPUT === 'true';
             const dispatchStartedAt = new Date();
+            const inputs = { labs_branch: labsBranch };
+            if (acceptsLabsInput) {
+              inputs.labs = selectedLabs;
+            }
 
-            core.info(`Dispatching ${owner}/${repo}:${workflow_id}`);
+            core.info(`Dispatching ${workflowLabel}: ${owner}/${repo}:${workflow_id}`);
             core.info(`labs branch: ${labsBranch}`);
             core.info(`labs-tests branch: ${ref}`);
             core.info(`selected labs: ${selectedLabs || '(all labs)'}`);
@@ -68,10 +89,7 @@ jobs:
               repo,
               workflow_id,
               ref,
-              inputs: {
-                labs_branch: labsBranch,
-                labs: selectedLabs,
-              },
+              inputs,
             });
 
             let run = null;
@@ -91,33 +109,35 @@ jobs:
               if (run) {
                 break;
               }
-              core.info(`Waiting for dispatched labs-tests run to appear (attempt ${attempt}/30)...`);
+              core.info(`Waiting for ${workflowLabel} run to appear (attempt ${attempt}/30)...`);
               await new Promise(resolve => setTimeout(resolve, 10000));
             }
 
             if (!run) {
-              core.setFailed('Unable to locate the dispatched labs-tests workflow run.');
+              core.setFailed(`Unable to locate the dispatched ${workflowLabel} run.`);
               return;
             }
 
-            core.info(`Matched labs-tests workflow run: ${run.html_url}`);
+            core.info(`Matched ${workflowLabel} run: ${run.html_url}`);
             core.setOutput('run_id', String(run.id));
             core.setOutput('run_url', run.html_url);
 
-      - name: Wait for labs-tests workflow completion
+      - name: Wait for downstream workflow completion
         id: wait
         uses: actions/github-script@v7
         env:
           RUN_ID: ${{ steps.dispatch.outputs.run_id }}
+          WORKFLOW_LABEL: ${{ matrix.workflow_label }}
         with:
           github-token: ${{ secrets.SPECMATIC_GITHUB_TOKEN }}
           script: |
             const owner = process.env.TARGET_OWNER;
             const repo = process.env.TARGET_REPO;
             const run_id = Number(process.env.RUN_ID);
+            const workflowLabel = process.env.WORKFLOW_LABEL;
 
             if (!run_id) {
-              core.setFailed('Missing downstream workflow run id.');
+              core.setFailed(`Missing downstream workflow run id for ${workflowLabel}.`);
               return;
             }
 
@@ -125,7 +145,7 @@ jobs:
             for (let attempt = 1; attempt <= 180; attempt += 1) {
               const response = await github.rest.actions.getWorkflowRun({ owner, repo, run_id });
               run = response.data;
-              core.info(`labs-tests run status: ${run.status}, conclusion: ${run.conclusion || 'n/a'} (attempt ${attempt}/180)`);
+              core.info(`${workflowLabel} status: ${run.status}, conclusion: ${run.conclusion || 'n/a'} (attempt ${attempt}/180)`);
               if (run.status === 'completed') {
                 break;
               }
@@ -133,7 +153,7 @@ jobs:
             }
 
             if (!run || run.status !== 'completed') {
-              core.setFailed('Timed out waiting for the labs-tests workflow to finish.');
+              core.setFailed(`Timed out waiting for ${workflowLabel} to finish.`);
               return;
             }
 
@@ -141,17 +161,19 @@ jobs:
             core.setOutput('run_url', run.html_url);
             core.setOutput('run_number', String(run.run_number));
 
-      - name: Download labs-tests reports artifact
+      - name: Download downstream reports artifact
         env:
           GH_TOKEN: ${{ secrets.SPECMATIC_GITHUB_TOKEN }}
           RUN_ID: ${{ steps.dispatch.outputs.run_id }}
+          ARTIFACT_NAME: ${{ matrix.artifact_name }}
+          WORKFLOW_ID: ${{ matrix.workflow_id }}
         run: |
           set -euo pipefail
-          rm -rf downstream-labs-tests-artifact
-          mkdir -p downstream-labs-tests-artifact
-          gh run download "$RUN_ID"             --repo "${TARGET_OWNER}/${TARGET_REPO}"             --name specmatic-labs-reports             --dir downstream-labs-tests-artifact
+          rm -rf downstream-artifact
+          mkdir -p downstream-artifact
+          gh run download "$RUN_ID"             --repo "${TARGET_OWNER}/${TARGET_REPO}"             --name "$ARTIFACT_NAME"             --dir downstream-artifact
 
-      - name: Build labs workflow summary from labs-tests result
+      - name: Build summary from downstream result
         env:
           RUN_URL: ${{ steps.wait.outputs.run_url }}
           RUN_CONCLUSION: ${{ steps.wait.outputs.conclusion }}
@@ -159,13 +181,14 @@ jobs:
           SELECTED_LABS: ${{ env.SELECTED_LABS }}
           EFFECTIVE_LABS_BRANCH: ${{ env.EFFECTIVE_LABS_BRANCH }}
           EFFECTIVE_LABS_TESTS_BRANCH: ${{ env.EFFECTIVE_LABS_TESTS_BRANCH }}
+          WORKFLOW_LABEL: ${{ matrix.workflow_label }}
         run: |
           python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
           import json
           import os
           from pathlib import Path
 
-          root = Path('downstream-labs-tests-artifact')
+          root = Path('downstream-artifact')
           candidates = [
               root / 'output' / 'consolidated-report' / 'consolidated-report.json',
               root / 'consolidated-report' / 'consolidated-report.json',
@@ -173,6 +196,7 @@ jobs:
           ]
           report_path = next((path for path in candidates if path.exists()), None)
 
+          workflow_label = os.environ['WORKFLOW_LABEL']
           run_url = os.environ['RUN_URL']
           conclusion = os.environ.get('RUN_CONCLUSION', 'unknown')
           run_number = os.environ.get('RUN_NUMBER', 'n/a')
@@ -180,7 +204,7 @@ jobs:
           labs_branch = os.environ.get('EFFECTIVE_LABS_BRANCH', 'main')
           labs_tests_branch = os.environ.get('EFFECTIVE_LABS_TESTS_BRANCH', 'main')
 
-          print('## Downstream labs-tests run')
+          print(f'## {workflow_label}')
           print('')
           print(f'- labs branch: `{labs_branch}`')
           print(f'- labs-tests branch: `{labs_tests_branch}`')
@@ -190,7 +214,7 @@ jobs:
 
           if report_path is None:
             print('')
-            print('No consolidated report was found in the downloaded labs-tests artifact.')
+            print('No consolidated report was found in the downloaded downstream artifact.')
             raise SystemExit(0)
 
           payload = json.loads(report_path.read_text(encoding='utf-8'))
@@ -219,8 +243,8 @@ jobs:
             )
           PY
 
-      - name: Fail when labs-tests workflow fails
+      - name: Fail when downstream workflow fails
         if: steps.wait.outputs.conclusion != 'success'
         run: |
-          echo "Downstream labs-tests workflow failed: ${{ steps.wait.outputs.run_url }}"
+          echo "Downstream workflow failed: ${{ steps.wait.outputs.run_url }}"
           exit 1
