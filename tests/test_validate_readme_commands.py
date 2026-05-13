@@ -380,6 +380,7 @@ class MainTests(GitRepoTestCase):
 
         self.assertEqual(completed.returncode, 1)
         self.assertIn("missing expected terminaloutput block #1", completed.stderr)
+        self.assertTrue(completed.stdout.rstrip().endswith("FAIL"))
 
     def test_cli_invocation_prints_failure_summary(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -414,6 +415,7 @@ class MainTests(GitRepoTestCase):
         self.assertEqual(completed.returncode, 1)
         self.assertIn("FAIL command #1", completed.stdout)
         self.assertIn("SKIP command #2", completed.stdout)
+        self.assertTrue(completed.stdout.rstrip().endswith("FAIL"))
 
     def test_dry_run_does_not_execute_commands(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -452,6 +454,37 @@ class MainTests(GitRepoTestCase):
 
         self.assertEqual(completed.returncode, 0)
         self.assertIn("Command #1:", completed.stdout)
+
+    def test_cli_invocation_prints_pass_at_end(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_path = Path(temp_dir)
+            self._init_git_repo(repo_path)
+            readme_path = repo_path / "README.md"
+            readme_path.write_text(
+                textwrap.dedent(
+                    """
+                    ```shell
+                    printf ok
+                    ```
+
+                    ```terminaloutput
+                    ok
+                    ```
+                    """
+                ).lstrip(),
+                encoding="utf-8",
+            )
+
+            completed = subprocess.run(
+                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(readme_path)],
+                cwd=str(repo_path),
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(completed.returncode, 0)
+        self.assertTrue(completed.stdout.rstrip().endswith("PASS"))
 
     def test_main_resets_lab_changed_files_by_default(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:

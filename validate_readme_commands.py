@@ -561,6 +561,9 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if exit_code == 0:
         print(f"Validated {len(summary.results)} command(s) in {readme_path}")
+        print("PASS")
+    else:
+        print("FAIL")
     return exit_code
 
 
