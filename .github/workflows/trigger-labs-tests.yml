@@ -1,0 +1,226 @@
+name: Trigger labs-tests
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      labs_branch:
+        description: "Optional branch of specmatic/labs to test. Defaults to the branch this workflow runs on."
+        required: false
+        type: string
+      labs_tests_branch:
+        description: "Branch of specmatic/labs-tests whose workflow should run. Defaults to main."
+        required: false
+        default: "main"
+        type: string
+      labs:
+        description: "Optional space-separated list of labs to run in labs-tests. Leave empty to run the full suite."
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  dispatch-labs-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      TARGET_OWNER: specmatic
+      TARGET_REPO: labs-tests
+      TARGET_WORKFLOW_ID: labs-tests.yml
+      EFFECTIVE_LABS_BRANCH: ${{ github.event.inputs.labs_branch || github.ref_name }}
+      EFFECTIVE_LABS_TESTS_BRANCH: ${{ github.event.inputs.labs_tests_branch || 'main' }}
+      SELECTED_LABS: ${{ github.event.inputs.labs || '' }}
+    steps:
+      - name: Validate labs-tests dispatch token
+        env:
+          TOKEN_PRESENT: ${{ secrets.SPECMATIC_GITHUB_TOKEN != '' }}
+        run: |
+          if [[ "${TOKEN_PRESENT}" != "true" ]]; then
+            echo "::error::Missing SPECMATIC_GITHUB_TOKEN secret in specmatic/labs."
+            exit 1
+          fi
+
+      - name: Dispatch labs-tests workflow
+        id: dispatch
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.SPECMATIC_GITHUB_TOKEN }}
+          script: |
+            const owner = process.env.TARGET_OWNER;
+            const repo = process.env.TARGET_REPO;
+            const workflow_id = process.env.TARGET_WORKFLOW_ID;
+            const ref = process.env.EFFECTIVE_LABS_TESTS_BRANCH;
+            const labsBranch = process.env.EFFECTIVE_LABS_BRANCH;
+            const selectedLabs = process.env.SELECTED_LABS;
+            const dispatchStartedAt = new Date();
+
+            core.info(`Dispatching ${owner}/${repo}:${workflow_id}`);
+            core.info(`labs branch: ${labsBranch}`);
+            core.info(`labs-tests branch: ${ref}`);
+            core.info(`selected labs: ${selectedLabs || '(all labs)'}`);
+
+            await github.rest.actions.createWorkflowDispatch({
+              owner,
+              repo,
+              workflow_id,
+              ref,
+              inputs: {
+                labs_branch: labsBranch,
+                labs: selectedLabs,
+              },
+            });
+
+            let run = null;
+            for (let attempt = 1; attempt <= 30; attempt += 1) {
+              const response = await github.rest.actions.listWorkflowRuns({
+                owner,
+                repo,
+                workflow_id,
+                branch: ref,
+                event: 'workflow_dispatch',
+                per_page: 20,
+              });
+              run = response.data.workflow_runs.find(candidate => {
+                const createdAt = new Date(candidate.created_at);
+                return createdAt >= new Date(dispatchStartedAt.getTime() - 60_000);
+              });
+              if (run) {
+                break;
+              }
+              core.info(`Waiting for dispatched labs-tests run to appear (attempt ${attempt}/30)...`);
+              await new Promise(resolve => setTimeout(resolve, 10000));
+            }
+
+            if (!run) {
+              core.setFailed('Unable to locate the dispatched labs-tests workflow run.');
+              return;
+            }
+
+            core.info(`Matched labs-tests workflow run: ${run.html_url}`);
+            core.setOutput('run_id', String(run.id));
+            core.setOutput('run_url', run.html_url);
+
+      - name: Wait for labs-tests workflow completion
+        id: wait
+        uses: actions/github-script@v7
+        env:
+          RUN_ID: ${{ steps.dispatch.outputs.run_id }}
+        with:
+          github-token: ${{ secrets.SPECMATIC_GITHUB_TOKEN }}
+          script: |
+            const owner = process.env.TARGET_OWNER;
+            const repo = process.env.TARGET_REPO;
+            const run_id = Number(process.env.RUN_ID);
+
+            if (!run_id) {
+              core.setFailed('Missing downstream workflow run id.');
+              return;
+            }
+
+            let run = null;
+            for (let attempt = 1; attempt <= 180; attempt += 1) {
+              const response = await github.rest.actions.getWorkflowRun({ owner, repo, run_id });
+              run = response.data;
+              core.info(`labs-tests run status: ${run.status}, conclusion: ${run.conclusion || 'n/a'} (attempt ${attempt}/180)`);
+              if (run.status === 'completed') {
+                break;
+              }
+              await new Promise(resolve => setTimeout(resolve, 30000));
+            }
+
+            if (!run || run.status !== 'completed') {
+              core.setFailed('Timed out waiting for the labs-tests workflow to finish.');
+              return;
+            }
+
+            core.setOutput('conclusion', run.conclusion || 'unknown');
+            core.setOutput('run_url', run.html_url);
+            core.setOutput('run_number', String(run.run_number));
+
+      - name: Download labs-tests reports artifact
+        env:
+          GH_TOKEN: ${{ secrets.SPECMATIC_GITHUB_TOKEN }}
+          RUN_ID: ${{ steps.dispatch.outputs.run_id }}
+        run: |
+          set -euo pipefail
+          rm -rf downstream-labs-tests-artifact
+          mkdir -p downstream-labs-tests-artifact
+          gh run download "$RUN_ID"             --repo "${TARGET_OWNER}/${TARGET_REPO}"             --name specmatic-labs-reports             --dir downstream-labs-tests-artifact
+
+      - name: Build labs workflow summary from labs-tests result
+        env:
+          RUN_URL: ${{ steps.wait.outputs.run_url }}
+          RUN_CONCLUSION: ${{ steps.wait.outputs.conclusion }}
+          RUN_NUMBER: ${{ steps.wait.outputs.run_number }}
+          SELECTED_LABS: ${{ env.SELECTED_LABS }}
+          EFFECTIVE_LABS_BRANCH: ${{ env.EFFECTIVE_LABS_BRANCH }}
+          EFFECTIVE_LABS_TESTS_BRANCH: ${{ env.EFFECTIVE_LABS_TESTS_BRANCH }}
+        run: |
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          import os
+          from pathlib import Path
+
+          root = Path('downstream-labs-tests-artifact')
+          candidates = [
+              root / 'output' / 'consolidated-report' / 'consolidated-report.json',
+              root / 'consolidated-report' / 'consolidated-report.json',
+              root / 'output' / 'consolidated-report.json',
+          ]
+          report_path = next((path for path in candidates if path.exists()), None)
+
+          run_url = os.environ['RUN_URL']
+          conclusion = os.environ.get('RUN_CONCLUSION', 'unknown')
+          run_number = os.environ.get('RUN_NUMBER', 'n/a')
+          selected_labs = os.environ.get('SELECTED_LABS', '') or '(all labs)'
+          labs_branch = os.environ.get('EFFECTIVE_LABS_BRANCH', 'main')
+          labs_tests_branch = os.environ.get('EFFECTIVE_LABS_TESTS_BRANCH', 'main')
+
+          print('## Downstream labs-tests run')
+          print('')
+          print(f'- labs branch: `{labs_branch}`')
+          print(f'- labs-tests branch: `{labs_tests_branch}`')
+          print(f'- selected labs: `{selected_labs}`')
+          print(f'- labs-tests run: [#{run_number}]({run_url})')
+          print(f'- conclusion: **{conclusion.upper()}**')
+
+          if report_path is None:
+            print('')
+            print('No consolidated report was found in the downloaded labs-tests artifact.')
+            raise SystemExit(0)
+
+          payload = json.loads(report_path.read_text(encoding='utf-8'))
+          summary = {item['label']: item['value'] for item in payload.get('summary', [])}
+          environment = payload.get('environment', {})
+          print('')
+          print(f'- Specmatic: `{environment.get("specmaticVersion", "n/a")}`')
+          print(f'- labs discovered: `{summary.get("Labs discovered", 0)}`')
+          print(f'- labs passed: `{summary.get("Labs passed", 0)}`')
+          print(f'- labs failed: `{summary.get("Labs failed", 0)}`')
+          print('')
+          print('| Lab | Status | Time (s) | Exit Code | Failures | Validations |')
+          print('| --- | --- | ---: | ---: | ---: | ---: |')
+          for lab in payload.get('labs', []):
+            failures = 'n/a'
+            validations = 'n/a'
+            for item in lab.get('summary', []):
+              if item.get('label') == 'Failures':
+                failures = item.get('value', 'n/a')
+              if item.get('label') == 'Validations':
+                validations = item.get('value', 'n/a')
+            print(
+              f"| {lab.get('name', 'unknown')} | {lab.get('status', 'unknown')} | "
+              f"{lab.get('durationSeconds', 'n/a')} | {lab.get('exitCode', 'n/a')} | "
+              f"{failures} | {validations} |"
+            )
+          PY
+
+      - name: Fail when labs-tests workflow fails
+        if: steps.wait.outputs.conclusion != 'success'
+        run: |
+          echo "Downstream labs-tests workflow failed: ${{ steps.wait.outputs.run_url }}"
+          exit 1
