@@ -70,7 +70,9 @@ This lab uses FastAPI, which can publish OpenAPI dynamically at `/openapi.json`.
 
 The important point for API coverage is not the specific library. What matters is that the application exposes a current OpenAPI document that Specmatic can fetch using `swaggerUrl`.
 
-## Baseline Phase
+## Lab Implementation Phases
+
+### Baseline Phase
 Run:
 
 ```shell
@@ -126,7 +128,7 @@ Example baseline CTRF HTML report:
 
 ![Baseline CTRF HTML report](assets/api-coverage-html-report.png)
 
-## Task A: Fix the checked-in spec
+### Task A: Fix the checked-in spec
 Open `specs/service.yaml`.
 
 Find this path:
@@ -145,8 +147,19 @@ Change it to:
 
 Do not change anything else in the operation.
 
-## Final Phase
-Run the same command again:
+Alternatively, you can also run this command to implement the changes:
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i 's|/pets/search:$|/pets/find:|' specs/service.yaml"
+```
+
+Expected implementation output:
+
+```terminaloutput
+(no output)
+```
+
+### Final Phase
+Run:
 
 ```shell
 docker compose up test --build --abort-on-container-exit
@@ -171,7 +184,7 @@ Clean up:
 docker compose down -v
 ```
 
-### Verify generated HTML report
+## Verify generated HTML report
 After a run, Specmatic also generates report artifacts inside this `build/reports/specmatic` folder.
 
 Important file:
@@ -185,7 +198,7 @@ The HTML report is useful both before and after the fix:
 - before the fix, it shows the coverage mismatch in a more readable UI
 - after the fix, it confirms both paths are covered
 
-### Studio verification
+## Studio verification
 
 Start Studio and the provider:
 
