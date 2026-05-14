@@ -99,6 +99,12 @@ In `http-response.body`, change:
 
 Do not change any other fields.
 
+Alternative run command for Task A:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i 's#[$]match(exact: approved)#\$match(pattern: approved\|verified)#' examples/test_finance_user_11.json"
+```
+
 Re-run:
 
 ```shell
@@ -129,7 +135,11 @@ In `http-response.body`, change:
 
 Keep `handledBy` and `decision` as exact matches.
 
-## Final Phase
+Alternative run command for Final Phase:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i 's#[$]match(exact: VRF-123456)#\$match(pattern: VRF-[0-9]{6})#; s#[$]match(exact: 2026-03-17)#\$match(dataType: date)#' examples/test_support_user_55.json"
+```
 
 Run:
 

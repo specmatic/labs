@@ -147,19 +147,14 @@ Change it to:
 
 Do not change anything else in the operation.
 
-Alternatively, you can also run this command to implement the changes:
+Alternative run command:
+
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i 's|/pets/search:$|/pets/find:|' specs/service.yaml"
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i 's#/pets/search:$#/pets/find:#' specs/service.yaml"
 ```
 
-Expected implementation output:
-
-```terminaloutput
-(no output)
-```
-
-### Final Phase
-Run:
+## 3. Re-run the tests and coverage check
+Run the same command again:
 
 ```shell
 docker compose up test --build --abort-on-container-exit

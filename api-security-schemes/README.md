@@ -132,6 +132,12 @@ Update [`specmatic.yaml`](specmatic.yaml) to valid values again:
 
 Do not change anything else. Fix only the above values.
 
+Alternative run command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i 's#INVALID_OAUTH_TOKEN#OAUTH_TOKEN#g; s#dXNlcjppbnZhbGlkcGFzcw==#dXNlcjpwYXNzd29yZA==#g; s#INVALID_APIKEY1234#APIKEY1234#g' specmatic.yaml"
+```
+
 ## Verify the fix
 
 Re-run:

@@ -98,6 +98,12 @@ Make these two fixes:
 
 Do not change anything else.
 
+Alternative run command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i 's#\"damage\": 0.0#\"damaged\": 0.0#; s#order\\[\"shipment\"\\]#order[\"shipmentStatus\"]#' service/order_service.py"
+```
+
 ## Part C: Re-run tests (expected to pass)
 Run:
 
