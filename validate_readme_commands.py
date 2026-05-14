@@ -40,6 +40,8 @@ DEFAULT_LABS = [
     "quick-start-contract-testing",
     "schema-resiliency-testing",
     "workflow-in-same-spec",
+    "filters",
+    "overlays"
 ]
 
 
