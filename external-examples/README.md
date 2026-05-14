@@ -103,6 +103,12 @@ Expected output:
 [OK] Examples: 6 passed and 0 failed out of 6 total
 ```
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise:latest -lc 'cp -R external-examples-fixed/. examples/'
+```
+
 ### Final Phase
 
 #### 5. Re-run validation and verify pass state
