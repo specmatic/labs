@@ -99,7 +99,7 @@ Expected behavior:
 Expected failure highlight:
 
 ```terminaloutput
-(INCOMPATIBLE) This spec contains breaking changes to the API
+(INCOMPATIBLE) The changes to the spec are NOT backward compatible with the corresponding spec from main
 ```
 
 Why this fails:
