@@ -32,7 +32,7 @@ docker compose up --abort-on-container-exit
 Expected baseline output:
 
 ```terminaloutput
-Tests run: 136, Successes: 20, Failures: 114, Errors: 2
+Tests run: 136, Successes: 18, Failures: 114, WIP: 4, Errors: 0
 ```
 
 Clean up:
@@ -103,7 +103,7 @@ docker compose up --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 20, Successes: 20, Failures: 0, Errors: 0
+Tests run: 20, Successes: 18, Failures: 0, WIP: 2, Errors: 0
 ```
 
 Clean up:
@@ -115,7 +115,7 @@ docker compose down -v
 ## Pass Criteria
 - Baseline run shows `136` tests with many failures.
 - After applying and exporting filters, CLI run shows:
-  - `Tests run: 20, Successes: 20, Failures: 0, Errors: 0`
+  - `Tests run: 20, Successes: 18, Failures: 0, WIP: 2, Errors: 0`
 
 ## Why this lab matters
 - Filters help teams focus on critical scenarios while they triage known failures.
