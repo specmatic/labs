@@ -94,17 +94,17 @@ Why both hooks are needed:
 - `pre_specmatic_request_processor`: adapts PascalCase request fields to camelCase before sending to mock.
 - `post_specmatic_response_processor`: adapts camelCase mock response fields back to PascalCase before assertion.
 
-Alternatively, just run the following command:
-
-```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i '/^specmatic:/i\  data:\n    adapters:\n      pre_specmatic_request_processor: ./hooks/pre_specmatic_request_processor.sh\n      post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh\n' specmatic.yaml && chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh"
-```
-
 ## 5. Ensure hook scripts are executable
 Run:
 
 ```shell
 chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
+```
+
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i '/^specmatic:/i\  data:\n    adapters:\n      pre_specmatic_request_processor: ./hooks/pre_specmatic_request_processor.sh\n      post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh\n' specmatic.yaml && chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh"
 ```
 
 ## 6. Restart mock + UI
@@ -150,7 +150,7 @@ git update-index --chmod=+x hooks/pre_specmatic_request_processor.sh hooks/post_
 
 - Ensure hook files use LF line endings (not CRLF). In Git Bash:
 
-```shell
+```powershell
 sed -i 's/\r$//' hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
 ```
 
