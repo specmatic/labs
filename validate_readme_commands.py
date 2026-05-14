@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import difflib
 import queue
 import shutil
 import shlex
@@ -19,6 +20,7 @@ ANSI_RESET = "\033[0m"
 ANSI_BOLD = "\033[1m"
 ANSI_CYAN = "\033[36m"
 ANSI_GREEN = "\033[32m"
+ANSI_RED = "\033[31m"
 ANSI_YELLOW = "\033[33m"
 ANSI_DIM = "\033[2m"
 
@@ -286,6 +288,7 @@ def _assert_command_result(result: CommandResult) -> None:
     if result.expected_outputs:
         for output_index, expected_output in enumerate(result.expected_outputs, start=1):
             if not _expected_output_matches(expected_output, result.combined_output):
+                mismatch_detail = _describe_output_mismatch(expected_output, result.combined_output)
                 raise CommandValidationFailure(
                     _format_failure_message(
                         index=result.index,
@@ -294,6 +297,7 @@ def _assert_command_result(result: CommandResult) -> None:
                         cwd=result.cwd,
                         returncode=result.returncode,
                         reason=f"missing expected terminaloutput block #{output_index}",
+                        detail=mismatch_detail,
                     )
                 )
         return
@@ -329,6 +333,69 @@ def _expected_output_matches(expected_output: str, actual_output: str) -> bool:
             return False
 
     return True
+
+
+def _describe_output_mismatch(expected_output: str, actual_output: str) -> str | None:
+    expected_lines = [line for line in expected_output.splitlines() if line.strip()]
+    actual_lines = actual_output.splitlines()
+
+    if not expected_lines:
+        return None
+
+    actual_index = 0
+    for expected_line in expected_lines:
+        while actual_index < len(actual_lines):
+            if expected_line in actual_lines[actual_index]:
+                actual_index += 1
+                break
+            actual_index += 1
+        else:
+            closest_line = _find_closest_line(expected_line, actual_lines)
+            divider = _style("-" * 48, ANSI_DIM)
+            detail_lines = [
+                "",
+                divider,
+                _style("Mismatch Detail", ANSI_BOLD, ANSI_RED),
+                "",
+                _style("Expected line", ANSI_BOLD, ANSI_GREEN),
+                f"  {expected_line}",
+            ]
+            if closest_line is not None:
+                detail_lines.extend(
+                    [
+                        "",
+                        _style("Closest actual line", ANSI_BOLD, ANSI_YELLOW),
+                        f"  {closest_line}",
+                    ]
+                )
+            else:
+                detail_lines.extend(
+                    [
+                        "",
+                        _style("Closest actual line", ANSI_BOLD, ANSI_YELLOW),
+                        "  none",
+                    ]
+                )
+            detail_lines.extend(["", divider])
+            return "\n".join(detail_lines)
+
+    return None
+
+
+def _find_closest_line(expected_line: str, actual_lines: Sequence[str]) -> str | None:
+    best_line: str | None = None
+    best_ratio = 0.0
+
+    for actual_line in actual_lines:
+        ratio = difflib.SequenceMatcher(None, expected_line, actual_line).ratio()
+        if ratio > best_ratio:
+            best_ratio = ratio
+            best_line = actual_line
+
+    if best_ratio == 0.0:
+        return None
+
+    return best_line
 
 
 def _run_command(
@@ -574,6 +641,7 @@ def _format_failure_message(
     cwd: Path | None,
     returncode: int | None,
     reason: str,
+    detail: str | None = None,
 ) -> str:
     returncode_text = "n/a" if returncode is None else str(returncode)
     lines = [
@@ -589,6 +657,8 @@ def _format_failure_message(
             f"Expected terminaloutput blocks: {len(expected_outputs)}",
         ]
     )
+    if detail:
+        lines.extend(["", detail])
     return "\n".join(lines)
 
 

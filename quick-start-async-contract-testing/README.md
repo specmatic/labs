@@ -45,7 +45,7 @@ docker compose up contract-test --build --abort-on-container-exit
 ```
 
 ```terminaloutput
-Tests run: 1, Successes: 0, Failures: 1, Errors: 0
+Tests run: 1, Successes: 0, Failures: 1, WIP: 0, Errors: 0
 ```
 
 Expected failure signal:
@@ -89,7 +89,7 @@ docker compose up contract-test --build --abort-on-container-exit
 Expected pass signal:
 
 ```terminaloutput
-Tests run: 1, Successes: 1, Failures: 0, Errors: 0
+Tests run: 1, Successes: 1, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Then clean up:

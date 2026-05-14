@@ -165,6 +165,26 @@ class RunCommandSpecsTests(GitRepoTestCase):
 
         self.assertIn("command exited non-zero without any expected terminaloutput blocks", str(ctx.exception))
 
+    def test_failure_message_shows_expected_and_closest_actual_line(self) -> None:
+        with self.assertRaises(CommandExecutionError) as ctx:
+            run_command_specs(
+                [
+                    CommandSpec(
+                        command="printf 'Tests run: 1, Successes: 1, Failures: 0, WIP: 0, Errors: 0\\n'",
+                        expected_outputs=["Tests run: 1, Successes: 1, Failures: 0, Errors: 0\n"],
+                    )
+                ],
+                cwd=ROOT_DIR,
+                timeout_seconds=5,
+            )
+
+        message = str(ctx.exception)
+        self.assertIn("Mismatch Detail", message)
+        self.assertIn("Expected line", message)
+        self.assertIn("Tests run: 1, Successes: 1, Failures: 0, Errors: 0", message)
+        self.assertIn("Closest actual line", message)
+        self.assertIn("Tests run: 1, Successes: 1, Failures: 0, WIP: 0, Errors: 0", message)
+
     def test_line_by_line_matching_allows_prefixed_actual_lines(self) -> None:
         expected_output = (
             "Failed the following API Coverage Report success criteria:\n"
