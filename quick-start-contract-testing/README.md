@@ -47,7 +47,7 @@ docker compose up test --build --abort-on-container-exit
 ```
 
 ```terminaloutput
-Request to http://petstore:8080 at <date-time-stamp>
+Request to http://petstore:8080 at 
   GET /pets/1
   Specmatic-Response-Code: 200
   Host: petstore:8080
@@ -55,10 +55,10 @@ Request to http://petstore:8080 at <date-time-stamp>
   Accept: */*
   Content-Type: NOT SENT
   
-Response at <date-time-stamp>
+Response at 
   200 OK
-  Server: BaseHTTP/0.6 Python/3.14.3
-  Date: <date-time-stamp>
+  Server: BaseHTTP/0.6 Python/
+  Date: 
   Content-Type: application/json
   Content-Length: 79
   
