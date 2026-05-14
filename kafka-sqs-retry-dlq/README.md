@@ -121,11 +121,16 @@ Tests run: 6, Successes: 6, Failures: 0, Errors: 0
 The message count report should show:
 
 ```terminaloutput
-| Topic/queue name        | Actual | Expected |
-| place-order-topic       |   6    |    6     |
-| place-order-queue       |   4    |    4     |
-| place-order-retry-topic |   2    |    2     |
-| place-order-dlq-topic   |   2    |    2     |
++-------------------------+-------------------------+----------+
+| Topic                   | No of messages received            |
++-------------------------+-------------------------+----------+
+|                         | Actual                  | Expected |
++-------------------------+-------------------------+----------+
+| place-order-topic       | 6                       | 6        |
+| place-order-queue       | 4                       | 4        |
+| place-order-dlq-topic   | 2                       | 2        |
+| place-order-retry-topic | 2                       | 2        |
++-------------------------+-------------------------+----------+
 ```
 
 Clean up:
