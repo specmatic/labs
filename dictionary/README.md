@@ -42,11 +42,11 @@ docker compose down -v
 Generate dictionary data from existing examples:
 
 ```shell
-docker run --rm -v .:/usr/src/app specmatic/enterprise examples dictionary --examples-dir examples --spec-file specs/simple-openapi-spec.yaml --out specs/dictionary.yaml
+docker run --rm -v "$PWD:/usr/src/app" specmatic/enterprise examples dictionary --examples-dir examples --spec-file specs/simple-openapi-spec.yaml --out specs/dictionary.yaml
 ```
 
 ```terminaloutput
-Generated dictionary file at specs/dictionary.yaml
+Dictionary file written to /usr/src/app/specs/dictionary.yaml
 ```
 
 Open and understand the [generated dictionary file](specs/dictionary.yaml)
