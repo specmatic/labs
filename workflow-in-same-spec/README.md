@@ -50,7 +50,7 @@ docker compose --profile test up test --build --abort-on-container-exit
 Expected baseline result:
 
 ```terminaloutput
-Tests run: 4, Successes: 1, Failures: 3, Errors: 0
+Tests run: 4, Successes: 1, Failures: 3, WIP: 0, Errors: 0
 ```
 
 You should see failures for:
@@ -120,7 +120,7 @@ docker compose --profile test up test --build --abort-on-container-exit
 Expected passing result:
 
 ```terminaloutput
-Tests run: 4, Successes: 4, Failures: 0, Errors: 0
+Tests run: 4, Successes: 4, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Cleanup:
