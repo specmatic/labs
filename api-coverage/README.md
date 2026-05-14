@@ -90,7 +90,7 @@ Expected behavior:
 Expected result summary:
 
 ```terminaloutput
-Tests run: 2, Successes: 1, Failures: 1, Errors: 0
+Tests run: 2, Successes: 1, Failures: 1, WIP: 0, Errors: 0
 ```
 
 Expected coverage highlight:
@@ -164,7 +164,7 @@ docker compose up test --build --abort-on-container-exit
 Expected final result:
 
 ```terminaloutput
-Tests run: 2, Successes: 2, Failures: 0, Errors: 0
+Tests run: 2, Successes: 2, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Expected coverage outcome:
