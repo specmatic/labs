@@ -25,7 +25,7 @@ docker compose up suite --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 3, Successes: 0, Failures: 3, Errors: 0
+Tests run: 3, Successes: 0, Failures: 3, WIP: 0, Errors: 0
 ```
 
 ### Root cause of the failed tests
@@ -75,7 +75,7 @@ docker compose up suite --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 3, Successes: 3, Failures: 0, Errors: 0
+Tests run: 3, Successes: 3, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Clean up:
@@ -85,8 +85,8 @@ docker compose down -v
 ```
 
 ## Pass Criteria
-- Baseline run fails with `Tests run: 3, Successes: 0, Failures: 3, Errors: 0`.
-- After dictionary configuration, run passes with `Tests run: 3, Successes: 3, Failures: 0, Errors: 0`.
+- Baseline run fails with `Tests run: 3, Successes: 0, Failures: 3, WIP: 0, Errors: 0`.
+- After dictionary configuration, run passes with `Tests run: 3, Successes: 3, Failures: 0, WIP: 0, Errors: 0`.
 
 ## Additional Resources
 - [Specmatic Dictionary Documentation](https://docs.specmatic.io/features/dictionary)
