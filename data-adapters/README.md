@@ -42,7 +42,7 @@ This lab will help you understand how to identify such mismatches and use Specma
 Run:
 
 ```shell
-docker compose up
+docker compose up -d
 ```
 
 ## 2. Trigger the mismatch from browser (intentional failure)
