@@ -74,7 +74,7 @@ docker compose up api-test --build --abort-on-container-exit
 * Expected console output
 
 ```terminaloutput
-Tests run: 4, Successes: 2, Failures: 2, Errors: 0
+Tests run: 4, Successes: 2, Failures: 2, WIP: 0, Errors: 0
 ```
 
 Why the baseline fails:
@@ -114,7 +114,7 @@ docker compose up api-test --build --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 4, Successes: 3, Failures: 1, Errors: 0
+Tests run: 4, Successes: 3, Failures: 1, WIP: 0, Errors: 0
 ```
 
 Clean up:
@@ -149,7 +149,7 @@ docker compose up api-test --build --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 4, Successes: 4, Failures: 0, Errors: 0
+Tests run: 4, Successes: 4, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Clean up:
