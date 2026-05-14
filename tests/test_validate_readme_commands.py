@@ -5,8 +5,10 @@ import textwrap
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
+from unittest.mock import patch
 
 from validate_readme_commands import (
+    DEFAULT_LABS,
     CommandExecutionError,
     CommandSpec,
     _expected_output_matches,
@@ -14,6 +16,8 @@ from validate_readme_commands import (
     parse_readme_commands,
     print_command_mapping,
     reset_lab_changes,
+    resolve_readme_paths,
+    run_single_readme,
     run_cleanup_commands,
     run_command_specs,
     snapshot_repo_state,
@@ -309,6 +313,13 @@ class SkipCommandTests(GitRepoTestCase):
 
 
 class MainTests(GitRepoTestCase):
+    def test_resolve_readme_paths_uses_default_labs_when_no_arg(self) -> None:
+        readme_paths = resolve_readme_paths(None)
+
+        self.assertEqual(len(readme_paths), len(DEFAULT_LABS))
+        self.assertTrue(str(readme_paths[0]).endswith("/api-coverage/README.md"))
+        self.assertTrue(str(readme_paths[-1]).endswith("/workflow-in-same-spec/README.md"))
+
     def test_main_returns_zero_for_valid_readme(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             readme_path = Path(temp_dir) / "README.md"
@@ -560,6 +571,40 @@ class MainTests(GitRepoTestCase):
 
         self.assertEqual(completed.returncode, 0)
         self.assertNotIn("RESET", completed.stdout)
+
+    def test_main_without_readme_runs_all_default_labs_and_continues_after_failure(self) -> None:
+        fake_readmes = [
+            Path("/tmp/lab-one/README.md"),
+            Path("/tmp/lab-two/README.md"),
+            Path("/tmp/lab-three/README.md"),
+        ]
+        stdout_buffer = io.StringIO()
+        calls: list[Path] = []
+
+        def fake_run_single_readme(*, readme_path: Path, dry_run: bool, skip_reset: bool, timeout_seconds: float) -> int:
+            calls.append(readme_path)
+            return 1 if readme_path == fake_readmes[1] else 0
+
+        with (
+            patch("validate_readme_commands.resolve_readme_paths", return_value=fake_readmes),
+            patch("pathlib.Path.is_file", return_value=True),
+            patch("validate_readme_commands.run_single_readme", side_effect=fake_run_single_readme),
+            redirect_stdout(stdout_buffer),
+        ):
+            exit_code = main([])
+
+        self.assertEqual(exit_code, 1)
+        self.assertEqual(calls, fake_readmes)
+        output = stdout_buffer.getvalue()
+        self.assertIn("===== lab-one =====", output)
+        self.assertIn("===== lab-two =====", output)
+        self.assertIn("===== lab-three =====", output)
+        self.assertIn("===== Summary =====", output)
+        self.assertIn("PASS labs: 2", output)
+        self.assertIn("  lab-one", output)
+        self.assertIn("  lab-three", output)
+        self.assertIn("FAIL labs: 1", output)
+        self.assertIn("  lab-two", output)
 
 if __name__ == "__main__":
     unittest.main()

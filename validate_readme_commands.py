@@ -21,6 +21,21 @@ ANSI_GREEN = "\033[32m"
 ANSI_YELLOW = "\033[33m"
 ANSI_DIM = "\033[2m"
 
+DEFAULT_LABS = [
+    "api-coverage",
+    "api-security-schemes",
+    "continuous-integration",
+    "data-adapters",
+    "dictionary",
+    "kafka-sqs-retry-dlq",
+    "mcp-auto-test",
+    "quick-start-api-testing",
+    "quick-start-async-contract-testing",
+    "quick-start-contract-testing",
+    "schema-resiliency-testing",
+    "workflow-in-same-spec",
+]
+
 
 @dataclass(frozen=True)
 class ValidationRunSummary:
@@ -518,7 +533,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Validate README shell commands against terminaloutput blocks."
     )
-    parser.add_argument("readme", help="Path to the README.md file to validate.")
+    parser.add_argument(
+        "readme",
+        nargs="?",
+        help="Path to the README.md file to validate. If omitted, runs the built-in lab README list.",
+    )
     parser.add_argument(
         "--dry-run",
         action="store_true",
@@ -542,22 +561,57 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
 
-    readme_path = Path(args.readme).expanduser().resolve()
-    if not readme_path.is_file():
-        parser.error(f"README file does not exist: {readme_path}")
+    readme_paths = resolve_readme_paths(args.readme)
+    multiple_labs = len(readme_paths) > 1
+    for readme_path in readme_paths:
+        if not readme_path.is_file():
+            parser.error(f"README file does not exist: {readme_path}")
 
-    repo_snapshot = None if args.skip_reset else snapshot_repo_state(readme_path.parent)
+    overall_exit_code = 0
+    passed_labs: list[str] = []
+    failed_labs: list[str] = []
+    for index, readme_path in enumerate(readme_paths, start=1):
+        if multiple_labs:
+            if index > 1:
+                print()
+            print(f"===== {readme_path.parent.name} =====")
+        exit_code = run_single_readme(
+            readme_path=readme_path,
+            dry_run=args.dry_run,
+            skip_reset=args.skip_reset,
+            timeout_seconds=args.timeout,
+        )
+        if exit_code != 0:
+            overall_exit_code = exit_code
+            failed_labs.append(readme_path.parent.name)
+        else:
+            passed_labs.append(readme_path.parent.name)
 
+    if multiple_labs:
+        print()
+        print_multi_lab_summary(passed_labs, failed_labs)
+
+    return overall_exit_code
+
+
+def run_single_readme(
+    *,
+    readme_path: Path,
+    dry_run: bool,
+    skip_reset: bool,
+    timeout_seconds: float,
+) -> int:
+    repo_snapshot = None if skip_reset else snapshot_repo_state(readme_path.parent)
     try:
         command_specs = parse_readme_commands(readme_path)
-        if args.dry_run:
+        if dry_run:
             print_command_mapping(command_specs)
             return 0
         print_command_mapping(command_specs)
         summary = run_command_specs(
             command_specs=command_specs,
             cwd=readme_path.parent,
-            timeout_seconds=args.timeout,
+            timeout_seconds=timeout_seconds,
         )
         exit_code = 0
     except ValidationStopped as exc:
@@ -583,6 +637,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     else:
         print("FAIL")
     return exit_code
+
+
+def resolve_readme_paths(readme_arg: str | None) -> list[Path]:
+    if readme_arg:
+        return [Path(readme_arg).expanduser().resolve()]
+
+    repo_root = Path(__file__).resolve().parent
+    return [(repo_root / lab / "README.md").resolve() for lab in DEFAULT_LABS]
 
 
 def print_command_mapping(command_specs: Sequence[CommandSpec]) -> None:
@@ -695,6 +757,16 @@ def print_run_summary(summary: ValidationRunSummary, total_commands: int) -> Non
 
     for index in range(len(summary.results) + 1, total_commands + 1):
         print(f"SKIP command #{index}")
+
+
+def print_multi_lab_summary(passed_labs: Sequence[str], failed_labs: Sequence[str]) -> None:
+    print("===== Summary =====")
+    print(f"PASS labs: {len(passed_labs)}")
+    for lab in passed_labs:
+        print(f"  {lab}")
+    print(f"FAIL labs: {len(failed_labs)}")
+    for lab in failed_labs:
+        print(f"  {lab}")
 
 
 def _get_repo_root(cwd: Path) -> Path | None:

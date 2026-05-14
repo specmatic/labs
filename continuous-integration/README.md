@@ -139,6 +139,12 @@ Keep:
 
 Do not change anything else.
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "awk 'BEGIN{done=0} !done && \$0==\"                - priority\" {done=1; next} {print}' contracts/order_api.yaml > /tmp/order_api.yaml && mv /tmp/order_api.yaml contracts/order_api.yaml"
+```
+
 ## Part C: Re-run the CI simulation
 Run the same command again:
 
