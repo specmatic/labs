@@ -151,7 +151,7 @@ Do not change anything else in the operation.
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i 's|/pets/search:$|/pets/find:|' specs/service.yaml"
+docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i 's|/pets/search:|/pets/find:|' specs/service.yaml"
 ```
 
 ## Final Phase

@@ -74,7 +74,7 @@ Scenario: GET /pets/(petid:number) -> 200 with the request from the example 'SCO
 
 Expected output:
 ```terminaloutput
-Tests run: 1, Successes: 0, Failures: 1, Errors: 0
+Tests run: 1, Successes: 0, Failures: 1, WIP: 0, Errors: 0
 ```
 
 How did Specmatic generate the GET request for /pets with ID `1`?
@@ -123,7 +123,7 @@ docker compose up test --build --abort-on-container-exit
 
 Expected output:
 ```terminaloutput
-Tests run: 1, Successes: 1, Failures: 0, Errors: 0
+Tests run: 1, Successes: 1, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Clean up:
