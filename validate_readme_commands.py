@@ -23,6 +23,9 @@ ANSI_DIM = "\033[2m"
 
 DEFAULT_LABS = [
     "api-coverage",
+    "schema-design",
+    "response-templating",
+    "api-resiliency-testing",
     "api-security-schemes",
     "continuous-integration",
     "data-adapters",
