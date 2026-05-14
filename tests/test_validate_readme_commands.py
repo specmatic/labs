@@ -343,9 +343,19 @@ class MainTests(GitRepoTestCase):
         self.assertTrue(str(readme_paths[0]).endswith("/api-coverage/README.md"))
         self.assertTrue(str(readme_paths[-1]).endswith("/workflow-in-same-spec/README.md"))
 
+    def test_resolve_readme_paths_appends_readme_to_lab_directory(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            lab_path = Path(temp_dir) / "sample-lab"
+            lab_path.mkdir()
+
+            readme_paths = resolve_readme_paths(str(lab_path))
+
+        self.assertEqual(readme_paths, [(lab_path / "README.md").resolve()])
+
     def test_main_returns_zero_for_valid_readme(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
-            readme_path = Path(temp_dir) / "README.md"
+            lab_path = Path(temp_dir)
+            readme_path = lab_path / "README.md"
             readme_path.write_text(
                 textwrap.dedent(
                     """
@@ -361,7 +371,7 @@ class MainTests(GitRepoTestCase):
                 encoding="utf-8",
             )
 
-            exit_code = main([str(readme_path), "--timeout", "5"])
+            exit_code = main([str(lab_path), "--timeout", "5"])
 
         self.assertEqual(exit_code, 0)
 
@@ -390,7 +400,8 @@ class MainTests(GitRepoTestCase):
 
     def test_cli_invocation_reports_failure(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
-            readme_path = Path(temp_dir) / "README.md"
+            lab_path = Path(temp_dir)
+            readme_path = lab_path / "README.md"
             readme_path.write_text(
                 textwrap.dedent(
                     """
@@ -407,7 +418,7 @@ class MainTests(GitRepoTestCase):
             )
 
             completed = subprocess.run(
-                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(readme_path)],
+                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(lab_path)],
                 cwd=str(ROOT_DIR),
                 capture_output=True,
                 text=True,
@@ -420,7 +431,8 @@ class MainTests(GitRepoTestCase):
 
     def test_cli_invocation_prints_failure_summary(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
-            readme_path = Path(temp_dir) / "README.md"
+            lab_path = Path(temp_dir)
+            readme_path = lab_path / "README.md"
             readme_path.write_text(
                 textwrap.dedent(
                     """
@@ -441,7 +453,7 @@ class MainTests(GitRepoTestCase):
             )
 
             completed = subprocess.run(
-                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(readme_path)],
+                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(lab_path)],
                 cwd=str(ROOT_DIR),
                 capture_output=True,
                 text=True,
@@ -455,9 +467,9 @@ class MainTests(GitRepoTestCase):
 
     def test_dry_run_does_not_execute_commands(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
-            temp_path = Path(temp_dir)
-            readme_path = temp_path / "README.md"
-            marker_path = temp_path / "marker.txt"
+            lab_path = Path(temp_dir)
+            readme_path = lab_path / "README.md"
+            marker_path = lab_path / "marker.txt"
             readme_path.write_text(
                 textwrap.dedent(
                     f"""
@@ -478,9 +490,9 @@ class MainTests(GitRepoTestCase):
                     "python3",
                     str(ROOT_DIR / "validate_readme_commands.py"),
                     "--dry-run",
-                    str(readme_path),
+                    str(lab_path),
                 ],
-                cwd=str(temp_path),
+                cwd=str(lab_path),
                 capture_output=True,
                 text=True,
                 check=False,
@@ -512,7 +524,7 @@ class MainTests(GitRepoTestCase):
             )
 
             completed = subprocess.run(
-                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(readme_path)],
+                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(repo_path)],
                 cwd=str(repo_path),
                 capture_output=True,
                 text=True,
@@ -545,7 +557,7 @@ class MainTests(GitRepoTestCase):
             )
 
             completed = subprocess.run(
-                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(readme_path)],
+                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(repo_path)],
                 cwd=str(repo_path),
                 capture_output=True,
                 text=True,
@@ -582,7 +594,7 @@ class MainTests(GitRepoTestCase):
                     "python3",
                     str(ROOT_DIR / "validate_readme_commands.py"),
                     "--skip-reset",
-                    str(readme_path),
+                    str(repo_path),
                 ],
                 cwd=str(repo_path),
                 capture_output=True,

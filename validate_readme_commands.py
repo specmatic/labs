@@ -621,7 +621,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "readme",
         nargs="?",
-        help="Path to the README.md file to validate. If omitted, runs the built-in lab README list.",
+        help="Lab directory to validate. If omitted, runs the built-in lab README list.",
     )
     parser.add_argument(
         "--dry-run",
@@ -734,7 +734,7 @@ def run_single_readme(
 
 def resolve_readme_paths(readme_arg: str | None) -> list[Path]:
     if readme_arg:
-        return [Path(readme_arg).expanduser().resolve()]
+        return [(Path(readme_arg).expanduser().resolve() / "README.md")]
 
     repo_root = Path(__file__).resolve().parent
     return [(repo_root / lab / "README.md").resolve() for lab in DEFAULT_LABS]
