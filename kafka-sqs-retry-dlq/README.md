@@ -67,7 +67,7 @@ Expected failure shape:
 Preferred failure summary:
 
 ```terminaloutput
-Tests run: 6, Successes: 4, Failures: 2, Errors: 0
+Tests run: 6, Successes: 4, Failures: 2, WIP: 0, Errors: 0
 ```
 
 The failing scenarios should be:
@@ -115,7 +115,7 @@ docker compose up contract-test --build --abort-on-container-exit
 Expected passing output:
 
 ```terminaloutput
-Tests run: 6, Successes: 6, Failures: 0, Errors: 0
+Tests run: 6, Successes: 6, Failures: 0, WIP: 0, Errors: 0
 ```
 
 The message count report should show:
