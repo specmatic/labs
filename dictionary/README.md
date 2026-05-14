@@ -59,6 +59,13 @@ data:
     path: specs/dictionary.yaml
 ```
 
+Alternative run command:
+
+```shell
+docker run --rm -v "$PWD:/usr/src/app" specmatic/enterprise examples dictionary --examples-dir examples --spec-file specs/simple-openapi-spec.yaml --out specs/dictionary.yaml
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i '/^specmatic:/i\        data:\n          dictionary:\n            path: specs/dictionary.yaml\n' specmatic.yaml"
+```
+
 ## 3. Re-run the suite after configuring dictionary
 
 ```shell

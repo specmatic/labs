@@ -98,6 +98,12 @@ What to look for:
 
 Do not change the contract, examples, or Compose wiring.
 
+Alternative run command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i 's@            # threading.Thread(target=self._run_retry_consumer, name=\"RetryConsumer\", daemon=True),@            threading.Thread(target=self._run_retry_consumer, name=\"RetryConsumer\", daemon=True),@' service/app.py"
+```
+
 ## Pass criteria
 
 Re-run:

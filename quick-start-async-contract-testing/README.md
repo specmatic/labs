@@ -73,6 +73,12 @@ To:
 "status": "INITIATED",
 ```
 
+Alternative run command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i 's#\"status\": \"STARTED\"#\"status\": \"INITIATED\"#' service/processor.py"
+```
+
 ## Pass criteria
 Re-run:
 

@@ -105,6 +105,12 @@ workflow:
       use: "PATH.task_id"
 ```
 
+Alternative run command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i '/^specmatic:/i\        workflow:\n          ids:\n            \"POST /tasks -> 200\":\n              extract: \"BODY.tasks.[0].id\"\n            \"GET /tasks/(task_id:string) -> 200\":\n              use: \"PATH.task_id\"\n            \"PUT /tasks/(task_id:string) -> 200\":\n              use: \"PATH.task_id\"\n            \"DELETE /tasks/(task_id:string) -> 204\":\n              use: \"PATH.task_id\"\n' specmatic.yaml"
+```
+
 Re-run:
 
 ```shell

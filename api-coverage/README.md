@@ -70,7 +70,9 @@ This lab uses FastAPI, which can publish OpenAPI dynamically at `/openapi.json`.
 
 The important point for API coverage is not the specific library. What matters is that the application exposes a current OpenAPI document that Specmatic can fetch using `swaggerUrl`.
 
-## 1. Baseline run (intentional coverage failure)
+## Lab Implementation Phases
+
+### Baseline Phase
 Run:
 
 ```shell
@@ -107,7 +109,6 @@ Expected gate failure highlight:
 Failed the following API Coverage Report success criteria:
 Total API coverage: 50% is less than the specified minimum threshold of 100%.
 Total missed operations: 1 is greater than the maximum threshold of 0.
-
 ```
 
 Clean up:
@@ -127,7 +128,7 @@ Example baseline CTRF HTML report:
 
 ![Baseline CTRF HTML report](assets/api-coverage-html-report.png)
 
-## 2. Fix the checked-in spec
+### Task A: Fix the checked-in spec
 Open `specs/service.yaml`.
 
 Find this path:
@@ -145,6 +146,12 @@ Change it to:
 ```
 
 Do not change anything else in the operation.
+
+Alternative run command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/work" -w /work specmatic/enterprise -lc "sed -i 's|/pets/search:|/pets/find:|' specs/service.yaml"
+```
 
 ## 3. Re-run the tests and coverage check
 Run the same command again:
@@ -186,7 +193,8 @@ The HTML report is useful both before and after the fix:
 - before the fix, it shows the coverage mismatch in a more readable UI
 - after the fix, it confirms both paths are covered
 
-## Short Studio follow-up
+## Studio verification
+
 Start Studio and the provider:
 
 ```shell
