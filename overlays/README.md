@@ -54,7 +54,7 @@ docker compose up test --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 1, Successes: 0, Failures: 1, Errors: 0
+Tests run: 1, Successes: 0, Failures: 1, WIP: 0, Errors: 0
 ```
 
 - The test run fails because requests are generated for `/api/users/{id}` while the provider serves `/api/v1/users/{id}`.
@@ -124,7 +124,7 @@ docker compose up test --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 1, Successes: 1, Failures: 0, Errors: 0
+Tests run: 1, Successes: 1, Failures: 0, WIP: 0, Errors: 0
 ```
 
 - Contract tests pass, because Specmatic applies the overlay before running tests.
