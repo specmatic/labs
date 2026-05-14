@@ -111,7 +111,7 @@ chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_
 Run:
 
 ```shell
-docker compose up
+docker compose up -d
 ```
 
 ## 7. Trigger the matching request/response from browser
