@@ -45,7 +45,7 @@ docker compose up contract-test --build --abort-on-container-exit
 
 Expected output:
 ```terminaloutput
-Tests run: 4, Successes: 2, Failures: 2, Errors: 0
+Tests run: 4, Successes: 2, Failures: 2, WIP: 0, Errors: 0
 ```
 
 Failure reason points to `POST /payments` where requests like `{ "paymentType": "card" }` and `{ "paymentType": "bank_transfer" }` are contract-valid but service returns `400` instead of expected `201`.
@@ -120,6 +120,12 @@ Open `specs/payment-api.yaml` and update `PaymentRequest` to this shape:
           bank_transfer: "#/components/schemas/BankTransferPaymentRequest"
 ```
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc 'cp payments-request.yaml specs/payment-api.yaml'
+```
+
 ## 3. Re-run contract tests
 Run:
 
@@ -129,7 +135,7 @@ docker compose up contract-test --build --abort-on-container-exit
 
 Expected output:
 ```terminaloutput
-Tests run: 2, Successes: 2, Failures: 0, Errors: 0
+Tests run: 2, Successes: 2, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Clean up:
