@@ -107,7 +107,7 @@ docker compose up specmatic-test --abort-on-container-exit
 Expected failing result:
 
 ```terminaloutput
-Tests run: 171, Successes: 0, Failures: 171, Errors: 0
+Tests run: 171, Successes: 0, Failures: 171, WIP: 0, Errors: 0
 ```
 
 - The compose command exits with a non-zero code.
@@ -149,7 +149,7 @@ docker compose up specmatic-test --abort-on-container-exit
 Expected result:
 
 ```terminaloutput
-Tests run: 171, Successes: 171, Failures: 0, Errors: 0
+Tests run: 171, Successes: 171, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Cleanup after run:
