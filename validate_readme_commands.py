@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import queue
 import shutil
+import shlex
 import subprocess
 import sys
 import threading
@@ -462,6 +463,78 @@ def run_cleanup_commands(
     return cleanup_results
 
 
+def run_final_cleanup_commands(
+    command_specs: Sequence[CommandSpec],
+    cwd: Path,
+    timeout_seconds: float,
+) -> list[CommandResult]:
+    cleanup_results: list[CommandResult] = []
+
+    for cleanup_index, cleanup_command in enumerate(derive_final_cleanup_commands(command_specs), start=1):
+        try:
+            completed = _run_command(
+                command=cleanup_command,
+                cwd=cwd,
+                timeout_seconds=timeout_seconds,
+            )
+        except subprocess.TimeoutExpired:
+            continue
+        cleanup_results.append(
+            CommandResult(
+                index=cleanup_index,
+                command=cleanup_command,
+                expected_outputs=[],
+                cwd=cwd,
+                skipped=False,
+                returncode=completed.returncode,
+                stdout=completed.stdout,
+                stderr=completed.stderr,
+            )
+        )
+
+    return cleanup_results
+
+
+def derive_final_cleanup_commands(command_specs: Sequence[CommandSpec]) -> list[str]:
+    cleanup_commands: list[str] = []
+    seen: set[str] = set()
+
+    for command_spec in command_specs:
+        cleanup_command = _derive_cleanup_command(command_spec.command)
+        if cleanup_command is None or cleanup_command in seen:
+            continue
+        seen.add(cleanup_command)
+        cleanup_commands.append(cleanup_command)
+
+    return cleanup_commands
+
+
+def _derive_cleanup_command(command: str) -> str | None:
+    try:
+        tokens = shlex.split(command)
+    except ValueError:
+        return None
+
+    if len(tokens) >= 2 and tokens[0] == "docker" and tokens[1] == "compose":
+        compose_start_index = 2
+    elif tokens and tokens[0] == "docker-compose":
+        compose_start_index = 1
+    else:
+        return None
+
+    subcommand_index = None
+    for index in range(compose_start_index, len(tokens)):
+        if tokens[index] in {"up", "run"}:
+            subcommand_index = index
+            break
+
+    if subcommand_index is None:
+        return None
+
+    cleanup_tokens = tokens[:subcommand_index] + ["down", "-v", "--remove-orphans"]
+    return shlex.join(cleanup_tokens)
+
+
 def _is_cleanup_command(command: str) -> bool:
     normalized_command = " ".join(command.lower().split())
     cleanup_patterns = (
@@ -482,6 +555,15 @@ def _format_cleanup_results(cleanup_results: Sequence[CommandResult]) -> str:
     for result in cleanup_results:
         lines.append(f"- `{result.command.strip()}` exited with {result.returncode}")
     return "\n".join(lines)
+
+
+def print_final_cleanup_summary(cleanup_results: Sequence[CommandResult]) -> None:
+    if not cleanup_results:
+        return
+
+    print("FINAL CLEANUP")
+    for result in cleanup_results:
+        print(f"  {result.command}")
 
 
 def _format_failure_message(
@@ -630,6 +712,14 @@ def run_single_readme(
     if summary.failure_message is not None:
         print(f"README: {readme_path}", file=sys.stderr)
         print(summary.failure_message, file=sys.stderr)
+
+    final_cleanup_results = run_final_cleanup_commands(
+        command_specs=command_specs,
+        cwd=readme_path.parent,
+        timeout_seconds=timeout_seconds,
+    )
+    if final_cleanup_results:
+        print_final_cleanup_summary(final_cleanup_results)
 
     if repo_snapshot is not None:
         print_reset_summary(reset_lab_changes(readme_path.parent, repo_snapshot))

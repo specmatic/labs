@@ -147,6 +147,12 @@ Overall Success Rate: 94.3%
 
 This is not required for the lab goal. It is a follow-up to explore how Specmatic mutates valid tool inputs to probe validation boundaries. Try to pass all 35 tests.
 
+Clean up:
+
+```shell
+docker compose down -v
+```
+
 ## Pass criteria
 - Baseline run fails with two tool execution failures.
 - After fixing only `service/order_service.py`, both tests pass.

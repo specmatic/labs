@@ -12,6 +12,7 @@ from validate_readme_commands import (
     CommandExecutionError,
     CommandSpec,
     _expected_output_matches,
+    derive_final_cleanup_commands,
     main,
     parse_readme_commands,
     print_command_mapping,
@@ -256,6 +257,28 @@ class RunCommandSpecsTests(GitRepoTestCase):
 
 
 class CleanupCommandTests(GitRepoTestCase):
+    def test_derive_final_cleanup_commands_preserves_profiles(self) -> None:
+        cleanup_commands = derive_final_cleanup_commands(
+            [
+                CommandSpec(
+                    command="docker compose --profile test up test --build --abort-on-container-exit\n",
+                    expected_outputs=[],
+                ),
+                CommandSpec(
+                    command="docker compose run --rm mcp-test --enable-resiliency-tests\n",
+                    expected_outputs=[],
+                ),
+            ]
+        )
+
+        self.assertEqual(
+            cleanup_commands,
+            [
+                "docker compose --profile test down -v --remove-orphans",
+                "docker compose down -v --remove-orphans",
+            ],
+        )
+
     def test_runs_only_cleanup_commands_before_next_expected_output_command(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             temp_path = Path(temp_dir)
