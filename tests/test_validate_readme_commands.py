@@ -12,7 +12,7 @@ from validate_readme_commands import (
     _expected_output_matches,
     main,
     parse_readme_commands,
-    print_dry_run,
+    print_command_mapping,
     reset_lab_changes,
     run_cleanup_commands,
     run_command_specs,
@@ -339,18 +339,20 @@ class MainTests(GitRepoTestCase):
         ]
 
         with redirect_stdout(stdout_buffer):
-            print_dry_run(command_specs)
+            print_command_mapping(command_specs)
 
         output = stdout_buffer.getvalue()
-        self.assertIn("Command #1:", output)
-        self.assertIn("echo one", output)
-        self.assertIn("Expected terminaloutput blocks: 2", output)
-        self.assertIn("terminaloutput #1:", output)
-        self.assertIn("one", output)
-        self.assertIn("terminaloutput #2:", output)
-        self.assertIn("two", output)
-        self.assertIn("Command #2:", output)
-        self.assertIn("Expected terminaloutput blocks: 0", output)
+        self.assertIn("Command #1", output)
+        self.assertIn("Shell", output)
+        self.assertIn("expected terminaloutput blocks: 2", output)
+        self.assertIn("  echo one", output)
+        self.assertIn("  echo one\n\nterminaloutput #1", output)
+        self.assertIn("terminaloutput #1", output)
+        self.assertIn("  one", output)
+        self.assertIn("terminaloutput #2", output)
+        self.assertIn("  two", output)
+        self.assertIn("Command #2", output)
+        self.assertIn("terminaloutput  none", output)
 
     def test_cli_invocation_reports_failure(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -453,7 +455,7 @@ class MainTests(GitRepoTestCase):
             self.assertFalse(marker_path.exists())
 
         self.assertEqual(completed.returncode, 0)
-        self.assertIn("Command #1:", completed.stdout)
+        self.assertIn("Command #1", completed.stdout)
 
     def test_cli_invocation_prints_pass_at_end(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -484,6 +486,8 @@ class MainTests(GitRepoTestCase):
             )
 
         self.assertEqual(completed.returncode, 0)
+        self.assertIn("Command #1", completed.stdout)
+        self.assertIn("expected terminaloutput blocks: 1", completed.stdout)
         self.assertTrue(completed.stdout.rstrip().endswith("PASS"))
 
     def test_main_resets_lab_changed_files_by_default(self) -> None:

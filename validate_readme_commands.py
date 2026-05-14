@@ -14,6 +14,13 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
 
+ANSI_RESET = "\033[0m"
+ANSI_BOLD = "\033[1m"
+ANSI_CYAN = "\033[36m"
+ANSI_GREEN = "\033[32m"
+ANSI_YELLOW = "\033[33m"
+ANSI_DIM = "\033[2m"
+
 
 @dataclass(frozen=True)
 class ValidationRunSummary:
@@ -90,6 +97,16 @@ class ValidationStopped(CommandExecutionError):
 
 class GitInteractionError(ReadmeValidationError):
     """Raised when git state cannot be inspected or restored."""
+
+
+def _supports_color() -> bool:
+    return sys.stdout.isatty()
+
+
+def _style(text: str, *codes: str) -> str:
+    if not _supports_color() or not codes:
+        return text
+    return f"{''.join(codes)}{text}{ANSI_RESET}"
 
 
 def should_skip_command(command: str) -> bool:
@@ -534,8 +551,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         command_specs = parse_readme_commands(readme_path)
         if args.dry_run:
-            print_dry_run(command_specs)
+            print_command_mapping(command_specs)
             return 0
+        print_command_mapping(command_specs)
         summary = run_command_specs(
             command_specs=command_specs,
             cwd=readme_path.parent,
@@ -567,15 +585,36 @@ def main(argv: Sequence[str] | None = None) -> int:
     return exit_code
 
 
-def print_dry_run(command_specs: Sequence[CommandSpec]) -> None:
+def print_command_mapping(command_specs: Sequence[CommandSpec]) -> None:
+    separator = _style("=" * 72, ANSI_DIM)
+
     for index, command_spec in enumerate(command_specs, start=1):
-        print(f"Command #{index}:")
-        print(command_spec.command.rstrip("\n"))
-        print(f"Expected terminaloutput blocks: {len(command_spec.expected_outputs)}")
+        print(separator)
+        print(_style(f"Command #{index}", ANSI_BOLD, ANSI_CYAN))
+        print(
+            _style("Shell", ANSI_BOLD, ANSI_YELLOW)
+            + f"  {_style(f'(expected terminaloutput blocks: {len(command_spec.expected_outputs)})', ANSI_DIM)}"
+        )
+        _print_indented_block(command_spec.command)
         for output_index, expected_output in enumerate(command_spec.expected_outputs, start=1):
-            print(f"terminaloutput #{output_index}:")
-            print(expected_output.rstrip("\n"))
+            print()
+            print(_style(f"terminaloutput #{output_index}", ANSI_BOLD, ANSI_GREEN))
+            _print_indented_block(expected_output)
+        if not command_spec.expected_outputs:
+            print()
+            print(_style("terminaloutput  none", ANSI_DIM))
         print()
+    if command_specs:
+        print(separator)
+
+
+def print_dry_run(command_specs: Sequence[CommandSpec]) -> None:
+    print_command_mapping(command_specs)
+
+
+def _print_indented_block(content: str) -> None:
+    for line in content.rstrip("\n").splitlines():
+        print(f"  {line}")
 
 
 def snapshot_repo_state(cwd: Path) -> RepoSnapshot | None:
