@@ -108,6 +108,12 @@ Uncomment this line:
 overlayFilePath: ./overlays/path-prefix.overlay.yaml
 ```
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc 'cp path-prefix.overlay.yaml overlays/path-prefix.overlay.yaml && sed -i "s/^#            overlayFilePath:/            overlayFilePath:/" specmatic.yaml'
+```
+
 ## Pass verification
 Run:
 
