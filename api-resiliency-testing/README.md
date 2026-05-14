@@ -255,7 +255,6 @@ To fix this, update `examples/order-service/stub_timeout_post_product.json` so t
 }
 ```
 
-
 Why `value:each` is the right matcher here:
 - `value:each` tracks matcher exhaustion separately for each distinct value
 - that means each valid `type` value gets its own one-time transient timeout match
