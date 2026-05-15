@@ -89,6 +89,12 @@ properties:
 
 You now have an uncommitted change in a tracked contract file. Specmatic will compare it to the version on `origin/main`.
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/workspace" -w /workspace specmatic/enterprise:latest -lc 'cp products-breaking.yaml products.yaml'
+```
+
 ## Part B: Run the backward compatibility check
 Run:
 
@@ -135,12 +141,6 @@ The Incompatibility Report:
         This is number in the new specification response but string in the old specification
 ```
 
-Expected verdict:
-
-```terminaloutput
-(INCOMPATIBLE) This spec contains breaking changes to the API
-```
-
 Why this fails:
 - Adding optional `category` is safe.
 - Changing `name` from `string` to `number` is a breaking change for existing consumers.
@@ -164,6 +164,12 @@ name:
 
 Keep the new `category` field.
 Keep version `1.1.0`.
+
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/workspace" -w /workspace specmatic/enterprise:latest -lc 'cp products-fixed.yaml products.yaml'
+```
 
 ## Part D: Re-run the check
 Run the same command again:
@@ -195,22 +201,11 @@ Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
   (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
 ```
 
-Expected passing output:
-
-```terminaloutput
-Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
-  (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
-```
-
 ## Clean up
 Restore the tracked file:
 
 ```shell
 git restore products.yaml
-```
-
-```terminaloutput
-products.yaml restored.
 ```
 
 ## Check backward compatibility in Specmatic Studio before saving
