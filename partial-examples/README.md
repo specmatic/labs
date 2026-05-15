@@ -98,6 +98,20 @@ Stop Studio after the examples are saved:
 docker compose --profile studio down -v
 ```
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise:latest -lc '
+sed -i "2i\\  \\\"partial\\\": {" examples/test_accepted_order_request.json &&
+sed -i "\$i\\  }" examples/test_accepted_order_request.json &&
+sed -i "2i\\  \\\"partial\\\": {" examples/test_accepted_product_request.json &&
+sed -i "\$i\\  }" examples/test_accepted_product_request.json &&
+sed -i "s#\\\"path\\\": \\\"/findAvailableProducts\\\"#\\\"path\\\": \\\"/findAvailableProducts?type=book\\\"#" examples/test_find_available_products_book_200.json &&
+sed -i "/\\\"query\\\": {/a\\            \\\"from-date\\\": \\\"2025-10-01\\\",\\n            \\\"to-date\\\": \\\"2025-10-15\\\"" examples/test_find_available_products_book_200.json &&
+sed -i "/\\\"type\\\": \\\"book\\\"/d" examples/test_find_available_products_book_200.json
+'
+```
+
 ### Final Phase
 
 Re-run validation with the Windows single-line command after the Studio fixes are saved.
@@ -144,7 +158,7 @@ docker compose up --abort-on-container-exit
 This runs the suite, starts the dependency mocks, and executes the tests. You should see:
 
 ```terminaloutput
-Tests run: 7, Successes: 7, Failures: 0, Errors: 0
+Tests run: 7, Successes: 6, Failures: 0, WIP: 1, Errors: 0
 ```
 
 ```shell
@@ -153,7 +167,7 @@ docker compose down -v
 
 ## Pass Criteria
 - Validation shows: `3 passed and 0 failed out of 3 total`.
-- Loop test shows: `Tests run: 7, Successes: 7, Failures: 0, Errors: 0`.
+- Loop test shows: `Tests run: 7, Successes: 6, Failures: 0, WIP: 1, Errors: 0`.
 
 
 ## What you learned

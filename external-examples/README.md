@@ -93,20 +93,28 @@ In Studio, update the failing examples:
 3. `examples/test_accepted_order_request.json`
    - Add missing required property `count` (for example `2`) in request body.
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise:latest -lc '
+sed -i "s/\"to-date\": \"today\"/\"to-date\": \"2025-11-28\"/" examples/test_find_available_products_book_200.json &&
+sed -i "s/\"type\": \"movie\"/\"type\": \"book\"/" examples/test_accepted_product_request.json &&
+sed -i "s/\"inventory\": \"five\"/\"inventory\": 5/" examples/test_accepted_product_request.json &&
+sed -i "s/\"productid\": 1234/\"productid\": 1234,/" examples/test_accepted_order_request.json &&
+sed -i "/\"productid\": 1234,/a\\      \"count\": 2" examples/test_accepted_order_request.json
+'
+```
+
 #### 4. Generate missing examples in the same Studio flow
 Still in Studio, generate examples for:
 - `POST /products` with response `201`
 - `POST /orders` with response `201`
 
-Expected output:
-```terminaloutput
-[OK] Examples: 6 passed and 0 failed out of 6 total
-```
 
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise:latest -lc 'cp -R external-examples-fixed/. examples/'
+docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise:latest -lc 'cp external-examples-generated/* examples/'
 ```
 
 ### Final Phase
