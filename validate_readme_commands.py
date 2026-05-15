@@ -30,18 +30,24 @@ DEFAULT_LABS = [
     "response-templating",
     "api-resiliency-testing",
     "api-security-schemes",
+    "async-event-flow",
+    "backward-compatibility-testing",
     "continuous-integration",
     "data-adapters",
     "dictionary",
+    "external-examples",
+    "filters",
+    "kafka-avro",
     "kafka-sqs-retry-dlq",
     "mcp-auto-test",
+    "overlays",
+    "partial-examples",
     "quick-start-api-testing",
     "quick-start-async-contract-testing",
     "quick-start-contract-testing",
+    "quick-start-mock",
     "schema-resiliency-testing",
     "workflow-in-same-spec",
-    "filters",
-    "overlays"
 ]
 
 
