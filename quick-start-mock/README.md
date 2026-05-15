@@ -66,7 +66,7 @@ Alternatively, just run the following commands:
 
 ```shell
 docker compose up -d --wait --wait-timeout 30 consumer --build
-curl -s http://127.0.0.1:9100/pets/1 2>/dev/null || echo "Service unavailable"
+docker run --rm --network quick-start-mock_default --entrypoint sh specmatic/enterprise:latest -lc 'curl -s http://mock:9100/pets/1 || echo "Service unavailable"'
 ```
 
 ## Part B: Start contract-generated mock (consumer unblocked)
@@ -94,10 +94,10 @@ Alternatively, just run the following commands:
 
 ```shell
 docker compose --profile mock up -d --wait --wait-timeout 30 mock
-curl -sS http://127.0.0.1:9100/pets/1
-curl -sS http://127.0.0.1:9100/pets/2
-curl -sS http://127.0.0.1:9100/pets/2
-curl -i -sS http://127.0.0.1:9100/pets/abc
+docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS http://mock:9100/pets/1
+docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS http://mock:9100/pets/2
+docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS http://mock:9100/pets/2
+docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -i -sS http://mock:9100/pets/abc
 ```
 
 ## Part C: Stop only the mock and observe fallback
@@ -115,7 +115,7 @@ Expected output:
 Alternatively, just run the following commands:
 
 ```shell
-curl -s http://127.0.0.1:9100/pets/1 2>/dev/null || echo "Service unavailable"
+docker run --rm --network quick-start-mock_default --entrypoint sh specmatic/enterprise:latest -lc 'curl -s http://mock:9100/pets/1 || echo "Service unavailable"'
 ```
 
 ## Part D: Run mock from Studio and inspect traffic
@@ -155,8 +155,8 @@ Alternatively, just run the following commands:
 ```shell
 docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise:latest -lc 'mkdir -p specs/service_examples && cp quick-start-mock-generated/pets_242_GET_200_1.json specs/service_examples/pets_242_GET_200_1.json'
 docker compose --profile mock up -d --wait --wait-timeout 30 mock
-curl -sS http://127.0.0.1:9100/pets/242
-curl -sS http://127.0.0.1:9100/pets/242
+docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS http://mock:9100/pets/242
+docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS http://mock:9100/pets/242
 ```
 
 ## Pass criteria
