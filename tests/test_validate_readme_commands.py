@@ -11,11 +11,18 @@ from validate_readme_commands import (
     DEFAULT_LABS,
     CommandExecutionError,
     CommandSpec,
+    DockerWarmupResult,
+    LabExecutionResult,
+    PreflightCheckResult,
+    PreflightRequirements,
     _expected_output_matches,
+    determine_preflight_requirements,
     derive_final_cleanup_commands,
     main,
     parse_readme_commands,
     print_command_mapping,
+    run_preflight,
+    warm_docker_images,
     reset_lab_changes,
     resolve_readme_paths,
     run_single_readme,
@@ -355,6 +362,335 @@ class SkipCommandTests(GitRepoTestCase):
         self.assertFalse(should_skip_command("open specmatic studio"))
 
 
+class PreflightTests(GitRepoTestCase):
+    def test_determine_preflight_requirements_for_non_docker_lab(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            lab_path = Path(temp_dir)
+            (lab_path / "README.md").write_text(
+                textwrap.dedent(
+                    """
+                    ```shell
+                    printf 'ok\\n'
+                    ```
+                    """
+                ).lstrip(),
+                encoding="utf-8",
+            )
+
+            requirements = determine_preflight_requirements([lab_path / "README.md"])
+
+        self.assertEqual(
+            requirements,
+            PreflightRequirements(
+                docker_cli=False,
+                docker_compose=False,
+                license_validation=False,
+                remote_contract_access=False,
+            ),
+        )
+
+    def test_determine_preflight_requirements_for_repo_lab(self) -> None:
+        requirements = determine_preflight_requirements([ROOT_DIR / "api-coverage" / "README.md"])
+
+        self.assertEqual(
+            requirements,
+            PreflightRequirements(
+                docker_cli=True,
+                docker_compose=True,
+                license_validation=True,
+                remote_contract_access=False,
+            ),
+        )
+
+    def test_run_preflight_returns_empty_when_no_checks_required(self) -> None:
+        results = run_preflight(
+            [Path("/tmp/sample/README.md")],
+            PreflightRequirements(
+                docker_cli=False,
+                docker_compose=False,
+                license_validation=False,
+                remote_contract_access=False,
+            ),
+        )
+
+        self.assertEqual(results, [])
+
+    def test_run_preflight_reports_missing_docker(self) -> None:
+        with patch(
+            "validate_readme_commands.subprocess.run",
+            side_effect=OSError("No such file or directory: 'docker'"),
+        ):
+            results = run_preflight(
+                [Path("/tmp/sample/README.md")],
+                PreflightRequirements(
+                    docker_cli=True,
+                    docker_compose=False,
+                    license_validation=False,
+                    remote_contract_access=False,
+                ),
+            )
+
+        self.assertEqual(results[0].name, "docker")
+        self.assertFalse(results[0].passed)
+        self.assertIn("No such file or directory", results[0].detail or "")
+
+    def test_run_preflight_reports_missing_docker_compose(self) -> None:
+        with patch(
+            "validate_readme_commands.subprocess.run",
+            return_value=subprocess.CompletedProcess(
+                args=["docker", "compose", "version"],
+                returncode=1,
+                stdout="",
+                stderr="docker: 'compose' is not a docker command",
+            ),
+        ):
+            results = run_preflight(
+                [Path("/tmp/sample/README.md")],
+                PreflightRequirements(
+                    docker_cli=False,
+                    docker_compose=True,
+                    license_validation=False,
+                    remote_contract_access=False,
+                ),
+            )
+
+        self.assertEqual(results[0].name, "docker compose")
+        self.assertFalse(results[0].passed)
+        self.assertIn("not a docker command", results[0].detail or "")
+
+    def test_run_preflight_reports_unreachable_docker_daemon(self) -> None:
+        with patch(
+            "validate_readme_commands.subprocess.run",
+            side_effect=[
+                subprocess.CompletedProcess(args=["docker", "--version"], returncode=0, stdout="", stderr=""),
+                subprocess.CompletedProcess(args=["docker", "info"], returncode=1, stdout="", stderr="Cannot connect to the Docker daemon"),
+            ],
+        ):
+            results = run_preflight(
+                [Path("/tmp/sample/README.md")],
+                PreflightRequirements(
+                    docker_cli=True,
+                    docker_compose=False,
+                    license_validation=False,
+                    remote_contract_access=False,
+                ),
+            )
+
+        self.assertEqual(results[1].name, "docker daemon")
+        self.assertFalse(results[1].passed)
+        self.assertIn("Cannot connect to the Docker daemon", results[1].detail or "")
+
+    def test_run_preflight_reports_missing_license_file(self) -> None:
+        with (
+            patch(
+                "validate_readme_commands.subprocess.run",
+                side_effect=[
+                    subprocess.CompletedProcess(args=["docker", "--version"], returncode=0, stdout="", stderr=""),
+                    subprocess.CompletedProcess(args=["docker", "compose", "version"], returncode=0, stdout="", stderr=""),
+                    subprocess.CompletedProcess(args=["docker", "info"], returncode=0, stdout="", stderr=""),
+                ],
+            ),
+            patch("validate_readme_commands.Path.is_file", return_value=False),
+        ):
+            results = run_preflight(
+                [ROOT_DIR / "api-coverage" / "README.md"],
+                PreflightRequirements(
+                    docker_cli=True,
+                    docker_compose=True,
+                    license_validation=True,
+                    remote_contract_access=False,
+                ),
+            )
+
+        self.assertEqual(results[3].name, "specmatic license file exists")
+        self.assertFalse(results[3].passed)
+        self.assertEqual(results[4].name, "specmatic license validation")
+        self.assertFalse(results[4].passed)
+        self.assertTrue(results[4].skipped)
+
+    def test_run_preflight_reports_invalid_license(self) -> None:
+        with patch(
+            "validate_readme_commands.subprocess.run",
+            side_effect=[
+                subprocess.CompletedProcess(args=["docker", "--version"], returncode=0, stdout="", stderr=""),
+                subprocess.CompletedProcess(args=["docker", "compose", "version"], returncode=0, stdout="", stderr=""),
+                subprocess.CompletedProcess(args=["docker", "info"], returncode=0, stdout="", stderr=""),
+                subprocess.CompletedProcess(args=["docker", "run"], returncode=1, stdout="", stderr="License expired"),
+            ],
+        ) as mocked_run, patch("validate_readme_commands.Path.is_file", return_value=True):
+            results = run_preflight(
+                [ROOT_DIR / "api-coverage" / "README.md"],
+                PreflightRequirements(
+                    docker_cli=True,
+                    docker_compose=True,
+                    license_validation=True,
+                    remote_contract_access=False,
+                ),
+            )
+
+        self.assertEqual(results[4].name, "specmatic license validation")
+        self.assertFalse(results[4].passed)
+        self.assertIn("License expired", results[4].detail or "")
+        license_call = mocked_run.call_args_list[3]
+        self.assertEqual(
+            license_call.kwargs["cwd"],
+            str(ROOT_DIR),
+        )
+        self.assertEqual(
+            license_call.args[0],
+            [
+                "docker",
+                "run",
+                "--rm",
+                "-v",
+                "./license.txt:/specmatic/specmatic-license.txt:ro",
+                "-e",
+                "SPECMATIC_LICENSE_PATH=/specmatic/specmatic-license.txt",
+                "specmatic/enterprise:latest",
+                "show-license",
+            ],
+        )
+
+    def test_run_preflight_reports_expired_license_even_when_show_license_exits_zero(self) -> None:
+        with patch(
+            "validate_readme_commands.subprocess.run",
+            side_effect=[
+                subprocess.CompletedProcess(args=["docker", "--version"], returncode=0, stdout="", stderr=""),
+                subprocess.CompletedProcess(args=["docker", "compose", "version"], returncode=0, stdout="", stderr=""),
+                subprocess.CompletedProcess(args=["docker", "info"], returncode=0, stdout="", stderr=""),
+                subprocess.CompletedProcess(
+                    args=["docker", "run"],
+                    returncode=0,
+                    stdout=(
+                        "WARNING: License loaded from /specmatic/specmatic-license.txt is expired as of May 16, 2026 at 6:30:32 AM UTC\n"
+                        "Using Specmatic Trial license initialized from jar:file:/usr/local/share/enterprise/enterprise.jar!/specmatic-default-trial-license.txt\n"
+                        "License details:\n"
+                    ),
+                    stderr="",
+                ),
+            ],
+        ), patch("validate_readme_commands.Path.is_file", return_value=True):
+            results = run_preflight(
+                [ROOT_DIR / "api-coverage" / "README.md"],
+                PreflightRequirements(
+                    docker_cli=True,
+                    docker_compose=True,
+                    license_validation=True,
+                    remote_contract_access=False,
+                ),
+            )
+
+        self.assertEqual(results[4].name, "specmatic license validation")
+        self.assertFalse(results[4].passed)
+        self.assertIn("is expired", results[4].detail or "")
+        self.assertIn("initialized from jar:file:", results[4].detail or "")
+
+    def test_run_preflight_skips_license_validation_when_not_required(self) -> None:
+        with patch(
+            "validate_readme_commands.subprocess.run",
+            return_value=subprocess.CompletedProcess(args=["docker", "--version"], returncode=0, stdout="", stderr=""),
+        ) as mocked_run:
+            results = run_preflight(
+                [Path("/tmp/sample/README.md")],
+                PreflightRequirements(
+                    docker_cli=True,
+                    docker_compose=False,
+                    license_validation=False,
+                    remote_contract_access=False,
+                ),
+            )
+
+        self.assertTrue(all(result.name != "specmatic license validation" for result in results))
+        self.assertEqual(mocked_run.call_count, 2)
+
+    def test_run_preflight_reports_remote_contract_access_failure(self) -> None:
+        with patch(
+            "validate_readme_commands.subprocess.run",
+            return_value=subprocess.CompletedProcess(args=["git", "ls-remote"], returncode=128, stdout="", stderr="Could not resolve host: github.com"),
+        ):
+            results = run_preflight(
+                [ROOT_DIR / "response-templating" / "README.md"],
+                PreflightRequirements(
+                    docker_cli=False,
+                    docker_compose=False,
+                    license_validation=False,
+                    remote_contract_access=True,
+                ),
+            )
+
+        self.assertEqual(results[0].name, "labs-contracts access")
+        self.assertFalse(results[0].passed)
+        self.assertIn("Could not resolve host", results[0].detail or "")
+
+    def test_run_preflight_skips_remote_contract_check_when_not_required(self) -> None:
+        with patch(
+            "validate_readme_commands.subprocess.run",
+            return_value=subprocess.CompletedProcess(args=["docker", "--version"], returncode=0, stdout="", stderr=""),
+        ) as mocked_run:
+            run_preflight(
+                [Path("/tmp/sample/README.md")],
+                PreflightRequirements(
+                    docker_cli=True,
+                    docker_compose=False,
+                    license_validation=False,
+                    remote_contract_access=False,
+                ),
+            )
+
+        commands = [call.args[0] for call in mocked_run.call_args_list]
+        self.assertNotIn(
+            ["git", "ls-remote", "--exit-code", "https://github.com/specmatic/labs-contracts.git", "HEAD"],
+            commands,
+        )
+
+    def test_warm_docker_images_skips_non_compose_lab(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            lab_path = Path(temp_dir)
+            (lab_path / "README.md").write_text(
+                textwrap.dedent(
+                    """
+                    ```shell
+                    printf 'ok\\n'
+                    ```
+                    """
+                ).lstrip(),
+                encoding="utf-8",
+            )
+
+            results = warm_docker_images([lab_path / "README.md"])
+
+        self.assertEqual(results, [])
+
+    def test_warm_docker_images_runs_compose_pull_with_extended_timeout(self) -> None:
+        with patch(
+            "validate_readme_commands.subprocess.run",
+            return_value=subprocess.CompletedProcess(args=["docker", "compose", "pull"], returncode=0, stdout="", stderr=""),
+        ) as mocked_run:
+            results = warm_docker_images([ROOT_DIR / "api-coverage" / "README.md"])
+
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].lab_name, "api-coverage")
+        self.assertTrue(results[0].passed)
+        warmup_call = mocked_run.call_args_list[0]
+        self.assertEqual(
+            warmup_call.args[0],
+            ["docker", "compose", "pull", "--ignore-buildable"],
+        )
+        self.assertEqual(warmup_call.kwargs["cwd"], str(ROOT_DIR / "api-coverage"))
+        self.assertEqual(warmup_call.kwargs["timeout"], 300.0)
+
+    def test_warm_docker_images_reports_timeout(self) -> None:
+        with patch(
+            "validate_readme_commands.subprocess.run",
+            side_effect=subprocess.TimeoutExpired(cmd="docker compose pull", timeout=300),
+        ):
+            results = warm_docker_images([ROOT_DIR / "api-coverage" / "README.md"])
+
+        self.assertEqual(results[0].lab_name, "api-coverage")
+        self.assertFalse(results[0].passed)
+        self.assertIn("timed out after 300 seconds", results[0].detail or "")
+
+
 class MainTests(GitRepoTestCase):
     def test_resolve_readme_paths_uses_default_labs_when_no_arg(self) -> None:
         readme_paths = resolve_readme_paths(None)
@@ -391,7 +727,9 @@ class MainTests(GitRepoTestCase):
                 encoding="utf-8",
             )
 
-            exit_code = main([str(lab_path), "--timeout", "5"])
+            with patch("validate_readme_commands.run_preflight", return_value=[]):
+                with patch("validate_readme_commands.warm_docker_images", return_value=[]):
+                    exit_code = main([str(lab_path), "--timeout", "5"])
 
         self.assertEqual(exit_code, 0)
 
@@ -636,19 +974,58 @@ class MainTests(GitRepoTestCase):
         stdout_buffer = io.StringIO()
         calls: list[Path] = []
 
-        def fake_run_single_readme(*, readme_path: Path, dry_run: bool, skip_reset: bool, timeout_seconds: float) -> int:
+        def fake_run_single_readme(
+            *,
+            readme_path: Path,
+            dry_run: bool,
+            skip_reset: bool,
+            timeout_seconds: float,
+        ) -> LabExecutionResult:
             calls.append(readme_path)
-            return 1 if readme_path == fake_readmes[1] else 0
+            if readme_path == fake_readmes[0]:
+                return LabExecutionResult(
+                    name="lab-one",
+                    exit_code=0,
+                    duration_seconds=0.0,
+                    validated_commands=5,
+                    total_commands=5,
+                    skipped_commands=0,
+                )
+            if readme_path == fake_readmes[1]:
+                return LabExecutionResult(
+                    name="lab-two",
+                    exit_code=1,
+                    duration_seconds=0.0,
+                    validated_commands=2,
+                    total_commands=4,
+                    skipped_commands=2,
+                )
+            return LabExecutionResult(
+                name="lab-three",
+                exit_code=0,
+                duration_seconds=0.0,
+                validated_commands=3,
+                total_commands=5,
+                skipped_commands=2,
+            )
 
         with (
             patch("validate_readme_commands.resolve_readme_paths", return_value=fake_readmes),
             patch("pathlib.Path.is_file", return_value=True),
+            patch("validate_readme_commands.run_preflight", return_value=[]),
+            patch("validate_readme_commands.warm_docker_images", return_value=[]) as mocked_warmup,
             patch("validate_readme_commands.run_single_readme", side_effect=fake_run_single_readme),
+            patch(
+                "validate_readme_commands.time.perf_counter",
+                side_effect=[0.0, 1.5, 1.5, 4.0, 4.0, 7.25],
+            ),
             redirect_stdout(stdout_buffer),
         ):
             exit_code = main([])
 
         self.assertEqual(exit_code, 1)
+        warmed_readmes = [call.args[0][0] for call in mocked_warmup.call_args_list]
+        self.assertEqual(warmed_readmes, fake_readmes)
         self.assertEqual(calls, fake_readmes)
         output = stdout_buffer.getvalue()
         self.assertIn("===== lab-one =====", output)
@@ -656,10 +1033,206 @@ class MainTests(GitRepoTestCase):
         self.assertIn("===== lab-three =====", output)
         self.assertIn("===== Summary =====", output)
         self.assertIn("PASS labs: 2", output)
-        self.assertIn("  lab-one", output)
-        self.assertIn("  lab-three", output)
+        self.assertIn("  lab-one (status: PASS, duration: 1.50s, validated: 5/5, skipped: 0)", output)
+        self.assertIn("  lab-three (status: PASS, duration: 3.25s, validated: 3/5, skipped: 2)", output)
         self.assertIn("FAIL labs: 1", output)
-        self.assertIn("  lab-two", output)
+        self.assertIn("  lab-two (status: FAIL, duration: 2.50s, validated: 2/4, skipped: 2)", output)
+
+    def test_main_aborts_before_running_labs_when_preflight_fails(self) -> None:
+        stdout_buffer = io.StringIO()
+
+        with (
+            patch(
+                "validate_readme_commands.resolve_readme_paths",
+                return_value=[ROOT_DIR / "api-coverage" / "README.md"],
+            ),
+            patch("pathlib.Path.is_file", return_value=True),
+            patch(
+                "validate_readme_commands.run_preflight",
+                return_value=[
+                    PreflightCheckResult(
+                        name="docker daemon",
+                        passed=False,
+                        skipped=False,
+                        detail="Docker is not running",
+                        suggestion="Start Docker Desktop.",
+                    )
+                ],
+            ),
+            patch("validate_readme_commands.warm_docker_images") as mocked_warmup,
+            patch("validate_readme_commands.run_single_readme") as mocked_run_single_readme,
+            redirect_stdout(stdout_buffer),
+        ):
+            exit_code = main([])
+
+        self.assertEqual(exit_code, 1)
+        mocked_warmup.assert_not_called()
+        mocked_run_single_readme.assert_not_called()
+        output = stdout_buffer.getvalue()
+        self.assertIn("===== Preflight =====", output)
+        self.assertIn("FAIL docker daemon: Docker is not running", output)
+        self.assertIn("Preflight failed. No labs were executed.", output)
+        self.assertNotIn("===== api-coverage =====", output)
+
+    def test_print_preflight_results_uses_skip_for_dependent_checks(self) -> None:
+        stdout_buffer = io.StringIO()
+
+        with redirect_stdout(stdout_buffer):
+            from validate_readme_commands import print_preflight_results
+
+            print_preflight_results(
+                [
+                    PreflightCheckResult(name="docker", passed=True),
+                    PreflightCheckResult(
+                        name="docker daemon",
+                        passed=False,
+                        detail="Docker is not running",
+                        suggestion="Start Docker Desktop.",
+                    ),
+                    PreflightCheckResult(
+                        name="specmatic license validation",
+                        passed=False,
+                        skipped=True,
+                        detail="skipped because Docker or the license file is unavailable",
+                        suggestion="Fix Docker access and the license file, then rerun the validator.",
+                    ),
+                ]
+            )
+
+        output = stdout_buffer.getvalue()
+        self.assertIn("PASS docker", output)
+        self.assertIn("FAIL docker daemon: Docker is not running", output)
+        self.assertIn("SKIP specmatic license validation: skipped because Docker or the license file is unavailable", output)
+
+    def test_main_prints_preflight_once_then_runs_labs(self) -> None:
+        stdout_buffer = io.StringIO()
+        fake_readmes = [Path("/tmp/lab-one/README.md")]
+
+        with (
+            patch("validate_readme_commands.resolve_readme_paths", return_value=fake_readmes),
+            patch("pathlib.Path.is_file", return_value=True),
+            patch(
+                "validate_readme_commands.run_preflight",
+                return_value=[PreflightCheckResult(name="docker", passed=True)],
+            ),
+            patch("validate_readme_commands.warm_docker_images", return_value=[]),
+            patch(
+                "validate_readme_commands.run_single_readme",
+                return_value=LabExecutionResult(
+                    name="lab-one",
+                    exit_code=0,
+                    duration_seconds=0.0,
+                    validated_commands=1,
+                    total_commands=1,
+                    skipped_commands=0,
+                ),
+            ),
+            patch("validate_readme_commands.time.perf_counter", side_effect=[0.0, 1.0]),
+            redirect_stdout(stdout_buffer),
+        ):
+            exit_code = main([])
+
+        self.assertEqual(exit_code, 0)
+        output = stdout_buffer.getvalue()
+        self.assertEqual(output.count("===== Preflight ====="), 1)
+        self.assertIn("PASS docker", output)
+
+    def test_main_marks_current_lab_failed_when_docker_warmup_fails(self) -> None:
+        stdout_buffer = io.StringIO()
+        fake_readmes = [Path("/tmp/lab-one/README.md"), Path("/tmp/lab-two/README.md")]
+
+        with (
+            patch("validate_readme_commands.resolve_readme_paths", return_value=fake_readmes),
+            patch("pathlib.Path.is_file", return_value=True),
+            patch("validate_readme_commands.run_preflight", return_value=[]),
+            patch(
+                "validate_readme_commands.warm_docker_images",
+                side_effect=[
+                    [DockerWarmupResult(lab_name="lab-one", passed=False, detail="timed out after 300 seconds")],
+                    [],
+                ],
+            ),
+            patch(
+                "validate_readme_commands.run_single_readme",
+                return_value=LabExecutionResult(
+                    name="lab-two",
+                    exit_code=0,
+                    duration_seconds=0.0,
+                    validated_commands=1,
+                    total_commands=1,
+                    skipped_commands=0,
+                ),
+            ) as mocked_run_single_readme,
+            patch("validate_readme_commands.time.perf_counter", side_effect=[0.0, 1.0, 1.0, 2.0]),
+            redirect_stdout(stdout_buffer),
+        ):
+            exit_code = main([])
+
+        self.assertEqual(exit_code, 1)
+        mocked_run_single_readme.assert_called_once_with(
+            readme_path=fake_readmes[1],
+            dry_run=False,
+            skip_reset=False,
+            timeout_seconds=120.0,
+        )
+        output = stdout_buffer.getvalue()
+        self.assertIn("===== lab-one =====", output)
+        self.assertIn("===== Docker Warmup =====", output)
+        self.assertIn("FAIL lab-one: timed out after 300 seconds", output)
+        self.assertIn("===== lab-two =====", output)
+        self.assertIn("PASS labs: 1", output)
+        self.assertIn("FAIL labs: 1", output)
+
+    def test_main_dry_run_summary_does_not_report_pass_or_fail(self) -> None:
+        fake_readmes = [
+            Path("/tmp/lab-one/README.md"),
+            Path("/tmp/lab-two/README.md"),
+        ]
+        stdout_buffer = io.StringIO()
+
+        def fake_run_single_readme(
+            *,
+            readme_path: Path,
+            dry_run: bool,
+            skip_reset: bool,
+            timeout_seconds: float,
+        ) -> LabExecutionResult:
+            self.assertTrue(dry_run)
+            if readme_path == fake_readmes[0]:
+                return LabExecutionResult(
+                    name="lab-one",
+                    exit_code=0,
+                    duration_seconds=0.0,
+                    validated_commands=0,
+                    total_commands=5,
+                    skipped_commands=0,
+                )
+            return LabExecutionResult(
+                name="lab-two",
+                exit_code=0,
+                duration_seconds=0.0,
+                validated_commands=0,
+                total_commands=3,
+                skipped_commands=0,
+            )
+
+        with (
+            patch("validate_readme_commands.resolve_readme_paths", return_value=fake_readmes),
+            patch("pathlib.Path.is_file", return_value=True),
+            patch("validate_readme_commands.run_single_readme", side_effect=fake_run_single_readme),
+            patch("validate_readme_commands.time.perf_counter", side_effect=[0.0, 1.0, 1.0, 2.0]),
+            redirect_stdout(stdout_buffer),
+        ):
+            exit_code = main(["--dry-run"])
+
+        self.assertEqual(exit_code, 0)
+        output = stdout_buffer.getvalue()
+        self.assertIn("===== Summary =====", output)
+        self.assertIn("DRY RUN labs: 2", output)
+        self.assertIn("  lab-one (status: DRY RUN, duration: 1.00s, commands discovered: 5)", output)
+        self.assertIn("  lab-two (status: DRY RUN, duration: 1.00s, commands discovered: 3)", output)
+        self.assertNotIn("PASS labs:", output)
+        self.assertNotIn("FAIL labs:", output)
 
 if __name__ == "__main__":
     unittest.main()

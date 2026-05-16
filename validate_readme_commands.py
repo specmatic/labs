@@ -23,6 +23,7 @@ ANSI_GREEN = "\033[32m"
 ANSI_RED = "\033[31m"
 ANSI_YELLOW = "\033[33m"
 ANSI_DIM = "\033[2m"
+DOCKER_WARMUP_TIMEOUT_SECONDS = 300.0
 
 DEFAULT_LABS = [
     "api-coverage",
@@ -98,6 +99,51 @@ class RepoSnapshot:
 class ResetSummary:
     restored: list[Path]
     removed: list[Path]
+
+
+@dataclass(frozen=True)
+class LabExecutionResult:
+    name: str
+    exit_code: int
+    duration_seconds: float
+    validated_commands: int
+    total_commands: int
+    skipped_commands: int
+
+
+@dataclass(frozen=True)
+class PreflightRequirements:
+    docker_cli: bool
+    docker_compose: bool
+    license_validation: bool
+    remote_contract_access: bool
+
+    @property
+    def any_required(self) -> bool:
+        return any(
+            (
+                self.docker_cli,
+                self.docker_compose,
+                self.license_validation,
+                self.remote_contract_access,
+            )
+        )
+
+
+@dataclass(frozen=True)
+class PreflightCheckResult:
+    name: str
+    passed: bool
+    skipped: bool = False
+    detail: str | None = None
+    suggestion: str | None = None
+
+
+@dataclass(frozen=True)
+class DockerWarmupResult:
+    lab_name: str
+    passed: bool
+    detail: str | None = None
 
 
 class ReadmeValidationError(Exception):
@@ -730,29 +776,65 @@ def main(argv: Sequence[str] | None = None) -> int:
         if not readme_path.is_file():
             parser.error(f"README file does not exist: {readme_path}")
 
+    if not args.dry_run:
+        requirements = determine_preflight_requirements(readme_paths)
+        preflight_results = run_preflight(readme_paths, requirements)
+        if preflight_results:
+            print_preflight_results(preflight_results)
+            if any(not result.passed and not result.skipped for result in preflight_results):
+                print("Preflight failed. No labs were executed.")
+                return 1
+
     overall_exit_code = 0
-    passed_labs: list[str] = []
-    failed_labs: list[str] = []
+    passed_labs: list[LabExecutionResult] = []
+    failed_labs: list[LabExecutionResult] = []
     for index, readme_path in enumerate(readme_paths, start=1):
         if multiple_labs:
             if index > 1:
                 print()
             print(f"===== {readme_path.parent.name} =====")
-        exit_code = run_single_readme(
+        start_time = time.perf_counter()
+        if not args.dry_run:
+            docker_warmup_results = warm_docker_images([readme_path])
+            if docker_warmup_results:
+                print_docker_warmup_results(docker_warmup_results)
+                if any(not result.passed for result in docker_warmup_results):
+                    print("FAIL")
+                    overall_exit_code = 1
+                    failed_labs.append(
+                        LabExecutionResult(
+                            name=readme_path.parent.name,
+                            exit_code=1,
+                            duration_seconds=time.perf_counter() - start_time,
+                            validated_commands=0,
+                            total_commands=0,
+                            skipped_commands=0,
+                        )
+                    )
+                    continue
+        lab_result = run_single_readme(
             readme_path=readme_path,
             dry_run=args.dry_run,
             skip_reset=args.skip_reset,
             timeout_seconds=args.timeout,
         )
-        if exit_code != 0:
-            overall_exit_code = exit_code
-            failed_labs.append(readme_path.parent.name)
+        lab_result = LabExecutionResult(
+            name=lab_result.name,
+            exit_code=lab_result.exit_code,
+            duration_seconds=time.perf_counter() - start_time,
+            validated_commands=lab_result.validated_commands,
+            total_commands=lab_result.total_commands,
+            skipped_commands=lab_result.skipped_commands,
+        )
+        if lab_result.exit_code != 0:
+            overall_exit_code = lab_result.exit_code
+            failed_labs.append(lab_result)
         else:
-            passed_labs.append(readme_path.parent.name)
+            passed_labs.append(lab_result)
 
     if multiple_labs:
         print()
-        print_multi_lab_summary(passed_labs, failed_labs)
+        print_multi_lab_summary(passed_labs, failed_labs, dry_run=args.dry_run)
 
     return overall_exit_code
 
@@ -763,13 +845,21 @@ def run_single_readme(
     dry_run: bool,
     skip_reset: bool,
     timeout_seconds: float,
-) -> int:
+) -> LabExecutionResult:
     repo_snapshot = None if skip_reset else snapshot_repo_state(readme_path.parent)
+    lab_name = readme_path.parent.name
     try:
         command_specs = parse_readme_commands(readme_path)
         if dry_run:
             print_command_mapping(command_specs)
-            return 0
+            return LabExecutionResult(
+                name=lab_name,
+                exit_code=0,
+                duration_seconds=0.0,
+                validated_commands=0,
+                total_commands=len(command_specs),
+                skipped_commands=0,
+            )
         print_command_mapping(command_specs)
         summary = run_command_specs(
             command_specs=command_specs,
@@ -783,7 +873,14 @@ def run_single_readme(
     except ReadmeValidationError as exc:
         print(f"README: {readme_path}", file=sys.stderr)
         print(exc, file=sys.stderr)
-        return 1
+        return LabExecutionResult(
+            name=lab_name,
+            exit_code=1,
+            duration_seconds=0.0,
+            validated_commands=0,
+            total_commands=0,
+            skipped_commands=0,
+        )
 
     print_run_summary(summary, total_commands=len(command_specs))
 
@@ -807,7 +904,16 @@ def run_single_readme(
         print("PASS")
     else:
         print("FAIL")
-    return exit_code
+    skipped_commands = sum(1 for result in summary.results if result.skipped)
+    validated_commands = len(summary.results) - skipped_commands
+    return LabExecutionResult(
+        name=lab_name,
+        exit_code=exit_code,
+        duration_seconds=0.0,
+        validated_commands=validated_commands,
+        total_commands=len(command_specs),
+        skipped_commands=total_commands_skipped(summary, len(command_specs)),
+    )
 
 
 def resolve_readme_paths(readme_arg: str | None) -> list[Path]:
@@ -816,6 +922,336 @@ def resolve_readme_paths(readme_arg: str | None) -> list[Path]:
 
     repo_root = Path(__file__).resolve().parent
     return [(repo_root / lab / "README.md").resolve() for lab in DEFAULT_LABS]
+
+
+def determine_preflight_requirements(readme_paths: Sequence[Path]) -> PreflightRequirements:
+    docker_cli = False
+    docker_compose = False
+    license_validation = False
+    remote_contract_access = False
+
+    for readme_path in readme_paths:
+        if _readme_uses_docker(readme_path):
+            docker_cli = True
+        if _readme_uses_docker_compose(readme_path):
+            docker_compose = True
+
+        for config_path in _related_config_paths(readme_path.parent):
+            if not config_path.is_file():
+                continue
+            try:
+                config_text = config_path.read_text(encoding="utf-8")
+            except OSError:
+                continue
+            if "/specmatic/specmatic-license.txt" in config_text:
+                license_validation = True
+            if "https://github.com/specmatic/labs-contracts.git" in config_text:
+                remote_contract_access = True
+
+    return PreflightRequirements(
+        docker_cli=docker_cli,
+        docker_compose=docker_compose,
+        license_validation=license_validation,
+        remote_contract_access=remote_contract_access,
+    )
+
+
+def _readme_uses_docker(readme_path: Path) -> bool:
+    try:
+        command_specs = parse_readme_commands(readme_path)
+    except (OSError, ReadmeValidationError):
+        return False
+    return any("docker" in command_spec.command.lower() for command_spec in command_specs)
+
+
+def _readme_uses_docker_compose(readme_path: Path) -> bool:
+    try:
+        command_specs = parse_readme_commands(readme_path)
+    except (OSError, ReadmeValidationError):
+        return False
+    return any(
+        "docker compose" in command_spec.command.lower()
+        or "docker-compose" in command_spec.command.lower()
+        for command_spec in command_specs
+    )
+
+
+def _related_config_paths(lab_dir: Path) -> list[Path]:
+    return [
+        lab_dir / "docker-compose.yaml",
+        lab_dir / "specmatic.yaml",
+        lab_dir / "run-suite-config.yaml",
+    ]
+
+
+def warm_docker_images(
+    readme_paths: Sequence[Path],
+    timeout_seconds: float = DOCKER_WARMUP_TIMEOUT_SECONDS,
+) -> list[DockerWarmupResult]:
+    results: list[DockerWarmupResult] = []
+
+    for lab_dir in _docker_compose_lab_dirs(readme_paths):
+        try:
+            completed = subprocess.run(
+                ["docker", "compose", "pull", "--ignore-buildable"],
+                cwd=str(lab_dir),
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=timeout_seconds,
+            )
+        except subprocess.TimeoutExpired:
+            results.append(
+                DockerWarmupResult(
+                    lab_name=lab_dir.name,
+                    passed=False,
+                    detail=f"timed out after {int(timeout_seconds)} seconds",
+                )
+            )
+            continue
+        except OSError as exc:
+            results.append(
+                DockerWarmupResult(
+                    lab_name=lab_dir.name,
+                    passed=False,
+                    detail=str(exc),
+                )
+            )
+            continue
+
+        if completed.returncode == 0:
+            results.append(DockerWarmupResult(lab_name=lab_dir.name, passed=True))
+            continue
+
+        error_output = completed.stderr.strip() or completed.stdout.strip() or "docker compose pull failed"
+        results.append(
+            DockerWarmupResult(
+                lab_name=lab_dir.name,
+                passed=False,
+                detail=error_output,
+            )
+        )
+
+    return results
+
+
+def _docker_compose_lab_dirs(readme_paths: Sequence[Path]) -> list[Path]:
+    lab_dirs: list[Path] = []
+    seen: set[Path] = set()
+
+    for readme_path in readme_paths:
+        lab_dir = readme_path.parent
+        docker_compose_path = lab_dir / "docker-compose.yaml"
+        if lab_dir in seen or not docker_compose_path.is_file():
+            continue
+        if not _readme_uses_docker_compose(readme_path):
+            continue
+        seen.add(lab_dir)
+        lab_dirs.append(lab_dir)
+
+    return lab_dirs
+
+
+def run_preflight(
+    readme_paths: Sequence[Path],
+    requirements: PreflightRequirements | None = None,
+) -> list[PreflightCheckResult]:
+    requirements = requirements or determine_preflight_requirements(readme_paths)
+    if not requirements.any_required:
+        return []
+
+    results: list[PreflightCheckResult] = []
+    repo_root = Path(__file__).resolve().parent
+    license_path = repo_root / "license.txt"
+
+    if requirements.docker_cli:
+        results.append(
+            _run_preflight_command(
+                name="docker",
+                command=["docker", "--version"],
+                failure_detail="docker CLI is not available",
+                suggestion="Install Docker and make sure `docker` is on PATH.",
+            )
+        )
+
+    docker_ready = not results or results[-1].passed
+    if requirements.docker_compose:
+        results.append(
+            _run_preflight_command(
+                name="docker compose",
+                command=["docker", "compose", "version"],
+                failure_detail="docker compose is not available",
+                suggestion="Install a Docker version that includes `docker compose`.",
+            )
+        )
+        docker_ready = docker_ready and results[-1].passed
+
+    if requirements.docker_cli and docker_ready:
+        results.append(
+            _run_preflight_command(
+                name="docker daemon",
+                command=["docker", "info"],
+                failure_detail="Docker daemon is not reachable",
+                suggestion="Start Docker Desktop or the Docker daemon, then rerun the validator.",
+            )
+        )
+        docker_ready = docker_ready and results[-1].passed
+    elif requirements.docker_cli:
+        results.append(
+            PreflightCheckResult(
+                name="docker daemon",
+                passed=False,
+                skipped=True,
+                detail="skipped because Docker CLI/Compose is unavailable",
+                suggestion="Fix the Docker installation first.",
+            )
+        )
+
+    if requirements.license_validation:
+        if license_path.is_file():
+            results.append(PreflightCheckResult(name="specmatic license file exists", passed=True))
+        else:
+            results.append(
+                PreflightCheckResult(
+                    name="specmatic license file exists",
+                    passed=False,
+                    detail=f"missing {license_path}",
+                    suggestion="Add a valid `license.txt` at the labs repo root.",
+                )
+            )
+
+        if docker_ready and license_path.is_file():
+            results.append(_validate_specmatic_license(repo_root))
+        else:
+            results.append(
+                PreflightCheckResult(
+                    name="specmatic license validation",
+                    passed=False,
+                    skipped=True,
+                    detail="skipped because Docker or the license file is unavailable",
+                    suggestion="Fix Docker access and the license file, then rerun the validator.",
+                )
+            )
+
+    if requirements.remote_contract_access:
+        results.append(
+            _run_preflight_command(
+                name="labs-contracts access",
+                command=[
+                    "git",
+                    "ls-remote",
+                    "--exit-code",
+                    "https://github.com/specmatic/labs-contracts.git",
+                    "HEAD",
+                ],
+                failure_detail="cannot reach github.com/specmatic/labs-contracts.git",
+                suggestion="Check network access to GitHub, then rerun the validator.",
+            )
+        )
+
+    return results
+
+
+def _run_preflight_command(
+    *,
+    name: str,
+    command: Sequence[str],
+    failure_detail: str,
+    suggestion: str,
+    cwd: Path | None = None,
+) -> PreflightCheckResult:
+    try:
+        completed = subprocess.run(
+            list(command),
+            cwd=str(cwd) if cwd is not None else None,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except OSError as exc:
+        return PreflightCheckResult(
+            name=name,
+            passed=False,
+            detail=f"{failure_detail}: {exc}",
+            suggestion=suggestion,
+        )
+
+    if completed.returncode == 0:
+        return PreflightCheckResult(name=name, passed=True)
+
+    error_output = completed.stderr.strip() or completed.stdout.strip() or failure_detail
+    return PreflightCheckResult(
+        name=name,
+        passed=False,
+        detail=error_output,
+        suggestion=suggestion,
+    )
+
+
+def _validate_specmatic_license(repo_root: Path) -> PreflightCheckResult:
+    completed = subprocess.run(
+        [
+            "docker",
+            "run",
+            "--rm",
+            "-v",
+            "./license.txt:/specmatic/specmatic-license.txt:ro",
+            "-e",
+            "SPECMATIC_LICENSE_PATH=/specmatic/specmatic-license.txt",
+            "specmatic/enterprise:latest",
+            "show-license",
+        ],
+        cwd=str(repo_root),
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    output = "\n".join(part for part in [completed.stdout.strip(), completed.stderr.strip()] if part)
+
+    loaded_expected_license = "initialized from /specmatic/specmatic-license.txt" in output
+    expired_license = "is expired" in output
+    fell_back_to_default = "initialized from jar:file:" in output
+
+    if completed.returncode == 0 and loaded_expected_license and not expired_license and not fell_back_to_default:
+        return PreflightCheckResult(name="specmatic license validation", passed=True)
+
+    return PreflightCheckResult(
+        name="specmatic license validation",
+        passed=False,
+        detail=output or "Specmatic license validation failed.",
+        suggestion="Replace `license.txt` with a valid, unexpired Specmatic license.",
+    )
+
+
+def print_preflight_results(results: Sequence[PreflightCheckResult]) -> None:
+    if not results:
+        return
+
+    print("===== Preflight =====")
+    for result in results:
+        if result.skipped:
+            status = "SKIP"
+        else:
+            status = "PASS" if result.passed else "FAIL"
+        if result.detail:
+            print(f"{status} {result.name}: {result.detail}")
+        else:
+            print(f"{status} {result.name}")
+        if (not result.passed or result.skipped) and result.suggestion:
+            print(f"  Fix: {result.suggestion}")
+
+
+def print_docker_warmup_results(results: Sequence[DockerWarmupResult]) -> None:
+    if not results:
+        return
+
+    print("===== Docker Warmup =====")
+    for result in results:
+        status = "PASS" if result.passed else "FAIL"
+        if result.detail:
+            print(f"{status} {result.lab_name}: {result.detail}")
+        else:
+            print(f"{status} {result.lab_name}")
 
 
 def print_command_mapping(command_specs: Sequence[CommandSpec]) -> None:
@@ -930,14 +1366,57 @@ def print_run_summary(summary: ValidationRunSummary, total_commands: int) -> Non
         print(f"SKIP command #{index}")
 
 
-def print_multi_lab_summary(passed_labs: Sequence[str], failed_labs: Sequence[str]) -> None:
+def _format_duration(duration_seconds: float) -> str:
+    if duration_seconds < 60:
+        return f"{duration_seconds:.2f}s"
+
+    minutes, seconds = divmod(duration_seconds, 60)
+    if duration_seconds < 3600:
+        return f"{int(minutes)}m {seconds:.2f}s"
+
+    hours, minutes = divmod(minutes, 60)
+    return f"{int(hours)}h {int(minutes)}m {seconds:.2f}s"
+
+
+def total_commands_skipped(summary: ValidationRunSummary, total_commands: int) -> int:
+    executed_skips = sum(1 for result in summary.results if result.skipped)
+    remaining_skips = total_commands - len(summary.results)
+    return executed_skips + remaining_skips
+
+
+def print_multi_lab_summary(
+    passed_labs: Sequence[LabExecutionResult],
+    failed_labs: Sequence[LabExecutionResult],
+    dry_run: bool = False,
+) -> None:
     print("===== Summary =====")
+    if dry_run:
+        dry_run_labs = [*passed_labs, *failed_labs]
+        print(f"DRY RUN labs: {len(dry_run_labs)}")
+        for lab in dry_run_labs:
+            print(
+                f"  {lab.name} "
+                f"(status: DRY RUN, duration: {_format_duration(lab.duration_seconds)}, "
+                f"commands discovered: {lab.total_commands})"
+            )
+        return
+
     print(f"PASS labs: {len(passed_labs)}")
     for lab in passed_labs:
-        print(f"  {lab}")
+        print(
+            f"  {lab.name} "
+            f"(status: PASS, duration: {_format_duration(lab.duration_seconds)}, "
+            f"validated: {lab.validated_commands}/{lab.total_commands}, "
+            f"skipped: {lab.skipped_commands})"
+        )
     print(f"FAIL labs: {len(failed_labs)}")
     for lab in failed_labs:
-        print(f"  {lab}")
+        print(
+            f"  {lab.name} "
+            f"(status: FAIL, duration: {_format_duration(lab.duration_seconds)}, "
+            f"validated: {lab.validated_commands}/{lab.total_commands}, "
+            f"skipped: {lab.skipped_commands})"
+        )
 
 
 def _get_repo_root(cwd: Path) -> Path | None:
