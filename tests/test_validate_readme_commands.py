@@ -1,4 +1,5 @@
 import io
+import json
 import subprocess
 import tempfile
 import textwrap
@@ -15,14 +16,18 @@ from validate_readme_commands import (
     LabExecutionResult,
     PreflightCheckResult,
     PreflightRequirements,
+    RunReport,
     _expected_output_matches,
     determine_preflight_requirements,
     derive_final_cleanup_commands,
+    load_run_report,
     main,
     parse_readme_commands,
     print_command_mapping,
+    print_run_report,
     run_preflight,
     warm_docker_images,
+    write_run_report,
     reset_lab_changes,
     resolve_readme_paths,
     run_single_readme,
@@ -733,6 +738,34 @@ class MainTests(GitRepoTestCase):
 
         self.assertEqual(exit_code, 0)
 
+    def test_main_single_lab_skips_preflight(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            lab_path = Path(temp_dir)
+            readme_path = lab_path / "README.md"
+            readme_path.write_text(
+                textwrap.dedent(
+                    """
+                    ```shell
+                    printf 'ok\\n'
+                    ```
+
+                    ```terminaloutput
+                    ok
+                    ```
+                    """
+                ).lstrip(),
+                encoding="utf-8",
+            )
+
+            with (
+                patch("validate_readme_commands.run_preflight") as mocked_preflight,
+                patch("validate_readme_commands.warm_docker_images", return_value=[]),
+            ):
+                exit_code = main([str(lab_path), "--timeout", "5"])
+
+        self.assertEqual(exit_code, 0)
+        mocked_preflight.assert_not_called()
+
     def test_dry_run_prints_command_mapping(self) -> None:
         stdout_buffer = io.StringIO()
         command_specs = [
@@ -1250,6 +1283,130 @@ class MainTests(GitRepoTestCase):
         self.assertIn("3", output)
         self.assertNotIn("PASS labs:", output)
         self.assertNotIn("FAIL labs:", output)
+
+    def test_main_preflight_only_runs_checks_and_exits(self) -> None:
+        stdout_buffer = io.StringIO()
+
+        with (
+            patch(
+                "validate_readme_commands.run_preflight",
+                return_value=[PreflightCheckResult(name="docker", passed=True)],
+            ),
+            patch("validate_readme_commands.run_single_readme") as mocked_run_single_readme,
+            redirect_stdout(stdout_buffer),
+        ):
+            exit_code = main(["--preflight-only"])
+
+        self.assertEqual(exit_code, 0)
+        mocked_run_single_readme.assert_not_called()
+        output = stdout_buffer.getvalue()
+        self.assertIn("===== Preflight =====", output)
+
+    def test_main_writes_result_json_for_single_lab(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            result_path = Path(temp_dir) / "result.json"
+
+            with (
+                patch(
+                    "validate_readme_commands.resolve_readme_paths",
+                    return_value=[Path("/tmp/lab-one/README.md")],
+                ),
+                patch("pathlib.Path.is_file", return_value=True),
+                patch("validate_readme_commands.warm_docker_images", return_value=[]),
+                patch(
+                    "validate_readme_commands.run_single_readme",
+                    return_value=LabExecutionResult(
+                        name="lab-one",
+                        exit_code=0,
+                        duration_seconds=0.0,
+                        validated_commands=2,
+                        total_commands=2,
+                        skipped_commands=0,
+                    ),
+                ),
+                patch("validate_readme_commands.time.perf_counter", side_effect=[0.0, 1.0]),
+            ):
+                exit_code = main(["/tmp/lab-one", "--result-json", str(result_path)])
+
+            self.assertEqual(exit_code, 0)
+            payload = json.loads(result_path.read_text(encoding="utf-8"))
+            self.assertEqual(payload["mode"], "execution")
+            self.assertEqual(payload["labs"][0]["name"], "lab-one")
+
+    def test_load_and_print_run_report_from_directory(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            result_dir = Path(temp_dir)
+            write_run_report(
+                result_dir / "lab-one.json",
+                RunReport(
+                    mode="execution",
+                    labs=[
+                        LabExecutionResult(
+                            name="lab-one",
+                            exit_code=0,
+                            duration_seconds=1.5,
+                            validated_commands=5,
+                            total_commands=5,
+                            skipped_commands=0,
+                        )
+                    ],
+                ),
+            )
+            write_run_report(
+                result_dir / "lab-two.json",
+                RunReport(
+                    mode="execution",
+                    labs=[
+                        LabExecutionResult(
+                            name="lab-two",
+                            exit_code=1,
+                            duration_seconds=2.5,
+                            validated_commands=2,
+                            total_commands=4,
+                            skipped_commands=2,
+                        )
+                    ],
+                ),
+            )
+
+            report = load_run_report(result_dir)
+            stdout_buffer = io.StringIO()
+            with redirect_stdout(stdout_buffer):
+                print_run_report(report)
+
+        output = stdout_buffer.getvalue()
+        self.assertIn("PASS labs: 1", output)
+        self.assertIn("FAIL labs: 1", output)
+        self.assertIn("lab-one", output)
+        self.assertIn("lab-two", output)
+
+    def test_main_report_from_directory_prints_consolidated_report(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            result_dir = Path(temp_dir)
+            (result_dir / "lab-one.json").write_text(
+                json.dumps(
+                    {
+                        "mode": "execution",
+                        "labs": [
+                            {
+                                "name": "lab-one",
+                                "exit_code": 0,
+                                "duration_seconds": 1.0,
+                                "validated_commands": 1,
+                                "total_commands": 1,
+                                "skipped_commands": 0,
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            stdout_buffer = io.StringIO()
+            with redirect_stdout(stdout_buffer):
+                exit_code = main(["--report-from", str(result_dir)])
+
+        self.assertEqual(exit_code, 0)
+        self.assertIn("===== Summary =====", stdout_buffer.getvalue())
 
 if __name__ == "__main__":
     unittest.main()

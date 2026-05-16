@@ -1,0 +1,123 @@
+name: Validate Lab ReadMes
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  preflight:
+    name: Shared Preflight
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run shared preflight
+        run: python3 validate_readme_commands.py --preflight-only
+
+  validate-lab:
+    name: Validate ${{ matrix.lab }}
+    needs: preflight
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        lab:
+          - api-coverage
+          - schema-design
+          - response-templating
+          - api-resiliency-testing
+          - api-security-schemes
+          - async-event-flow
+          - backward-compatibility-testing
+          - continuous-integration
+          - data-adapters
+          - dictionary
+          - external-examples
+          - filters
+          - kafka-avro
+          - kafka-sqs-retry-dlq
+          - mcp-auto-test
+          - overlays
+          - partial-examples
+          - quick-start-api-testing
+          - quick-start-async-contract-testing
+          - quick-start-contract-testing
+          - quick-start-mock
+          - schema-resiliency-testing
+          - workflow-in-same-spec
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Ensure origin/main is available
+        run: git fetch origin main:refs/remotes/origin/main
+
+      - name: Validate lab README
+        run: |
+          mkdir -p .artifacts/readme-validator
+          python3 validate_readme_commands.py "${{ matrix.lab }}" \
+            --result-json ".artifacts/readme-validator/${{ matrix.lab }}.json"
+
+      - name: Upload lab validation result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: readme-validator-${{ matrix.lab }}
+          path: .artifacts/readme-validator/${{ matrix.lab }}.json
+          if-no-files-found: error
+
+  report:
+    name: Consolidated Report
+    if: always()
+    needs:
+      - preflight
+      - validate-lab
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Note preflight failure
+        if: needs.preflight.result != 'success'
+        run: |
+          echo "Shared preflight failed. Lab matrix did not run." | tee -a "$GITHUB_STEP_SUMMARY"
+          exit 1
+
+      - name: Download lab validation artifacts
+        if: needs.preflight.result == 'success'
+        uses: actions/download-artifact@v4
+        with:
+          pattern: readme-validator-*
+          path: .artifacts/readme-validator
+          merge-multiple: true
+
+      - name: Print consolidated report
+        if: needs.preflight.result == 'success'
+        run: |
+          python3 validate_readme_commands.py \
+            --report-from ".artifacts/readme-validator" | tee -a "$GITHUB_STEP_SUMMARY"

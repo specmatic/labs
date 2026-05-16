@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import difflib
+import json
 import queue
 import shutil
 import shlex
@@ -144,6 +145,12 @@ class DockerWarmupResult:
     lab_name: str
     passed: bool
     detail: str | None = None
+
+
+@dataclass(frozen=True)
+class RunReport:
+    mode: str
+    labs: list[LabExecutionResult]
 
 
 class ReadmeValidationError(Exception):
@@ -763,6 +770,19 @@ def build_parser() -> argparse.ArgumentParser:
         default=120.0,
         help="Timeout in seconds for each shell command. Default: 120.",
     )
+    parser.add_argument(
+        "--preflight-only",
+        action="store_true",
+        help="Run only the shared preflight checks and exit.",
+    )
+    parser.add_argument(
+        "--result-json",
+        help="Write a machine-readable JSON result for this invocation.",
+    )
+    parser.add_argument(
+        "--report-from",
+        help="Read per-run JSON results from a directory and print a consolidated report.",
+    )
     return parser
 
 
@@ -770,13 +790,27 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
 
+    if args.preflight_only and (args.readme or args.dry_run or args.report_from):
+        parser.error("--preflight-only cannot be combined with a lab path, --dry-run, or --report-from")
+    if args.report_from and (args.readme or args.dry_run or args.preflight_only):
+        parser.error("--report-from cannot be combined with a lab path, --dry-run, or --preflight-only")
+
+    if args.report_from:
+        report = load_run_report(Path(args.report_from))
+        print_run_report(report)
+        exit_code = 1 if any(lab.exit_code != 0 for lab in report.labs) else 0
+        if args.result_json:
+            write_run_report(Path(args.result_json), report)
+        return exit_code
+
     readme_paths = resolve_readme_paths(args.readme)
     multiple_labs = len(readme_paths) > 1
     for readme_path in readme_paths:
         if not readme_path.is_file():
             parser.error(f"README file does not exist: {readme_path}")
 
-    if not args.dry_run:
+    should_run_preflight = not args.dry_run and (args.preflight_only or args.readme is None)
+    if should_run_preflight:
         requirements = determine_preflight_requirements(readme_paths)
         streamed_preflight = requirements.any_required
         if streamed_preflight:
@@ -791,7 +825,13 @@ def main(argv: Sequence[str] | None = None) -> int:
                 print_preflight_results(preflight_results)
             if any(not result.passed and not result.skipped for result in preflight_results):
                 print("Preflight failed. No labs were executed.")
+                if args.result_json:
+                    write_run_report(Path(args.result_json), RunReport(mode="preflight-only", labs=[]))
                 return 1
+        if args.preflight_only:
+            if args.result_json:
+                write_run_report(Path(args.result_json), RunReport(mode="preflight-only", labs=[]))
+            return 0
 
     overall_exit_code = 0
     passed_labs: list[LabExecutionResult] = []
@@ -848,6 +888,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     if multiple_labs:
         print()
         print_multi_lab_summary(passed_labs, failed_labs, dry_run=args.dry_run)
+
+    report_mode = "dry-run" if args.dry_run else "execution"
+    if args.result_json:
+        write_run_report(Path(args.result_json), RunReport(mode=report_mode, labs=[*passed_labs, *failed_labs]))
 
     return overall_exit_code
 
@@ -935,6 +979,65 @@ def resolve_readme_paths(readme_arg: str | None) -> list[Path]:
 
     repo_root = Path(__file__).resolve().parent
     return [(repo_root / lab / "README.md").resolve() for lab in DEFAULT_LABS]
+
+
+def write_run_report(path: Path, report: RunReport) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(
+        json.dumps(
+            {
+                "mode": report.mode,
+                "labs": [
+                    {
+                        "name": lab.name,
+                        "exit_code": lab.exit_code,
+                        "duration_seconds": lab.duration_seconds,
+                        "validated_commands": lab.validated_commands,
+                        "total_commands": lab.total_commands,
+                        "skipped_commands": lab.skipped_commands,
+                    }
+                    for lab in report.labs
+                ],
+            },
+            indent=2,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+
+
+def load_run_report(path: Path) -> RunReport:
+    report_files = sorted(path.glob("*.json")) if path.is_dir() else [path]
+    labs: list[LabExecutionResult] = []
+    modes: set[str] = set()
+
+    for report_file in report_files:
+        payload = json.loads(report_file.read_text(encoding="utf-8"))
+        modes.add(payload.get("mode", "execution"))
+        for lab in payload.get("labs", []):
+            labs.append(
+                LabExecutionResult(
+                    name=lab["name"],
+                    exit_code=lab["exit_code"],
+                    duration_seconds=lab["duration_seconds"],
+                    validated_commands=lab["validated_commands"],
+                    total_commands=lab["total_commands"],
+                    skipped_commands=lab["skipped_commands"],
+                )
+            )
+
+    merged_mode = "dry-run" if modes == {"dry-run"} else "execution"
+    return RunReport(mode=merged_mode, labs=sorted(labs, key=lambda lab: lab.name))
+
+
+def print_run_report(report: RunReport) -> None:
+    passed_labs = [lab for lab in report.labs if lab.exit_code == 0]
+    failed_labs = [lab for lab in report.labs if lab.exit_code != 0]
+    print_multi_lab_summary(
+        passed_labs,
+        failed_labs,
+        dry_run=report.mode == "dry-run",
+    )
 
 
 def determine_preflight_requirements(readme_paths: Sequence[Path]) -> PreflightRequirements:
