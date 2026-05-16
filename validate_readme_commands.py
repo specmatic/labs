@@ -778,9 +778,17 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if not args.dry_run:
         requirements = determine_preflight_requirements(readme_paths)
-        preflight_results = run_preflight(readme_paths, requirements)
+        streamed_preflight = requirements.any_required
+        if streamed_preflight:
+            print("===== Preflight =====")
+        preflight_results = run_preflight(
+            readme_paths,
+            requirements,
+            on_result=_print_preflight_result,
+        )
         if preflight_results:
-            print_preflight_results(preflight_results)
+            if not streamed_preflight:
+                print_preflight_results(preflight_results)
             if any(not result.passed and not result.skipped for result in preflight_results):
                 print("Preflight failed. No labs were executed.")
                 return 1
@@ -795,9 +803,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             print(f"===== {readme_path.parent.name} =====")
         start_time = time.perf_counter()
         if not args.dry_run:
-            docker_warmup_results = warm_docker_images([readme_path])
+            streamed_warmup = bool(_docker_compose_lab_dirs([readme_path]))
+            docker_warmup_results = warm_docker_images(
+                [readme_path],
+                on_result=_print_docker_warmup_result,
+            )
             if docker_warmup_results:
-                print_docker_warmup_results(docker_warmup_results)
+                if not streamed_warmup:
+                    print_docker_warmup_results(docker_warmup_results)
                 if any(not result.passed for result in docker_warmup_results):
                     print("FAIL")
                     overall_exit_code = 1
@@ -987,10 +1000,13 @@ def _related_config_paths(lab_dir: Path) -> list[Path]:
 def warm_docker_images(
     readme_paths: Sequence[Path],
     timeout_seconds: float = DOCKER_WARMUP_TIMEOUT_SECONDS,
+    on_result=None,
 ) -> list[DockerWarmupResult]:
     results: list[DockerWarmupResult] = []
 
     for lab_dir in _docker_compose_lab_dirs(readme_paths):
+        if on_result is not None and not results:
+            print("===== Docker Warmup =====")
         try:
             completed = subprocess.run(
                 ["docker", "compose", "pull", "--ignore-buildable"],
@@ -1001,36 +1017,42 @@ def warm_docker_images(
                 timeout=timeout_seconds,
             )
         except subprocess.TimeoutExpired:
-            results.append(
-                DockerWarmupResult(
-                    lab_name=lab_dir.name,
-                    passed=False,
-                    detail=f"timed out after {int(timeout_seconds)} seconds",
-                )
+            result = DockerWarmupResult(
+                lab_name=lab_dir.name,
+                passed=False,
+                detail=f"timed out after {int(timeout_seconds)} seconds",
             )
+            results.append(result)
+            if on_result is not None:
+                on_result(result)
             continue
         except OSError as exc:
-            results.append(
-                DockerWarmupResult(
-                    lab_name=lab_dir.name,
-                    passed=False,
-                    detail=str(exc),
-                )
+            result = DockerWarmupResult(
+                lab_name=lab_dir.name,
+                passed=False,
+                detail=str(exc),
             )
+            results.append(result)
+            if on_result is not None:
+                on_result(result)
             continue
 
         if completed.returncode == 0:
-            results.append(DockerWarmupResult(lab_name=lab_dir.name, passed=True))
+            result = DockerWarmupResult(lab_name=lab_dir.name, passed=True)
+            results.append(result)
+            if on_result is not None:
+                on_result(result)
             continue
 
         error_output = completed.stderr.strip() or completed.stdout.strip() or "docker compose pull failed"
-        results.append(
-            DockerWarmupResult(
-                lab_name=lab_dir.name,
-                passed=False,
-                detail=error_output,
-            )
+        result = DockerWarmupResult(
+            lab_name=lab_dir.name,
+            passed=False,
+            detail=error_output,
         )
+        results.append(result)
+        if on_result is not None:
+            on_result(result)
 
     return results
 
@@ -1055,6 +1077,7 @@ def _docker_compose_lab_dirs(readme_paths: Sequence[Path]) -> list[Path]:
 def run_preflight(
     readme_paths: Sequence[Path],
     requirements: PreflightRequirements | None = None,
+    on_result=None,
 ) -> list[PreflightCheckResult]:
     requirements = requirements or determine_preflight_requirements(readme_paths)
     if not requirements.any_required:
@@ -1065,89 +1088,96 @@ def run_preflight(
     license_path = repo_root / "license.txt"
 
     if requirements.docker_cli:
-        results.append(
-            _run_preflight_command(
-                name="docker",
-                command=["docker", "--version"],
-                failure_detail="docker CLI is not available",
-                suggestion="Install Docker and make sure `docker` is on PATH.",
-            )
+        result = _run_preflight_command(
+            name="docker",
+            command=["docker", "--version"],
+            failure_detail="docker CLI is not available",
+            suggestion="Install Docker and make sure `docker` is on PATH.",
         )
+        results.append(result)
+        if on_result is not None:
+            on_result(result)
 
     docker_ready = not results or results[-1].passed
     if requirements.docker_compose:
-        results.append(
-            _run_preflight_command(
-                name="docker compose",
-                command=["docker", "compose", "version"],
-                failure_detail="docker compose is not available",
-                suggestion="Install a Docker version that includes `docker compose`.",
-            )
+        result = _run_preflight_command(
+            name="docker compose",
+            command=["docker", "compose", "version"],
+            failure_detail="docker compose is not available",
+            suggestion="Install a Docker version that includes `docker compose`.",
         )
+        results.append(result)
+        if on_result is not None:
+            on_result(result)
         docker_ready = docker_ready and results[-1].passed
 
     if requirements.docker_cli and docker_ready:
-        results.append(
-            _run_preflight_command(
-                name="docker daemon",
-                command=["docker", "info"],
-                failure_detail="Docker daemon is not reachable",
-                suggestion="Start Docker Desktop or the Docker daemon, then rerun the validator.",
-            )
+        result = _run_preflight_command(
+            name="docker daemon",
+            command=["docker", "info"],
+            failure_detail="Docker daemon is not reachable",
+            suggestion="Start Docker Desktop or the Docker daemon, then rerun the validator.",
         )
+        results.append(result)
+        if on_result is not None:
+            on_result(result)
         docker_ready = docker_ready and results[-1].passed
     elif requirements.docker_cli:
-        results.append(
-            PreflightCheckResult(
-                name="docker daemon",
-                passed=False,
-                skipped=True,
-                detail="skipped because Docker CLI/Compose is unavailable",
-                suggestion="Fix the Docker installation first.",
-            )
+        result = PreflightCheckResult(
+            name="docker daemon",
+            passed=False,
+            skipped=True,
+            detail="skipped because Docker CLI/Compose is unavailable",
+            suggestion="Fix the Docker installation first.",
         )
+        results.append(result)
+        if on_result is not None:
+            on_result(result)
 
     if requirements.license_validation:
         if license_path.is_file():
-            results.append(PreflightCheckResult(name="specmatic license file exists", passed=True))
+            result = PreflightCheckResult(name="specmatic license file exists", passed=True)
         else:
-            results.append(
-                PreflightCheckResult(
-                    name="specmatic license file exists",
-                    passed=False,
-                    detail=f"missing {license_path}",
-                    suggestion="Add a valid `license.txt` at the labs repo root.",
-                )
+            result = PreflightCheckResult(
+                name="specmatic license file exists",
+                passed=False,
+                detail=f"missing {license_path}",
+                suggestion="Add a valid `license.txt` at the labs repo root.",
             )
+        results.append(result)
+        if on_result is not None:
+            on_result(result)
 
         if docker_ready and license_path.is_file():
-            results.append(_validate_specmatic_license(repo_root))
+            result = _validate_specmatic_license(repo_root)
         else:
-            results.append(
-                PreflightCheckResult(
-                    name="specmatic license validation",
-                    passed=False,
-                    skipped=True,
-                    detail="skipped because Docker or the license file is unavailable",
-                    suggestion="Fix Docker access and the license file, then rerun the validator.",
-                )
+            result = PreflightCheckResult(
+                name="specmatic license validation",
+                passed=False,
+                skipped=True,
+                detail="skipped because Docker or the license file is unavailable",
+                suggestion="Fix Docker access and the license file, then rerun the validator.",
             )
+        results.append(result)
+        if on_result is not None:
+            on_result(result)
 
     if requirements.remote_contract_access:
-        results.append(
-            _run_preflight_command(
-                name="labs-contracts access",
-                command=[
-                    "git",
-                    "ls-remote",
-                    "--exit-code",
-                    "https://github.com/specmatic/labs-contracts.git",
-                    "HEAD",
-                ],
-                failure_detail="cannot reach github.com/specmatic/labs-contracts.git",
-                suggestion="Check network access to GitHub, then rerun the validator.",
-            )
+        result = _run_preflight_command(
+            name="labs-contracts access",
+            command=[
+                "git",
+                "ls-remote",
+                "--exit-code",
+                "https://github.com/specmatic/labs-contracts.git",
+                "HEAD",
+            ],
+            failure_detail="cannot reach github.com/specmatic/labs-contracts.git",
+            suggestion="Check network access to GitHub, then rerun the validator.",
         )
+        results.append(result)
+        if on_result is not None:
+            on_result(result)
 
     return results
 
@@ -1229,16 +1259,7 @@ def print_preflight_results(results: Sequence[PreflightCheckResult]) -> None:
 
     print("===== Preflight =====")
     for result in results:
-        if result.skipped:
-            status = "SKIP"
-        else:
-            status = "PASS" if result.passed else "FAIL"
-        if result.detail:
-            print(f"{status} {result.name}: {result.detail}")
-        else:
-            print(f"{status} {result.name}")
-        if (not result.passed or result.skipped) and result.suggestion:
-            print(f"  Fix: {result.suggestion}")
+        _print_preflight_result(result)
 
 
 def print_docker_warmup_results(results: Sequence[DockerWarmupResult]) -> None:
@@ -1247,11 +1268,28 @@ def print_docker_warmup_results(results: Sequence[DockerWarmupResult]) -> None:
 
     print("===== Docker Warmup =====")
     for result in results:
+        _print_docker_warmup_result(result)
+
+
+def _print_preflight_result(result: PreflightCheckResult) -> None:
+    if result.skipped:
+        status = "SKIP"
+    else:
         status = "PASS" if result.passed else "FAIL"
-        if result.detail:
-            print(f"{status} {result.lab_name}: {result.detail}")
-        else:
-            print(f"{status} {result.lab_name}")
+    if result.detail:
+        print(f"{status} {result.name}: {result.detail}")
+    else:
+        print(f"{status} {result.name}")
+    if (not result.passed or result.skipped) and result.suggestion:
+        print(f"  Fix: {result.suggestion}")
+
+
+def _print_docker_warmup_result(result: DockerWarmupResult) -> None:
+    status = "PASS" if result.passed else "FAIL"
+    if result.detail:
+        print(f"{status} {result.lab_name}: {result.detail}")
+    else:
+        print(f"{status} {result.lab_name}")
 
 
 def print_command_mapping(command_specs: Sequence[CommandSpec]) -> None:
@@ -1393,30 +1431,85 @@ def print_multi_lab_summary(
     if dry_run:
         dry_run_labs = [*passed_labs, *failed_labs]
         print(f"DRY RUN labs: {len(dry_run_labs)}")
-        for lab in dry_run_labs:
-            print(
-                f"  {lab.name} "
-                f"(status: DRY RUN, duration: {_format_duration(lab.duration_seconds)}, "
-                f"commands discovered: {lab.total_commands})"
-            )
+        print()
+        _print_summary_table(
+            rows=[
+                (
+                    lab.name,
+                    "DRY RUN",
+                    _format_duration(lab.duration_seconds),
+                    str(lab.total_commands),
+                    "-",
+                )
+                for lab in dry_run_labs
+            ],
+            validated_header="Commands",
+        )
         return
 
     print(f"PASS labs: {len(passed_labs)}")
-    for lab in passed_labs:
-        print(
-            f"  {lab.name} "
-            f"(status: PASS, duration: {_format_duration(lab.duration_seconds)}, "
-            f"validated: {lab.validated_commands}/{lab.total_commands}, "
-            f"skipped: {lab.skipped_commands})"
-        )
     print(f"FAIL labs: {len(failed_labs)}")
-    for lab in failed_labs:
-        print(
-            f"  {lab.name} "
-            f"(status: FAIL, duration: {_format_duration(lab.duration_seconds)}, "
-            f"validated: {lab.validated_commands}/{lab.total_commands}, "
-            f"skipped: {lab.skipped_commands})"
+    print()
+    _print_summary_table(
+        rows=[
+            (
+                lab.name,
+                "PASS",
+                _format_duration(lab.duration_seconds),
+                f"{lab.validated_commands}/{lab.total_commands}",
+                str(lab.skipped_commands),
+            )
+            for lab in passed_labs
+        ]
+        + [
+            (
+                lab.name,
+                "FAIL",
+                _format_duration(lab.duration_seconds),
+                f"{lab.validated_commands}/{lab.total_commands}",
+                str(lab.skipped_commands),
+            )
+            for lab in failed_labs
+        ]
+    )
+
+
+def _print_summary_table(
+    *,
+    rows: Sequence[tuple[str, str, str, str, str]],
+    validated_header: str = "Validated",
+) -> None:
+    if not rows:
+        return
+
+    headers = ("Lab", "Status", "Duration", validated_header, "Skipped")
+    col_widths = [
+        max(len(headers[0]), *(len(row[0]) for row in rows)),
+        max(len(headers[1]), *(len(row[1]) for row in rows)),
+        max(len(headers[2]), *(len(row[2]) for row in rows)),
+        max(len(headers[3]), *(len(row[3]) for row in rows)),
+        max(len(headers[4]), *(len(row[4]) for row in rows)),
+    ]
+
+    def format_row(columns: Sequence[str]) -> str:
+        return (
+            f"{columns[0]:<{col_widths[0]}}  "
+            f"{columns[1]:<{col_widths[1]}}  "
+            f"{columns[2]:>{col_widths[2]}}  "
+            f"{columns[3]:>{col_widths[3]}}  "
+            f"{columns[4]:>{col_widths[4]}}"
         )
+
+    print(format_row(headers))
+    print(
+        f"{'-' * col_widths[0]}  "
+        f"{'-' * col_widths[1]}  "
+        f"{'-' * col_widths[2]}  "
+        f"{'-' * col_widths[3]}  "
+        f"{'-' * col_widths[4]}"
+    )
+    for row in rows:
+        print(format_row(row))
 
 
 def _get_repo_root(cwd: Path) -> Path | None:
