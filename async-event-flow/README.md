@@ -73,12 +73,12 @@ Together, `receive`/`send` plus `before`/`after` fixtures let you express full e
 ![Event flow Verification](assets/async-interaction-validation.gif)
 
 ## Run the contract tests using Specmatic Studio
-1. Start Kafka, the sample service, and Specmatic Studio.
+1. Start Kafka and the sample service.
 ```shell
 docker compose up -d
 ```
-   
-2. Go to [Studio](http://127.0.0.1:9000/_specmatic/studio) and open the [specmatic.yaml](specmatic.yaml) file from the left sidebar, click on "Run Suite", and use the checked-out contract under `.specmatic/repos/labs-contracts/asyncapi/async-event-flow/async-order-service.yaml` if you want to inspect the loaded AsyncAPI file in Studio.
+
+If you want to inspect the suite in Studio, start it separately with `docker compose --profile studio up -d studio`, then go to [Studio](http://127.0.0.1:9000/_specmatic/studio) and open the [specmatic.yaml](specmatic.yaml) file from the left sidebar. Click on "Run Suite", and use the checked-out contract under `.specmatic/repos/labs-contracts/asyncapi/async-event-flow/async-order-service.yaml` if you want to inspect the loaded AsyncAPI file in Studio.
 
 You should first see 2 passing tests and 2 failing tests:
 
@@ -146,6 +146,13 @@ docker compose down -v
 docker compose up -d
 ```
 
+If Studio is already running, restart it separately:
+
+```shell
+docker compose --profile studio stop studio
+docker compose --profile studio up -d studio
+```
+
 Re-run the suite from Studio.
 
 Alternatively, just run the following commands:
@@ -166,6 +173,7 @@ Bring down the Kafka broker after the tests are done.
 
 ```shell
 docker compose down -v
+docker compose --profile studio down -v
 ```
 
 ## Troubleshooting

@@ -209,7 +209,7 @@ def parse_readme_commands(readme_path: Path) -> list[CommandSpec]:
         expected_outputs: list[str] = []
         next_shell_index = len(blocks)
         for later_index in range(block_index + 1, len(blocks)):
-            if blocks[later_index].language == "shell":
+            if _is_command_block_language(blocks[later_index].language):
                 next_shell_index = later_index
                 break
 
@@ -225,6 +225,10 @@ def parse_readme_commands(readme_path: Path) -> list[CommandSpec]:
         )
 
     return commands
+
+
+def _is_command_block_language(language: str) -> bool:
+    return language in {"shell", "powershell"}
 
 
 def _parse_fenced_blocks(lines: Sequence[str]) -> list[FencedBlock]:

@@ -58,6 +58,8 @@ services:
     image: specmatic/enterprise:latest
     container_name: studio
     restart: unless-stopped
+    profiles:
+      - studio
     command: ["studio"]
     volumes:
       - .:/usr/src/app
