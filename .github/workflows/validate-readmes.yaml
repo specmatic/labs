@@ -110,7 +110,7 @@ jobs:
 
       - name: Download lab validation artifacts
         if: needs.preflight.result == 'success'
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           pattern: readme-validator-*
           path: .artifacts/readme-validator

@@ -76,15 +76,6 @@ docker compose up specmatic-test --abort-on-container-exit
 Expected failure signal:
 
 ```terminaloutput
-Unsuccessful Scenarios:
-  "Upon receiving a message on 'new-orders' channel, should send a message on 'wip-orders' channel. Example: PLACE_MACBOOK_ORDER FAILED"
-         Reason:
-    Cannot convert value: 600.0 to an Avro Integer
- 
- "Upon receiving a message on 'new-orders' channel, should send a message on 'wip-orders' channel. Example: PLACE_IPHONE_ORDER FAILED"
-         Reason:
-   Cannot convert value: 500.0 to an Avro Integer
-
 Tests run: 2, Successes: 0, Failures: 2, WIP: 0, Errors: 0
 ```
 

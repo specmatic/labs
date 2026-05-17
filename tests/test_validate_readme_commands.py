@@ -35,6 +35,7 @@ from validate_readme_commands import (
     run_command_specs,
     snapshot_repo_state,
     should_skip_command,
+    _remove_path,
 )
 
 
@@ -211,11 +212,43 @@ class RunCommandSpecsTests(GitRepoTestCase):
 
         self.assertTrue(_expected_output_matches(expected_output, actual_output))
 
+
+class RemovePathTests(unittest.TestCase):
+    @patch("validate_readme_commands.subprocess.run")
+    @patch("validate_readme_commands.Path.unlink")
+    def test_remove_path_uses_docker_fallback_on_permission_error(
+        self,
+        unlink_mock,
+        subprocess_run_mock,
+    ) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_root = Path(temp_dir)
+            target = repo_root / "quick-start-mock" / "specs" / "service_examples" / "pets.json"
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_text("data", encoding="utf-8")
+
+            unlink_mock.side_effect = PermissionError("permission denied")
+            subprocess_run_mock.return_value = subprocess.CompletedProcess(args=[], returncode=0, stdout="", stderr="")
+
+            _remove_path(target, repo_root)
+
+            subprocess_run_mock.assert_called_once()
+            docker_command = subprocess_run_mock.call_args.args[0]
+            self.assertEqual(docker_command[:4], ["docker", "run", "--rm", "-v"])
+            self.assertIn(f"{repo_root}:/workspace", docker_command)
+            self.assertIn("rm -rf '/workspace/quick-start-mock/specs/service_examples/pets.json'", docker_command)
+
     def test_line_by_line_matching_preserves_order(self) -> None:
         expected_output = "first line\nsecond line\n"
         actual_output = "prefix second line\nprefix first line\n"
 
         self.assertFalse(_expected_output_matches(expected_output, actual_output))
+
+    def test_line_by_line_matching_trims_expected_line_whitespace(self) -> None:
+        expected_output = "  first line  \n\tsecond line\t\n"
+        actual_output = "prefix first line\nprefix second line\n"
+
+        self.assertTrue(_expected_output_matches(expected_output, actual_output))
 
     def test_timeout_is_reported_cleanly(self) -> None:
         with self.assertRaises(CommandExecutionError) as ctx:

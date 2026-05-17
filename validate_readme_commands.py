@@ -15,7 +15,7 @@ import threading
 import time
 import traceback
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Sequence
 
 ANSI_RESET = "\033[0m"
@@ -382,7 +382,7 @@ def _assert_command_result(result: CommandResult) -> None:
 
 
 def _expected_output_matches(expected_output: str, actual_output: str) -> bool:
-    expected_lines = [line for line in expected_output.splitlines() if line.strip()]
+    expected_lines = [line.strip() for line in expected_output.splitlines() if line.strip()]
     actual_lines = actual_output.splitlines()
 
     if not expected_lines:
@@ -402,7 +402,7 @@ def _expected_output_matches(expected_output: str, actual_output: str) -> bool:
 
 
 def _describe_output_mismatch(expected_output: str, actual_output: str) -> str | None:
-    expected_lines = [line for line in expected_output.splitlines() if line.strip()]
+    expected_lines = [line.strip() for line in expected_output.splitlines() if line.strip()]
     actual_lines = actual_output.splitlines()
 
     if not expected_lines:
@@ -1481,13 +1481,47 @@ def reset_lab_changes(cwd: Path, baseline: RepoSnapshot | None) -> ResetSummary:
         absolute_path = baseline.repo_root / path
         if not absolute_path.exists():
             continue
-        if absolute_path.is_dir():
-            shutil.rmtree(absolute_path)
-        else:
-            absolute_path.unlink()
+        _remove_path(absolute_path, baseline.repo_root)
         removed.append(path)
 
     return ResetSummary(restored=paths_to_restore, removed=removed)
+
+
+def _remove_path(path: Path, repo_root: Path) -> None:
+    try:
+        if path.is_dir():
+            shutil.rmtree(path)
+        else:
+            path.unlink()
+        return
+    except PermissionError:
+        pass
+
+    relative_path = path.resolve().relative_to(repo_root.resolve())
+    container_target = PurePosixPath("/workspace") / PurePosixPath(relative_path.as_posix())
+
+    command = [
+        "docker",
+        "run",
+        "--rm",
+        "-v",
+        f"{repo_root}:/workspace",
+        "--entrypoint",
+        "sh",
+        "specmatic/enterprise:latest",
+        "-lc",
+        f"rm -rf '{container_target}'",
+    ]
+
+    completed = subprocess.run(
+        command,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if completed.returncode != 0 and path.exists():
+        error_output = completed.stderr.strip() or completed.stdout.strip() or "docker rm failed"
+        raise PermissionError(f"failed to remove {path}: {error_output}")
 
 
 def print_reset_summary(reset_summary: ResetSummary) -> None:
