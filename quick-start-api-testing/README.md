@@ -102,7 +102,7 @@ Do not change any other fields.
 Alternatively, just run the following command for Task A:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i 's#[$]match(exact: approved)#\$match(pattern: approved\|verified)#' examples/test_finance_user_11.json"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#[$]match(exact: approved)#\$match(pattern: approved\|verified)#' examples/test_finance_user_11.json"
 ```
 
 Re-run:
@@ -137,7 +137,7 @@ Keep `handledBy` and `decision` as exact matches.
 Alternatively, just run the following command for Final Phase:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i 's#[$]match(exact: VRF-123456)#\$match(pattern: VRF-[0-9]{6})#; s#[$]match(exact: 2026-03-17)#\$match(dataType: date)#' examples/test_support_user_55.json"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#[$]match(exact: VRF-123456)#\$match(pattern: VRF-[0-9]{6})#; s#[$]match(exact: 2026-03-17)#\$match(dataType: date)#' examples/test_support_user_55.json"
 ```
 
 Run:

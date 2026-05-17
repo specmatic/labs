@@ -13,6 +13,7 @@ import subprocess
 import sys
 import threading
 import time
+import traceback
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
@@ -945,16 +946,22 @@ def run_single_readme(
         print(f"README: {readme_path}", file=sys.stderr)
         print(summary.failure_message, file=sys.stderr)
 
-    final_cleanup_results = run_final_cleanup_commands(
-        command_specs=command_specs,
-        cwd=readme_path.parent,
-        timeout_seconds=timeout_seconds,
-    )
-    if final_cleanup_results:
-        print_final_cleanup_summary(final_cleanup_results)
+    try:
+        final_cleanup_results = run_final_cleanup_commands(
+            command_specs=command_specs,
+            cwd=readme_path.parent,
+            timeout_seconds=timeout_seconds,
+        )
+        if final_cleanup_results:
+            print_final_cleanup_summary(final_cleanup_results)
 
-    if repo_snapshot is not None:
-        print_reset_summary(reset_lab_changes(readme_path.parent, repo_snapshot))
+        if repo_snapshot is not None:
+            print_reset_summary(reset_lab_changes(readme_path.parent, repo_snapshot))
+    except Exception:
+        exit_code = 1
+        print(f"README: {readme_path}", file=sys.stderr)
+        print("Cleanup/reset failed:", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
 
     if exit_code == 0:
         print(f"Validated {len(summary.results)} command(s) in {readme_path}")

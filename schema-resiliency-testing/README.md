@@ -72,7 +72,7 @@ In `specmatic.yaml` change `schemaResiliencyTests: none` to `schemaResiliencyTes
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i 's#schemaResiliencyTests: none#schemaResiliencyTests: positiveOnly#' specmatic.yaml"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#schemaResiliencyTests: none#schemaResiliencyTests: positiveOnly#' specmatic.yaml"
 ```
 
 #### Run Positive only Tests
@@ -101,7 +101,7 @@ In `specmatic.yaml` change `schemaResiliencyTests: positiveOnly` to `schemaResil
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i 's#schemaResiliencyTests: positiveOnly#schemaResiliencyTests: all#' specmatic.yaml"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#schemaResiliencyTests: positiveOnly#schemaResiliencyTests: all#' specmatic.yaml"
 ```
 
 #### Run all Tests

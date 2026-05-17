@@ -101,7 +101,7 @@ Do not change anything else.
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i 's#\"damage\": 0.0#\"damaged\": 0.0#; s#order\\[\"shipment\"\\]#order[\"shipmentStatus\"]#' service/order_service.py"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#\"damage\": 0.0#\"damaged\": 0.0#; s#order\\[\"shipment\"\\]#order[\"shipmentStatus\"]#' service/order_service.py"
 ```
 
 ## Part C: Re-run tests (expected to pass)

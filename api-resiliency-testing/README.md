@@ -111,7 +111,7 @@ Keep:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i -e '/^  }$/s//  },/' -e '/^}$/i\  \"transient\": true,' -e '/^}$/i\  \"delay-in-seconds\": 2' examples/order-service/stub_timeout_get_products.json"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i -e '/^  }$/s//  },/' -e '/^}$/i\  \"transient\": true,' -e '/^}$/i\  \"delay-in-seconds\": 2' examples/order-service/stub_timeout_get_products.json"
 ```
 
 Re-run:
@@ -153,7 +153,7 @@ Keep:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i -e '/^  }$/s//  },/' -e '/^}$/i\  \"transient\": true,' -e '/^}$/i\  \"delay-in-seconds\": 2' examples/order-service/stub_timeout_post_product.json"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i -e '/^  }$/s//  },/' -e '/^}$/i\  \"transient\": true,' -e '/^}$/i\  \"delay-in-seconds\": 2' examples/order-service/stub_timeout_post_product.json"
 ```
 
 Re-run:
@@ -194,7 +194,7 @@ schemaResiliencyTests: all
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i 's/schemaResiliencyTests: none/schemaResiliencyTests: all/' specmatic.yaml"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's/schemaResiliencyTests: none/schemaResiliencyTests: all/' specmatic.yaml"
 ```
 
 Re-run:
@@ -268,7 +268,7 @@ Specmatic documentation for this matcher behavior:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i 's#\"type\": \"book\"#\"type\": \"\$match(dataType:ProductType, value:each, times:1)\"#; s#\"inventory\": 9#\"inventory\": \"\$match(dataType:ProductInventory, value:each, times:1)\"#' examples/order-service/stub_timeout_post_product.json"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#\"type\": \"book\"#\"type\": \"\$match(dataType:ProductType, value:each, times:1)\"#; s#\"inventory\": 9#\"inventory\": \"\$match(dataType:ProductInventory, value:each, times:1)\"#' examples/order-service/stub_timeout_post_product.json"
 ```
 
 Keep:

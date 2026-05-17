@@ -85,7 +85,7 @@ You should first see 2 passing tests and 2 failing tests:
 Alternatively, just run the following commands:
 
 ```shell
-docker run --rm --network async-event-flow_default -v "$PWD:/usr/src/app" -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest run-suite --config=/usr/src/app/run-suite-config.yaml
+docker run --rm --network async-event-flow_default -v "${PWD}:/usr/src/app" -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" specmatic/enterprise:latest run-suite --config=/usr/src/app/run-suite-config.yaml
 ```
 
 ```terminaloutput
@@ -135,8 +135,8 @@ To:
 Alternatively, just run the following commands:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise:latest -lc 'cp examples/fixed/acceptOrder-with-before.json examples/async-order-service/acceptOrder.json'
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise:latest -lc 'cp examples/fixed/outForDeliveryOrder-with-before.json examples/async-order-service/outForDeliveryOrder.json'
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc 'cp examples/fixed/acceptOrder-with-before.json examples/async-order-service/acceptOrder.json'
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc 'cp examples/fixed/outForDeliveryOrder-with-before.json examples/async-order-service/outForDeliveryOrder.json'
 ```
 
 4. Restart Docker Containers
@@ -151,7 +151,7 @@ Re-run the suite from Studio.
 Alternatively, just run the following commands:
 
 ```shell
-docker run --rm --network async-event-flow_default -v "$PWD:/usr/src/app" -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest run-suite --config=/usr/src/app/run-suite-config.yaml
+docker run --rm --network async-event-flow_default -v "${PWD}:/usr/src/app" -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" specmatic/enterprise:latest run-suite --config=/usr/src/app/run-suite-config.yaml
 ```
 
 You should now see:

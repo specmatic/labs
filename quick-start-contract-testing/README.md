@@ -111,7 +111,7 @@ Do not change anything else.
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i 's/"petType"/"type"/g' service/server.py"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's/"petType"/"type"/g' service/server.py"
 ```
 
 ## Part C: Re-run tests (expected to pass)

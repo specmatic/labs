@@ -153,7 +153,7 @@ To inspect mock traffic in Studio:
 Alternatively, just run the following commands:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise:latest -lc 'mkdir -p specs/service_examples && cp quick-start-mock-generated/pets_242_GET_200_1.json specs/service_examples/pets_242_GET_200_1.json'
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc 'mkdir -p specs/service_examples && cp quick-start-mock-generated/pets_242_GET_200_1.json specs/service_examples/pets_242_GET_200_1.json'
 docker compose --profile mock up -d --wait --wait-timeout 30 mock
 docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS http://mock:9100/pets/242
 docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS http://mock:9100/pets/242

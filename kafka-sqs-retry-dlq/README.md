@@ -101,7 +101,7 @@ Do not change the contract, examples, or Compose wiring.
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i 's/# threading.Thread/threading.Thread/' service/app.py"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's/# threading.Thread/threading.Thread/' service/app.py"
 ```
 
 ## Pass criteria

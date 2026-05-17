@@ -45,8 +45,8 @@ Test Run Cmd (Linux/Mac OSX)
 
 ```shell
 docker run --rm \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
+  -v "${PWD}:/usr/src/app" \
+  -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   specmatic/enterprise:latest \
   validate
 ```
@@ -56,10 +56,10 @@ docker run --rm \
 [FAIL] Examples: 0 passed and 3 failed out of 3 total
 ```
 
-Windows (PowerShell/CMD) single-line
+Windows PowerShell single-line
 
-```shell
-docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
+```powershell
+docker run --rm -v "$($PWD.Path):/usr/src/app" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" specmatic/enterprise:latest validate
 ```
 
 ```terminaloutput
@@ -101,7 +101,7 @@ docker compose --profile studio down -v
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise:latest -lc '
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc '
 sed -i "2i\\  \\\"partial\\\": {" examples/test_accepted_order_request.json &&
 sed -i "\$i\\  }" examples/test_accepted_order_request.json &&
 sed -i "2i\\  \\\"partial\\\": {" examples/test_accepted_product_request.json &&
@@ -114,12 +114,12 @@ sed -i "/\\\"type\\\": \\\"book\\\"/d" examples/test_find_available_products_boo
 
 ### Final Phase
 
-Re-run validation with the Windows single-line command after the Studio fixes are saved.
+Re-run validation with the Windows PowerShell command after the Studio fixes are saved.
 
-Windows (PowerShell/CMD) single-line
+Windows PowerShell single-line
 
-```shell
-docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
+```powershell
+docker run --rm -v "$($PWD.Path):/usr/src/app" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" specmatic/enterprise:latest validate
 ```
 
 ```terminaloutput

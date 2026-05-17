@@ -84,7 +84,7 @@ Keep `id` as-is.
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i 's#\"productid\": 1#\"productid\": \"(PRODUCTID:number)\"#; s#\"count\": 100#\"count\": \"(COUNT:number)\"#; s#\"productid\": \"\$match(dataType:number)\"#\"productid\": \"\$(PRODUCTID)\"#; s#\"count\": 1#\"count\": \"\$(COUNT)\"#' examples/mock/test_accepted_order_request.json"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#\"productid\": 1#\"productid\": \"(PRODUCTID:number)\"#; s#\"count\": 100#\"count\": \"(COUNT:number)\"#; s#\"productid\": \"\$match(dataType:number)\"#\"productid\": \"\$(PRODUCTID)\"#; s#\"count\": 1#\"count\": \"\$(COUNT)\"#' examples/mock/test_accepted_order_request.json"
 ```
 
 ### Checkpoint after Task A
@@ -116,7 +116,7 @@ Note:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc 'cp test_find_available_products_book_200.json examples/mock/test_find_available_products_book_200.json'
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc 'cp test_find_available_products_book_200.json examples/mock/test_find_available_products_book_200.json'
 ```
 
 ## 4. Final verification

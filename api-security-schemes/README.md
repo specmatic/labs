@@ -135,7 +135,7 @@ Do not change anything else. Fix only the above values.
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i 's#INVALID_OAUTH_TOKEN#OAUTH_TOKEN#g; s#dXNlcjppbnZhbGlkcGFzcw==#dXNlcjpwYXNzd29yZA==#g; s#INVALID_APIKEY1234#APIKEY1234#g' specmatic.yaml"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#INVALID_OAUTH_TOKEN#OAUTH_TOKEN#g; s#dXNlcjppbnZhbGlkcGFzcw==#dXNlcjpwYXNzd29yZA==#g; s#INVALID_APIKEY1234#APIKEY1234#g' specmatic.yaml"
 ```
 
 ## Verify the fix

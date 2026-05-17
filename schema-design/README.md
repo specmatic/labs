@@ -123,7 +123,7 @@ Open `specs/payment-api.yaml` and update `PaymentRequest` to this shape:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc 'cp payments-request.yaml specs/payment-api.yaml'
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc 'cp payments-request.yaml specs/payment-api.yaml'
 ```
 
 ## 3. Re-run contract tests

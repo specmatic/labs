@@ -104,7 +104,7 @@ chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "$PWD:/usr/src/app" specmatic/enterprise -lc "sed -i '/^specmatic:/i\  data:\n    adapters:\n      pre_specmatic_request_processor: ./hooks/pre_specmatic_request_processor.sh\n      post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh\n' specmatic.yaml && chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i '/^specmatic:/i\  data:\n    adapters:\n      pre_specmatic_request_processor: ./hooks/pre_specmatic_request_processor.sh\n      post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh\n' specmatic.yaml && chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh"
 ```
 
 ## 6. Restart mock + UI
