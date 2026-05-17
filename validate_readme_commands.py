@@ -227,6 +227,13 @@ def parse_readme_commands(readme_path: Path) -> list[CommandSpec]:
     return commands
 
 
+def _readme_command_specs(readme_path: Path) -> list[CommandSpec]:
+    try:
+        return parse_readme_commands(readme_path)
+    except (OSError, ReadmeValidationError):
+        return []
+
+
 def _is_command_block_language(language: str) -> bool:
     return language in {"shell", "powershell"}
 
@@ -900,8 +907,8 @@ def run_single_readme(
     lab_name = readme_path.parent.name
     try:
         command_specs = parse_readme_commands(readme_path)
+        print_command_mapping(command_specs)
         if dry_run:
-            print_command_mapping(command_specs)
             return LabExecutionResult(
                 name=lab_name,
                 exit_code=0,
@@ -910,7 +917,6 @@ def run_single_readme(
                 total_commands=len(command_specs),
                 skipped_commands=0,
             )
-        print_command_mapping(command_specs)
         summary = run_command_specs(
             command_specs=command_specs,
             cwd=readme_path.parent,
@@ -960,15 +966,15 @@ def run_single_readme(
         print("PASS")
     else:
         print("FAIL")
-    skipped_commands = sum(1 for result in summary.results if result.skipped)
-    validated_commands = len(summary.results) - skipped_commands
+    executed_skips = sum(1 for result in summary.results if result.skipped)
+    skipped_commands = total_commands_skipped(summary, len(command_specs))
     return LabExecutionResult(
         name=lab_name,
         exit_code=exit_code,
         duration_seconds=0.0,
-        validated_commands=validated_commands,
+        validated_commands=len(summary.results) - executed_skips,
         total_commands=len(command_specs),
-        skipped_commands=total_commands_skipped(summary, len(command_specs)),
+        skipped_commands=skipped_commands,
     )
 
 
@@ -1046,9 +1052,14 @@ def determine_preflight_requirements(readme_paths: Sequence[Path]) -> PreflightR
     remote_contract_access = False
 
     for readme_path in readme_paths:
-        if _readme_uses_docker(readme_path):
+        command_specs = _readme_command_specs(readme_path)
+        if any("docker" in command_spec.command.lower() for command_spec in command_specs):
             docker_cli = True
-        if _readme_uses_docker_compose(readme_path):
+        if any(
+            "docker compose" in command_spec.command.lower()
+            or "docker-compose" in command_spec.command.lower()
+            for command_spec in command_specs
+        ):
             docker_compose = True
 
         for config_path in _related_config_paths(readme_path.parent):
@@ -1071,26 +1082,6 @@ def determine_preflight_requirements(readme_paths: Sequence[Path]) -> PreflightR
     )
 
 
-def _readme_uses_docker(readme_path: Path) -> bool:
-    try:
-        command_specs = parse_readme_commands(readme_path)
-    except (OSError, ReadmeValidationError):
-        return False
-    return any("docker" in command_spec.command.lower() for command_spec in command_specs)
-
-
-def _readme_uses_docker_compose(readme_path: Path) -> bool:
-    try:
-        command_specs = parse_readme_commands(readme_path)
-    except (OSError, ReadmeValidationError):
-        return False
-    return any(
-        "docker compose" in command_spec.command.lower()
-        or "docker-compose" in command_spec.command.lower()
-        for command_spec in command_specs
-    )
-
-
 def _related_config_paths(lab_dir: Path) -> list[Path]:
     return [
         lab_dir / "docker-compose.yaml",
@@ -1106,6 +1097,11 @@ def warm_docker_images(
 ) -> list[DockerWarmupResult]:
     results: list[DockerWarmupResult] = []
 
+    def _emit(result: DockerWarmupResult) -> None:
+        results.append(result)
+        if on_result is not None:
+            on_result(result)
+
     for lab_dir in _docker_compose_lab_dirs(readme_paths):
         if on_result is not None and not results:
             print("===== Docker Warmup =====")
@@ -1119,42 +1115,36 @@ def warm_docker_images(
                 timeout=timeout_seconds,
             )
         except subprocess.TimeoutExpired:
-            result = DockerWarmupResult(
-                lab_name=lab_dir.name,
-                passed=False,
-                detail=f"timed out after {int(timeout_seconds)} seconds",
+            _emit(
+                DockerWarmupResult(
+                    lab_name=lab_dir.name,
+                    passed=False,
+                    detail=f"timed out after {int(timeout_seconds)} seconds",
+                )
             )
-            results.append(result)
-            if on_result is not None:
-                on_result(result)
             continue
         except OSError as exc:
-            result = DockerWarmupResult(
-                lab_name=lab_dir.name,
-                passed=False,
-                detail=str(exc),
+            _emit(
+                DockerWarmupResult(
+                    lab_name=lab_dir.name,
+                    passed=False,
+                    detail=str(exc),
+                )
             )
-            results.append(result)
-            if on_result is not None:
-                on_result(result)
             continue
 
         if completed.returncode == 0:
-            result = DockerWarmupResult(lab_name=lab_dir.name, passed=True)
-            results.append(result)
-            if on_result is not None:
-                on_result(result)
+            _emit(DockerWarmupResult(lab_name=lab_dir.name, passed=True))
             continue
 
         error_output = completed.stderr.strip() or completed.stdout.strip() or "docker compose pull failed"
-        result = DockerWarmupResult(
-            lab_name=lab_dir.name,
-            passed=False,
-            detail=error_output,
+        _emit(
+            DockerWarmupResult(
+                lab_name=lab_dir.name,
+                passed=False,
+                detail=error_output,
+            )
         )
-        results.append(result)
-        if on_result is not None:
-            on_result(result)
 
     return results
 
@@ -1168,7 +1158,12 @@ def _docker_compose_lab_dirs(readme_paths: Sequence[Path]) -> list[Path]:
         docker_compose_path = lab_dir / "docker-compose.yaml"
         if lab_dir in seen or not docker_compose_path.is_file():
             continue
-        if not _readme_uses_docker_compose(readme_path):
+        command_specs = _readme_command_specs(readme_path)
+        if not any(
+            "docker compose" in command_spec.command.lower()
+            or "docker-compose" in command_spec.command.lower()
+            for command_spec in command_specs
+        ):
             continue
         seen.add(lab_dir)
         lab_dirs.append(lab_dir)
@@ -1189,97 +1184,95 @@ def run_preflight(
     repo_root = Path(__file__).resolve().parent
     license_path = repo_root / "license.txt"
 
-    if requirements.docker_cli:
-        result = _run_preflight_command(
-            name="docker",
-            command=["docker", "--version"],
-            failure_detail="docker CLI is not available",
-            suggestion="Install Docker and make sure `docker` is on PATH.",
-        )
+    def _emit(result: PreflightCheckResult) -> None:
         results.append(result)
         if on_result is not None:
             on_result(result)
+
+    if requirements.docker_cli:
+        _emit(
+            _run_preflight_command(
+                name="docker",
+                command=["docker", "--version"],
+                failure_detail="docker CLI is not available",
+                suggestion="Install Docker and make sure `docker` is on PATH.",
+            )
+        )
 
     docker_ready = not results or results[-1].passed
     if requirements.docker_compose:
-        result = _run_preflight_command(
-            name="docker compose",
-            command=["docker", "compose", "version"],
-            failure_detail="docker compose is not available",
-            suggestion="Install a Docker version that includes `docker compose`.",
+        _emit(
+            _run_preflight_command(
+                name="docker compose",
+                command=["docker", "compose", "version"],
+                failure_detail="docker compose is not available",
+                suggestion="Install a Docker version that includes `docker compose`.",
+            )
         )
-        results.append(result)
-        if on_result is not None:
-            on_result(result)
         docker_ready = docker_ready and results[-1].passed
 
     if requirements.docker_cli and docker_ready:
-        result = _run_preflight_command(
-            name="docker daemon",
-            command=["docker", "info"],
-            failure_detail="Docker daemon is not reachable",
-            suggestion="Start Docker Desktop or the Docker daemon, then rerun the validator.",
+        _emit(
+            _run_preflight_command(
+                name="docker daemon",
+                command=["docker", "info"],
+                failure_detail="Docker daemon is not reachable",
+                suggestion="Start Docker Desktop or the Docker daemon, then rerun the validator.",
+            )
         )
-        results.append(result)
-        if on_result is not None:
-            on_result(result)
         docker_ready = docker_ready and results[-1].passed
     elif requirements.docker_cli:
-        result = PreflightCheckResult(
-            name="docker daemon",
-            passed=False,
-            skipped=True,
-            detail="skipped because Docker CLI/Compose is unavailable",
-            suggestion="Fix the Docker installation first.",
+        _emit(
+            PreflightCheckResult(
+                name="docker daemon",
+                passed=False,
+                skipped=True,
+                detail="skipped because Docker CLI/Compose is unavailable",
+                suggestion="Fix the Docker installation first.",
+            )
         )
-        results.append(result)
-        if on_result is not None:
-            on_result(result)
 
     if requirements.license_validation:
         if license_path.is_file():
-            result = PreflightCheckResult(name="specmatic license file exists", passed=True)
+            _emit(PreflightCheckResult(name="specmatic license file exists", passed=True))
         else:
-            result = PreflightCheckResult(
-                name="specmatic license file exists",
-                passed=False,
-                detail=f"missing {license_path}",
-                suggestion="Add a valid `license.txt` at the labs repo root.",
+            _emit(
+                PreflightCheckResult(
+                    name="specmatic license file exists",
+                    passed=False,
+                    detail=f"missing {license_path}",
+                    suggestion="Add a valid `license.txt` at the labs repo root.",
+                )
             )
-        results.append(result)
-        if on_result is not None:
-            on_result(result)
 
         if docker_ready and license_path.is_file():
-            result = _validate_specmatic_license(repo_root)
+            _emit(_validate_specmatic_license(repo_root))
         else:
-            result = PreflightCheckResult(
-                name="specmatic license validation",
-                passed=False,
-                skipped=True,
-                detail="skipped because Docker or the license file is unavailable",
-                suggestion="Fix Docker access and the license file, then rerun the validator.",
+            _emit(
+                PreflightCheckResult(
+                    name="specmatic license validation",
+                    passed=False,
+                    skipped=True,
+                    detail="skipped because Docker or the license file is unavailable",
+                    suggestion="Fix Docker access and the license file, then rerun the validator.",
+                )
             )
-        results.append(result)
-        if on_result is not None:
-            on_result(result)
 
     if requirements.remote_contract_access:
-        result = _run_preflight_command(
-            name="labs-contracts access",
-            command=[
-                "git",
-                "ls-remote",
-                "--exit-code",
-                "https://github.com/specmatic/labs-contracts.git",
-                "HEAD",
-            ],
-            failure_detail="cannot reach github.com/specmatic/labs-contracts.git",
-            suggestion="Check network access to GitHub, then rerun the validator.",
+        _emit(
+            _run_preflight_command(
+                name="labs-contracts access",
+                command=[
+                    "git",
+                    "ls-remote",
+                    "--exit-code",
+                    "https://github.com/specmatic/labs-contracts.git",
+                    "HEAD",
+                ],
+                failure_detail="cannot reach github.com/specmatic/labs-contracts.git",
+                suggestion="Check network access to GitHub, then rerun the validator.",
+            )
         )
-        results.append(result)
-        if on_result is not None:
-            on_result(result)
 
     return results
 
@@ -1415,11 +1408,6 @@ def print_command_mapping(command_specs: Sequence[CommandSpec]) -> None:
         print()
     if command_specs:
         print(separator)
-
-
-def print_dry_run(command_specs: Sequence[CommandSpec]) -> None:
-    print_command_mapping(command_specs)
-
 
 def _print_indented_block(content: str) -> None:
     for line in content.rstrip("\n").splitlines():
