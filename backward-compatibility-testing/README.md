@@ -100,12 +100,15 @@ Run:
 
 *Unix/Mac:
 ```shell
-docker run --rm --entrypoint sh \
+docker run --rm \
+  --user "$(id -u):$(id -g)" \
   -v "${PWD}/..:/workspace" \
   -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   -w /workspace \
   specmatic/enterprise:latest \
-  -lc 'git fetch https://github.com/specmatic/labs main:refs/remotes/origin/main && specmatic backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml'
+  backward-compatibility-check \
+  --base-branch origin/main \
+  --target-path backward-compatibility-testing/products.yaml
 ```
 
 ```terminaloutput
@@ -114,7 +117,7 @@ docker run --rm --entrypoint sh \
 
 Windows PowerShell single-line:
 ```powershell
-docker run --rm --entrypoint sh -v "$((Resolve-Path ..).Path):/workspace" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" -w /workspace specmatic/enterprise:latest -lc 'git fetch https://github.com/specmatic/labs main:refs/remotes/origin/main && specmatic backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml'
+docker run --rm --user "$(id -u):$(id -g)" -v "$((Resolve-Path ..).Path):/workspace" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
 ```
 
 ```terminaloutput
@@ -123,7 +126,7 @@ docker run --rm --entrypoint sh -v "$((Resolve-Path ..).Path):/workspace" -v "$(
 
 Why the command is structured this way:
 - `-v "${PWD}/..:/workspace"` mounts the `labs` repository root, not just this lab folder, so Specmatic can access the git repository metadata.
-- `git fetch https://github.com/specmatic/labs main:refs/remotes/origin/main` refreshes the baseline ref inside the container without depending on the mounted repo's remote URL or local SSH setup.
+- `--user "$(id -u):$(id -g)"` runs the container as your host user, which avoids git ownership issues when the mounted repository is inspected inside the container.
 - `--base-branch origin/main` tells Specmatic which tracked baseline to compare against.
 - `--target-path backward-compatibility-testing/products.yaml` tells Specmatic to compare the working tree version of this file with the tracked version on `origin/main`.
 
@@ -138,6 +141,12 @@ The Incompatibility Report:
     >> RESPONSE.BODY.name
 
         This is number in the new specification response but string in the old specification
+```
+
+Expected verdict:
+
+```terminaloutput
+(INCOMPATIBLE) This spec contains breaking changes to the API
 ```
 
 Why this fails:
@@ -175,12 +184,15 @@ Run the same command again:
 
 *Unix/Mac:
 ```shell
-docker run --rm --entrypoint sh \
+docker run --rm \
+  --user "$(id -u):$(id -g)" \
   -v "${PWD}/..:/workspace" \
   -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   -w /workspace \
   specmatic/enterprise:latest \
-  -lc 'git fetch https://github.com/specmatic/labs main:refs/remotes/origin/main && specmatic backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml'
+  backward-compatibility-check \
+  --base-branch origin/main \
+  --target-path backward-compatibility-testing/products.yaml
 ```
 
 ```terminaloutput
@@ -190,7 +202,7 @@ Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
 
 Windows PowerShell single-line:
 ```powershell
-docker run --rm --entrypoint sh -v "$((Resolve-Path ..).Path):/workspace" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" -w /workspace specmatic/enterprise:latest -lc 'git fetch https://github.com/specmatic/labs main:refs/remotes/origin/main && specmatic backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml'
+docker run --rm --user "$(id -u):$(id -g)" -v "$((Resolve-Path ..).Path):/workspace" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
 ```
 
 ```terminaloutput
