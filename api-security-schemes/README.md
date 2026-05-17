@@ -107,7 +107,7 @@ docker compose up specmatic-test --abort-on-container-exit
 Expected failing result:
 
 ```terminaloutput
-Tests run: 171, Successes: 0, Failures: 171, Errors: 0
+Tests run: 171, Successes: 0, Failures: 171, WIP: 0, Errors: 0
 ```
 
 - The compose command exits with a non-zero code.
@@ -132,6 +132,12 @@ Update [`specmatic.yaml`](specmatic.yaml) to valid values again:
 
 Do not change anything else. Fix only the above values.
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#INVALID_OAUTH_TOKEN#OAUTH_TOKEN#g; s#dXNlcjppbnZhbGlkcGFzcw==#dXNlcjpwYXNzd29yZA==#g; s#INVALID_APIKEY1234#APIKEY1234#g' specmatic.yaml"
+```
+
 ## Verify the fix
 
 Re-run:
@@ -143,7 +149,7 @@ docker compose up specmatic-test --abort-on-container-exit
 Expected result:
 
 ```terminaloutput
-Tests run: 171, Successes: 171, Failures: 0, Errors: 0
+Tests run: 171, Successes: 171, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Cleanup after run:

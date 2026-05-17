@@ -1,0 +1,58 @@
+version: 3
+systemUnderTest:
+  service:
+    $ref: "#/components/services/orderAsyncService"
+    runOptions:
+      $ref: "#/components/runOptions/orderAsyncServiceTest"
+    data:
+      examples:
+        - directories:
+            - examples/async-order-service
+
+dependencies:
+  services:
+    - service:
+        $ref: "#/components/services/taxService"
+        runOptions:
+          $ref: "#/components/runOptions/taxServiceMock"
+        data:
+          examples:
+            - directories:
+                - examples/tax-service
+
+components:
+  sources:
+    labsContracts:
+      git:
+        url: https://github.com/specmatic/labs-contracts.git
+        branch: main
+  services:
+    orderAsyncService:
+      definitions:
+        - definition:
+            source:
+              $ref: "#/components/sources/labsContracts"
+            specs:
+              - asyncapi/async-event-flow/async-order-service.yaml
+    taxService:
+      definitions:
+        - definition:
+            source:
+              $ref: "#/components/sources/labsContracts"
+            specs:
+              - openapi/async-event-flow/tax-service.yaml
+  runOptions:
+    orderAsyncServiceTest:
+      asyncapi:
+        type: test
+        servers:
+          - host: "${KAFKA_BROKER_HOST:kafka:9092}"
+            protocol: kafka
+    taxServiceMock:
+      openapi:
+        type: mock
+        baseUrl: "${TAX_SERVICE_URL:http://0.0.0.0:8090}"
+
+specmatic:
+  license:
+    path: /specmatic/specmatic-license.txt

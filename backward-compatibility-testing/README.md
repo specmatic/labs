@@ -89,14 +89,21 @@ properties:
 
 You now have an uncommitted change in a tracked contract file. Specmatic will compare it to the version on `origin/main`.
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc 'cp products-breaking.yaml products.yaml'
+```
+
 ## Part B: Run the backward compatibility check
 Run:
 
 *Unix/Mac:
 ```shell
 docker run --rm \
-  -v ..:/workspace \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
+  --user "$(id -u):$(id -g)" \
+  -v "${PWD}/..:/workspace" \
+  -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   -w /workspace \
   specmatic/enterprise:latest \
   backward-compatibility-check \
@@ -108,9 +115,9 @@ docker run --rm \
 (INCOMPATIBLE) This spec contains breaking changes to the API
 ```
 
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
+Windows PowerShell single-line:
+```powershell
+docker run --rm --user "$(id -u):$(id -g)" -v "$((Resolve-Path ..).Path):/workspace" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
 ```
 
 ```terminaloutput
@@ -118,7 +125,8 @@ docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.
 ```
 
 Why the command is structured this way:
-- `-v ..:/workspace` mounts the `labs` repository root, not just this lab folder, so Specmatic can access the git repository metadata.
+- `-v "${PWD}/..:/workspace"` mounts the `labs` repository root, not just this lab folder, so Specmatic can access the git repository metadata.
+- `--user "$(id -u):$(id -g)"` runs the container as your host user, which avoids git ownership issues when the mounted repository is inspected inside the container.
 - `--base-branch origin/main` tells Specmatic which tracked baseline to compare against.
 - `--target-path backward-compatibility-testing/products.yaml` tells Specmatic to compare the working tree version of this file with the tracked version on `origin/main`.
 
@@ -165,14 +173,21 @@ name:
 Keep the new `category` field.
 Keep version `1.1.0`.
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc 'cp products-fixed.yaml products.yaml'
+```
+
 ## Part D: Re-run the check
 Run the same command again:
 
 *Unix/Mac:
 ```shell
 docker run --rm \
-  -v ..:/workspace \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
+  --user "$(id -u):$(id -g)" \
+  -v "${PWD}/..:/workspace" \
+  -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   -w /workspace \
   specmatic/enterprise:latest \
   backward-compatibility-check \
@@ -185,17 +200,10 @@ Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
   (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
 ```
 
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
+Windows PowerShell single-line:
+```powershell
+docker run --rm --user "$(id -u):$(id -g)" -v "$((Resolve-Path ..).Path):/workspace" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
 ```
-
-```terminaloutput
-Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
-  (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
-```
-
-Expected passing output:
 
 ```terminaloutput
 Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
@@ -207,10 +215,6 @@ Restore the tracked file:
 
 ```shell
 git restore products.yaml
-```
-
-```terminaloutput
-products.yaml restored.
 ```
 
 ## Check backward compatibility in Specmatic Studio before saving

@@ -1,0 +1,19 @@
+{
+  "http-request": {
+    "path": "/pets/242",
+    "method": "GET"
+  },
+  "http-response": {
+    "status": 200,
+    "body": {
+      "id": 242,
+      "name": "Bolt",
+      "type": "Mixed Breed",
+      "status": "Available"
+    },
+    "status-text": "OK",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

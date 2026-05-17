@@ -1,0 +1,26 @@
+{
+    "http-request": {
+        "path": "/products",
+        "method": "POST",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "body": {
+            "name": "Dr. Brendon Mosciski",
+            "type": "book",
+            "inventory": 67
+        },
+        "description": "This is an example of a request to create a new entity at the /products endpoint "
+    },
+    "http-response": {
+        "status": 201,
+        "body": {
+            "id": 124
+        },
+        "status-text": "Created",
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "description": "This is an example of a response after creating a new entity at the /products endpoint "
+    }
+}

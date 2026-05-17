@@ -90,15 +90,17 @@ Expected behavior:
 Expected result summary:
 
 ```terminaloutput
-Tests run: 2, Successes: 1, Failures: 1, Errors: 0
+Tests run: 2, Successes: 1, Failures: 1, WIP: 0, Errors: 0
 ```
 
 Expected coverage highlight:
 
 ```terminaloutput
-100%     /pets/{petId}  GET   200   1   covered 
-0%       /pets/search   GET   200   1   not implemented
-0%       /pets/find     GET   0     0   missing in spec
+| coverage | path          | method | requestContentType | response | responseContentType | remarks          | result |
+|----------|---------------|--------|--------------------|----------|---------------------|------------------|--------|
+| 100%     | /pets/{petId} | GET    | NA                 | 200      | application/json    | covered          | 1p     |
+| 0%       | /pets/search  | GET    | NA                 | 200      | application/json    | not implemented  | 1f     |
+| 0%       | /pets/find    | GET    | NA                 | 0        | NA                  | missing in spec* |        |
 ```
 
 Expected gate failure highlight:
@@ -146,7 +148,13 @@ Change it to:
 
 Do not change anything else in the operation.
 
-## 3. Re-run the tests and coverage check
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's|/pets/search:|/pets/find:|' specs/service.yaml"
+```
+
+## Final Phase
 Run the same command again:
 
 ```shell
@@ -156,7 +164,7 @@ docker compose up test --build --abort-on-container-exit
 Expected final result:
 
 ```terminaloutput
-Tests run: 2, Successes: 2, Failures: 0, Errors: 0
+Tests run: 2, Successes: 2, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Expected coverage outcome:

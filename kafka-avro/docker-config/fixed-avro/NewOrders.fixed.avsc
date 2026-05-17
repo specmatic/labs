@@ -1,0 +1,39 @@
+{
+  "type": "record",
+  "name": "OrderRequest",
+  "namespace": "order",
+  "fields": [
+    {
+      "name": "id",
+      "type": "int",
+      "x-minimum": 1,
+      "x-maximum": 100
+    },
+    {
+      "name": "orderItems",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "Item",
+          "fields": [
+            { "name": "id", "type": "int" },
+            {
+              "name": "name",
+              "type": "string",
+              "x-minLength": 2,
+              "x-maxLength": 10,
+              "x-regex": "^[A-Za-z]{2,10}$"
+            },
+            { "name": "quantity", "type": "int" },
+            {
+              "name": "price",
+              "type": "int",
+              "x-minimum": 1000
+            }
+          ]
+        }
+      }
+    }
+  ]
+}
