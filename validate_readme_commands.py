@@ -388,14 +388,8 @@ def _expected_output_matches(expected_output: str, actual_output: str) -> bool:
     if not expected_lines:
         return True
 
-    actual_index = 0
     for expected_line in expected_lines:
-        while actual_index < len(actual_lines):
-            if expected_line in actual_lines[actual_index]:
-                actual_index += 1
-                break
-            actual_index += 1
-        else:
+        if not any(expected_line in actual_line for actual_line in actual_lines):
             return False
 
     return True
@@ -408,14 +402,8 @@ def _describe_output_mismatch(expected_output: str, actual_output: str) -> str |
     if not expected_lines:
         return None
 
-    actual_index = 0
     for expected_line in expected_lines:
-        while actual_index < len(actual_lines):
-            if expected_line in actual_lines[actual_index]:
-                actual_index += 1
-                break
-            actual_index += 1
-        else:
+        if not any(expected_line in actual_line for actual_line in actual_lines):
             closest_line = _find_closest_line(expected_line, actual_lines)
             divider = _style("-" * 48, ANSI_DIM)
             detail_lines = [

@@ -238,11 +238,11 @@ class RemovePathTests(unittest.TestCase):
             self.assertIn(f"{repo_root}:/workspace", docker_command)
             self.assertIn("rm -rf '/workspace/quick-start-mock/specs/service_examples/pets.json'", docker_command)
 
-    def test_line_by_line_matching_preserves_order(self) -> None:
+    def test_line_by_line_matching_does_not_require_order(self) -> None:
         expected_output = "first line\nsecond line\n"
         actual_output = "prefix second line\nprefix first line\n"
 
-        self.assertFalse(_expected_output_matches(expected_output, actual_output))
+        self.assertTrue(_expected_output_matches(expected_output, actual_output))
 
     def test_line_by_line_matching_trims_expected_line_whitespace(self) -> None:
         expected_output = "  first line  \n\tsecond line\t\n"
