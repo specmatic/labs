@@ -1086,7 +1086,6 @@ def _related_config_paths(lab_dir: Path) -> list[Path]:
     return [
         lab_dir / "docker-compose.yaml",
         lab_dir / "specmatic.yaml",
-        lab_dir / "run-suite-config.yaml",
     ]
 
 

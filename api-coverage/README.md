@@ -154,7 +154,7 @@ Alternatively, just run the following command:
 docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's|/pets/search:|/pets/find:|' specs/service.yaml"
 ```
 
-## Final Phase
+## 3. Re-run the tests and coverage check
 Run the same command again:
 
 ```shell
