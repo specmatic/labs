@@ -145,7 +145,7 @@ docker compose down -v
 docker compose up -d
 ```
 
-Re-run the suite from Studio.
+5. Re-run the suite from Studio.
 
 Alternatively, just run the following commands:
 

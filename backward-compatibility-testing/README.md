@@ -89,10 +89,10 @@ properties:
 
 You now have an uncommitted change in a tracked contract file. Specmatic will compare it to the version on `origin/main`.
 
-Alternatively, just run the following command:
+Alternatively, just run the following commands:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc 'cp products-breaking.yaml products.yaml'
+docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc "sed -i 's/version: 1.0.0/version: 1.1.0/' products.yaml; sed -i '/properties:/,/sku:/s/type: string/type: number/' products.yaml; sed -i '/^                  sku:$/i\\                  category:\\n                    type: string' products.yaml"
 ```
 
 ## Part B: Run the backward compatibility check
@@ -112,6 +112,7 @@ docker run --rm \
 ```
 
 ```terminaloutput
+Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
 (INCOMPATIBLE) This spec contains breaking changes to the API
 ```
 
@@ -121,14 +122,9 @@ docker run --rm --user "$(id -u):$(id -g)" -v "$((Resolve-Path ..).Path):/worksp
 ```
 
 ```terminaloutput
+Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
 (INCOMPATIBLE) This spec contains breaking changes to the API
 ```
-
-Why the command is structured this way:
-- `-v "${PWD}/..:/workspace"` mounts the `labs` repository root, not just this lab folder, so Specmatic can access the git repository metadata.
-- `--user "$(id -u):$(id -g)"` runs the container as your host user, which avoids git ownership issues when the mounted repository is inspected inside the container.
-- `--base-branch origin/main` tells Specmatic which tracked baseline to compare against.
-- `--target-path backward-compatibility-testing/products.yaml` tells Specmatic to compare the working tree version of this file with the tracked version on `origin/main`.
 
 Expected failure highlights:
 
@@ -143,15 +139,15 @@ The Incompatibility Report:
         This is number in the new specification response but string in the old specification
 ```
 
-Expected verdict:
-
-```terminaloutput
-(INCOMPATIBLE) This spec contains breaking changes to the API
-```
-
 Why this fails:
 - Adding optional `category` is safe.
 - Changing `name` from `string` to `number` is a breaking change for existing consumers.
+
+Why the command is structured this way:
+- `-v "${PWD}/..:/workspace"` mounts the `labs` repository root, not just this lab folder, so Specmatic can access the git repository metadata.
+- `--user "$(id -u):$(id -g)"` runs the container as your host user, which avoids git ownership issues when the mounted repository is inspected inside the container.
+- `--base-branch origin/main` tells Specmatic which tracked baseline to compare against.
+- `--target-path backward-compatibility-testing/products.yaml` tells Specmatic to compare the working tree version of this file with the tracked version on `origin/main`.
 
 ## Part C: Fix the contract
 Open `products.yaml`.
@@ -176,7 +172,7 @@ Keep version `1.1.0`.
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc 'cp products-fixed.yaml products.yaml'
+docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc 'sed -i "/properties:/,/sku:/s/type: number/type: string/" products.yaml'
 ```
 
 ## Part D: Re-run the check
