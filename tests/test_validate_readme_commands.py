@@ -960,6 +960,39 @@ class MainTests(GitRepoTestCase):
         self.assertIn("expected terminaloutput blocks: 1", completed.stdout)
         self.assertTrue(completed.stdout.rstrip().endswith("PASS"))
 
+    def test_cli_invocation_prints_command_execution_banners(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            repo_path = Path(temp_dir)
+            self._init_git_repo(repo_path)
+            readme_path = repo_path / "README.md"
+            readme_path.write_text(
+                textwrap.dedent(
+                    """
+                    ```shell
+                    printf 'hello\\n'
+                    ```
+
+                    ```terminaloutput
+                    hello
+                    ```
+                    """
+                ).lstrip(),
+                encoding="utf-8",
+            )
+
+            completed = subprocess.run(
+                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(repo_path)],
+                cwd=str(repo_path),
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(completed.returncode, 0)
+        self.assertIn("BEGIN command #1", completed.stdout)
+        self.assertIn("Command #1 output:", completed.stdout)
+        self.assertIn("END command #1 (exit 0)", completed.stdout)
+
     def test_main_resets_lab_changed_files_by_default(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             repo_path = Path(temp_dir)

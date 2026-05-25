@@ -274,9 +274,16 @@ def run_command_specs(
 
     for index, command_spec in enumerate(command_specs, start=1):
         if should_skip_command(command_spec.command):
+            print_command_skip_banner(index=index, command=command_spec.command, cwd=cwd)
             results.append(_build_result(index=index, command_spec=command_spec, cwd=cwd, skipped=True))
             continue
 
+        print_command_execution_start(
+            index=index,
+            command=command_spec.command,
+            cwd=cwd,
+            expected_outputs=command_spec.expected_outputs,
+        )
         try:
             completed = _run_command(
                 command=command_spec.command,
@@ -317,6 +324,7 @@ def run_command_specs(
             stdout=completed.stdout,
             stderr=completed.stderr,
         )
+        print_command_execution_end(result)
 
         try:
             _assert_command_result(result)
@@ -1407,6 +1415,42 @@ def print_command_mapping(command_specs: Sequence[CommandSpec]) -> None:
         print()
     if command_specs:
         print(separator)
+
+
+def print_command_execution_start(
+    *,
+    index: int,
+    command: str,
+    cwd: Path,
+    expected_outputs: Sequence[str],
+) -> None:
+    separator = "=" * 72
+    print(separator)
+    print(f"BEGIN command #{index}")
+    print(f"Working directory: {cwd}")
+    print(f"Expected terminaloutput blocks: {len(expected_outputs)}")
+    print("Command:")
+    _print_indented_block(command)
+    print("-" * 72)
+    print(f"Command #{index} output:")
+    print("-" * 72)
+
+
+def print_command_execution_end(result: CommandResult) -> None:
+    print("-" * 72)
+    print(f"END command #{result.index} (exit {result.returncode})")
+    print("=" * 72)
+
+
+def print_command_skip_banner(*, index: int, command: str, cwd: Path) -> None:
+    separator = "=" * 72
+    print(separator)
+    print(f"SKIP command #{index}")
+    print(f"Working directory: {cwd}")
+    print("Command:")
+    _print_indented_block(command)
+    print("=" * 72)
+
 
 def _print_indented_block(content: str) -> None:
     for line in content.rstrip("\n").splitlines():
