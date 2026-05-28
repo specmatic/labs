@@ -105,21 +105,22 @@ Run:
 
 *Unix/Mac:
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc "printf '--- products.yaml before running bcc command ---\n'; cat products.yaml"
-docker run --rm \
+docker run --rm --entrypoint sh \
   --user "$(id -u):$(id -g)" \
   -v "${PWD}/..:/workspace" \
   -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   -w /workspace \
   specmatic/enterprise:latest \
-  backward-compatibility-check \
-  --base-branch origin/main \
-  --target-path backward-compatibility-testing/products.yaml
+  -lc "printf '%s\n' '--- products.yaml before running bcc command ---'; cat backward-compatibility-testing/products.yaml; java -jar /usr/local/share/enterprise/enterprise.jar backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml; printf '%s\n' '--- products.yaml after running bcc command ---'; cat backward-compatibility-testing/products.yaml"
 ```
 
 ```terminaloutput
+--- products.yaml before running bcc command ---
+version: 1.1.0
 Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
 (INCOMPATIBLE) This spec contains breaking changes to the API
+--- products.yaml after running bcc command ---
+version: 1.1.0
 ```
 
 Windows PowerShell single-line:
@@ -191,21 +192,22 @@ Run the same command again:
 
 *Unix/Mac:
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc "printf '--- products.yaml before running 2nd bcc command ---\n'; cat products.yaml"
-docker run --rm \
+docker run --rm --entrypoint sh \
   --user "$(id -u):$(id -g)" \
   -v "${PWD}/..:/workspace" \
   -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   -w /workspace \
   specmatic/enterprise:latest \
-  backward-compatibility-check \
-  --base-branch origin/main \
-  --target-path backward-compatibility-testing/products.yaml
+  -lc "printf '%s\n' '--- products.yaml before running 2nd bcc command ---'; cat backward-compatibility-testing/products.yaml; java -jar /usr/local/share/enterprise/enterprise.jar backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml; printf '%s\n' '--- products.yaml after running 2nd bcc command ---'; cat backward-compatibility-testing/products.yaml"
 ```
 
 ```terminaloutput
+--- products.yaml before running 2nd bcc command ---
+version: 1.1.0
 Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
   (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
+--- products.yaml after running 2nd bcc command ---
+version: 1.1.0
 ```
 
 Windows PowerShell single-line:
