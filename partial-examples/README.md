@@ -41,7 +41,7 @@ Some APIs may have a lot of transient, but mandatory fields which does not matte
 
 Validate the original incomplete examples and observe the intentional failures.
 
-Test Run Cmd (Linux/Mac OSX)
+Validate Command (Linux/Mac OSX)
 
 ```shell
 docker run --rm \
@@ -56,7 +56,7 @@ docker run --rm \
 [FAIL] Examples: 0 passed and 3 failed out of 3 total
 ```
 
-Windows PowerShell single-line
+Validate Command (Windows PowerShell)
 
 ```powershell
 docker run --rm -v "$($PWD.Path):/usr/src/app" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" specmatic/enterprise:latest validate
@@ -114,9 +114,24 @@ sed -i "/\\\"type\\\": \\\"book\\\"/d" examples/test_find_available_products_boo
 
 ### Final Phase
 
-Re-run validation with the Windows PowerShell command after the Studio fixes are saved.
+Re-run validation after the Studio fixes are saved.
 
-Windows PowerShell single-line
+Validate Command (Linux/Mac OSX)
+
+```shell
+docker run --rm \
+  -v "${PWD}:/usr/src/app" \
+  -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
+  specmatic/enterprise:latest \
+  validate
+```
+
+```terminaloutput
+[OK] Specification product_search_bff_v6.yaml: PASSED
+[OK] Examples: 3 passed and 0 failed out of 3 total
+```
+
+Validate Command (Windows PowerShell)
 
 ```powershell
 docker run --rm -v "$($PWD.Path):/usr/src/app" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" specmatic/enterprise:latest validate
