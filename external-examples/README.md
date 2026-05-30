@@ -114,7 +114,7 @@ Still in Studio, generate examples for:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc 'cp external-examples-generated/* examples/'
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc 'cp .backup/* examples/'
 ```
 
 ### Final Phase

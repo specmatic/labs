@@ -139,15 +139,16 @@ The Incompatibility Report:
         This is number in the new specification response but string in the old specification
 ```
 
-Why this fails:
-- Adding optional `category` is safe.
-- Changing `name` from `string` to `number` is a breaking change for existing consumers.
-
 Why the command is structured this way:
 - `-v "${PWD}/..:/workspace"` mounts the `labs` repository root, not just this lab folder, so Specmatic can access the git repository metadata.
 - `--user "$(id -u):$(id -g)"` runs the container as your host user, which avoids git ownership issues when the mounted repository is inspected inside the container.
 - `--base-branch origin/main` tells Specmatic which tracked baseline to compare against.
 - `--target-path backward-compatibility-testing/products.yaml` tells Specmatic to compare the working tree version of this file with the tracked version on `origin/main`.
+
+
+Why this fails:
+- Adding optional `category` is safe.
+- Changing `name` from `string` to `number` is a breaking change for existing consumers.
 
 ## Part C: Fix the contract
 Open `products.yaml`.
