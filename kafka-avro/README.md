@@ -200,7 +200,15 @@ Replace `docker-config/avro/WipOrders.avsc` with:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc 'cp docker-config/fixed-avro/NewOrders.fixed.avsc docker-config/avro/NewOrders.avsc && cp docker-config/fixed-avro/WipOrders.fixed.avsc docker-config/avro/WipOrders.avsc'
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc "sed -i -e '/^      \"name\": \"id\",$/{n;s/^      \"type\": \"int\"$/&,\\
+      \"x-minimum\": 1,\\
+      \"x-maximum\": 100/;}' /usr/src/app/docker-config/avro/WipOrders.avsc && sed -i -e '/^      \"name\": \"id\",$/{n;s/^      \"type\": \"int\"$/&,\\
+      \"x-minimum\": 1,\\
+      \"x-maximum\": 100/;}' -e '/^              \"name\": \"name\",$/{n;s/^              \"type\": \"string\"$/&,\\
+              \"x-minLength\": 2,\\
+              \"x-maxLength\": 10,\\
+              \"x-regex\": \"^[A-Za-z]{2,10}$\"/;}' -e '/^              \"name\": \"price\",$/{n;s/^              \"type\": \"int\"$/&,\\
+              \"x-minimum\": 1000/;}' /usr/src/app/docker-config/avro/NewOrders.avsc"
 ```
 
 ### Step 2: Update the examples
@@ -277,8 +285,7 @@ Replace `api-specs/order-service-async-avro-v3_0_0_examples/PLACE_MACBOOK_ORDER.
 Alternatively, just run the following commands:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc "sed -i 's/\"id\": 101/\"id\": 1/; s/iPhone 14 Pro Max/iPhone/; s/\"price\": 500.00/\"price\": 5000/; s/exact:101/exact:1/; s#\"status\": \".*\"#\"status\": \"\$match(exact:PROCESSING)\"#' api-specs/order-service-async-avro-v3_0_0_examples/PLACE_IPHONE_ORDER.json"
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc "sed -i 's/\"id\": 102/\"id\": 2/; s/Macbook Mini Pro M5/Macbook/; s/\"price\": 600.00/\"price\": 6000/; s/exact:102/exact:2/; s#\"status\": \".*\"#\"status\": \"\$match(exact:PROCESSING)\"#' api-specs/order-service-async-avro-v3_0_0_examples/PLACE_MACBOOK_ORDER.json"
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc "sed -i 's/\"id\": 101/\"id\": 1/; s/iPhone 14 Pro Max/iPhone/; s/\"price\": 500.00/\"price\": 5000/; s/exact:101/exact:1/; s#\"status\": \".*\"#\"status\": \"\$match(exact:PROCESSING)\"#' api-specs/order-service-async-avro-v3_0_0_examples/PLACE_IPHONE_ORDER.json && sed -i 's/\"id\": 102/\"id\": 2/; s/Macbook Mini Pro M5/Macbook/; s/\"price\": 600.00/\"price\": 6000/; s/exact:102/exact:2/; s#\"status\": \".*\"#\"status\": \"\$match(exact:PROCESSING)\"#' api-specs/order-service-async-avro-v3_0_0_examples/PLACE_MACBOOK_ORDER.json"
 ```
 
 ## Verify the fix
