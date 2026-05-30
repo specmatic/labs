@@ -5,9 +5,7 @@
   "fields": [
     {
       "name": "id",
-      "type": "int",
-      "x-minimum": 1,
-      "x-maximum": 100
+      "type": "int"
     },
     {
       "name": "orderItems",
@@ -23,10 +21,7 @@
             },
             {
               "name": "name",
-              "type": "string",
-              "x-minLength": 2,
-              "x-maxLength": 10,
-              "x-regex": "^[A-Za-z]{2,10}$"
+              "type": "string"
             },
             {
               "name": "quantity",
@@ -34,8 +29,7 @@
             },
             {
               "name": "price",
-              "type": "int",
-              "x-minimum": 1000
+              "type": "int"
             }
           ]
         }
