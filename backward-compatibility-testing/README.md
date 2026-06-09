@@ -162,7 +162,7 @@ followed by the verdict:
 (INCOMPATIBLE) This spec contains breaking changes to the API
 ```
 
-## Part C: Fix the contract
+## Part C: Fix the contract and re-run
 Open `products.yaml`.
 
 Under the `200` response schema for `GET /products/{id}`, change:
@@ -179,11 +179,9 @@ name:
   type: string
 ```
 
-Keep the new `category` field.
-Keep version `1.1.0`.
+Keep the new `category` field, and keep version `1.1.0`.
 
-## Part D: Re-run the check
-Run the same command again:
+Re-run the same command:
 
 *Unix/Mac:
 ```shell
@@ -197,22 +195,26 @@ docker run --rm \
   --target-path backward-compatibility-testing/products.yaml
 ```
 
-```terminaloutput
-Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
-  (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
-```
-
 Windows (PowerShell/CMD) single-line:
 ```shell
 docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
 ```
 
-```terminaloutput
-Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
-  (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
+This time the check passes (exit code 0).
+
+### Read the HTML report
+Open the report again:
+
+```
+build/reports/specmatic/backward_compatibility/html/index.html
 ```
 
-Expected passing output:
+`GET /products/{id}` is now flagged **Compatible**. Adding the optional `category` field is a safe, additive change, so existing consumers are unaffected:
+
+![Backward Compatibility Report showing the operation is now compatible](assets/bcc-report-compatible.png)
+
+### The console output
+The terminal shows the passing verdict:
 
 ```terminaloutput
 Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
