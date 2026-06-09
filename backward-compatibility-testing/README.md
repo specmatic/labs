@@ -147,6 +147,27 @@ Why this fails:
 - Adding optional `category` is safe.
 - Changing `name` from `string` to `number` is a breaking change for existing consumers.
 
+### Open the HTML report
+Alongside the terminal output, the check writes a visual report into the `build/` directory at the root of the `labs` repository. Open it in your browser:
+
+Unix/Mac:
+```shell
+open "$(git rev-parse --show-toplevel)/build/reports/specmatic/backward_compatibility/html/index.html"
+```
+
+Windows (PowerShell):
+```shell
+start "$(git rev-parse --show-toplevel)/build/reports/specmatic/backward_compatibility/html/index.html"
+```
+
+The landing page lists each operation with its compatibility status:
+
+![Backward Compatibility Report landing page](assets/bcc-report-landing.png)
+
+Click the incompatible operation to drill into the details. You'll see the same breaking change from the terminal, including the exact file, line, and column:
+
+![Breaking change details for GET /products/{id}](assets/bcc-report-breaking-change.png)
+
 ## Part C: Fix the contract
 Open `products.yaml`.
 
