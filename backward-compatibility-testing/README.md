@@ -104,17 +104,9 @@ docker run --rm \
   --target-path backward-compatibility-testing/products.yaml
 ```
 
-```terminaloutput
-(INCOMPATIBLE) This spec contains breaking changes to the API
-```
-
 Windows (PowerShell/CMD) single-line:
 ```shell
 docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
-```
-
-```terminaloutput
-(INCOMPATIBLE) This spec contains breaking changes to the API
 ```
 
 Why the command is structured this way:
@@ -122,7 +114,36 @@ Why the command is structured this way:
 - `--base-branch origin/main` tells Specmatic which tracked baseline to compare against.
 - `--target-path backward-compatibility-testing/products.yaml` tells Specmatic to compare the working tree version of this file with the tracked version on `origin/main`.
 
-Expected failure highlights:
+The check fails (exit code 1) and writes an HTML report.
+
+### Read the HTML report
+After the run, open this file in your browser. It is written to the `build/` directory at the root of the `labs` repository:
+
+```
+build/reports/specmatic/backward_compatibility/html/index.html
+```
+
+The landing page lists every operation that was checked, each with a compatibility status. Here `GET /products/{id}` is flagged **Incompatible**:
+
+![Backward Compatibility Report landing page](assets/bcc-report-landing.png)
+
+Click that operation to see exactly what broke:
+
+![Breaking change details for GET /products/{id}](assets/bcc-report-breaking-change.png)
+
+Read the breaking-change card top to bottom:
+- **`R1001` Type mismatch** — the backward compatibility rule that was violated, with a short title. Click the rule ID to open its [reference](https://docs.specmatic.io/rules).
+- **ERROR** — the severity of the change.
+- **`RESPONSE.BODY.name`** — the breadcrumb: where the change sits within the request or response. Here, the `name` field of the response body.
+- *This is number in the new specification response but string in the old specification* — a plain-English description of the breaking change.
+- **`Source: backward-compatibility-testing/products.yaml:25:19`** — the exact file, line, and column of the change, so you can jump straight to it instead of scanning the whole spec.
+
+Why this fails:
+- Adding optional `category` is safe.
+- Changing `name` from `string` to `number` is a breaking change for existing consumers.
+
+### The console output
+The same result is printed to the terminal. The breaking change appears in the incompatibility report:
 
 ```terminaloutput
 The Incompatibility Report:
@@ -135,38 +156,11 @@ The Incompatibility Report:
         This is number in the new specification response but string in the old specification
 ```
 
-Notice the `(...products.yaml:25:19)` next to the breadcrumb. Specmatic pins each breaking change to its exact file, line, and column, so you can jump straight to it instead of scanning the whole spec.
-
-Expected verdict:
+followed by the verdict:
 
 ```terminaloutput
 (INCOMPATIBLE) This spec contains breaking changes to the API
 ```
-
-Why this fails:
-- Adding optional `category` is safe.
-- Changing `name` from `string` to `number` is a breaking change for existing consumers.
-
-### Open the HTML report
-Alongside the terminal output, the check writes a visual report into the `build/` directory at the root of the `labs` repository. Open it in your browser:
-
-Unix/Mac:
-```shell
-open "$(git rev-parse --show-toplevel)/build/reports/specmatic/backward_compatibility/html/index.html"
-```
-
-Windows (PowerShell):
-```shell
-start "$(git rev-parse --show-toplevel)/build/reports/specmatic/backward_compatibility/html/index.html"
-```
-
-The landing page lists each operation with its compatibility status:
-
-![Backward Compatibility Report landing page](assets/bcc-report-landing.png)
-
-Click the incompatible operation to drill into the details. You'll see the same breaking change from the terminal, including the exact file, line, and column:
-
-![Breaking change details for GET /products/{id}](assets/bcc-report-breaking-change.png)
 
 ## Part C: Fix the contract
 Open `products.yaml`.
