@@ -130,10 +130,12 @@ The Incompatibility Report:
   In scenario "Get product by id. Response: Product details"
   API: GET /products/(id:number) -> 200
 
-    >> RESPONSE.BODY.name
+    >> RESPONSE.BODY.name (backward-compatibility-testing/products.yaml:25:19)
 
         This is number in the new specification response but string in the old specification
 ```
+
+Notice the `(...products.yaml:25:19)` next to the breadcrumb. Specmatic pins each breaking change to its exact file, line, and column, so you can jump straight to it instead of scanning the whole spec.
 
 Expected verdict:
 
