@@ -89,6 +89,12 @@ properties:
 
 You now have an uncommitted change in a tracked contract file. Specmatic will compare it to the version on `origin/main`.
 
+Alternatively, apply all three edits with a single command. It bumps the version, changes `name` to `number`, and adds the `category` field:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc "sed -i 's/version: 1.0.0/version: 1.1.0/' products.yaml; sed -i '/properties:/,/sku:/s/type: string/type: number/' products.yaml; sed -i '/^                  sku:$/i\\                  category:\\n                    type: string' products.yaml"
+```
+
 ## Part B: Run the backward compatibility check
 Run:
 
@@ -102,11 +108,6 @@ docker run --rm \
   backward-compatibility-check \
   --base-branch origin/main \
   --target-path backward-compatibility-testing/products.yaml
-```
-
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
 ```
 
 Why the command is structured this way:
@@ -162,6 +163,12 @@ followed by the verdict:
 (INCOMPATIBLE) This spec contains breaking changes to the API
 ```
 
+On Windows (PowerShell/CMD), use the single-line form of the command:
+
+```powershell
+docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
+```
+
 ## Part C: Fix the contract and re-run
 Open `products.yaml`.
 
@@ -181,6 +188,12 @@ name:
 
 Keep the new `category` field, and keep version `1.1.0`.
 
+Alternatively, apply that fix with a single command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc 'sed -i "/properties:/,/sku:/s/type: number/type: string/" products.yaml'
+```
+
 Re-run the same command:
 
 *Unix/Mac:
@@ -193,11 +206,6 @@ docker run --rm \
   backward-compatibility-check \
   --base-branch origin/main \
   --target-path backward-compatibility-testing/products.yaml
-```
-
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
 ```
 
 This time the check passes (exit code 0).
@@ -221,15 +229,17 @@ Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
   (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
 ```
 
+On Windows (PowerShell/CMD), use the single-line form of the command:
+
+```powershell
+docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
+```
+
 ## Clean up
 Restore the tracked file:
 
 ```shell
 git restore products.yaml
-```
-
-```terminaloutput
-products.yaml restored.
 ```
 
 ## Check backward compatibility in Specmatic Studio before saving
