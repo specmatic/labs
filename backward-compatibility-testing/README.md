@@ -101,28 +101,54 @@ Run:
 *Unix/Mac:
 ```shell
 docker run --rm \
-  -v ..:/workspace \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
+  --user "$(id -u):$(id -g)" \
+  -v "${PWD}/..:/workspace" \
+  -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   -w /workspace \
   specmatic/enterprise:latest \
   backward-compatibility-check \
   --base-branch origin/main \
   --target-path backward-compatibility-testing/products.yaml
 ```
+### The console output
+The check fails (exit code 1) and followed by the verdict:
+
+```terminaloutput
+Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
+(INCOMPATIBLE) This spec contains breaking changes to the API
+```
+
+Expected failure highlights: The breaking change appears in the incompatibility report:
+
+```terminaloutput
+The Incompatibility Report:
+
+  In scenario "Get product by id. Response: Product details"
+  API: GET /products/(id:number) -> 200
+
+    >> RESPONSE.BODY.name (backward-compatibility-testing/products.yaml:25:19)
+
+        This is number in the new specification response but string in the old specification
+```
+
+Windows PowerShell single-line:
+```powershell
+docker run --rm --user "$(id -u):$(id -g)" -v "$((Resolve-Path ..).Path):/workspace" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
+```
+
+```terminaloutput
+Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
+(INCOMPATIBLE) This spec contains breaking changes to the API
+```
 
 Why the command is structured this way:
-- `-v ..:/workspace` mounts the `labs` repository root, not just this lab folder, so Specmatic can access the git repository metadata.
+- `-v "${PWD}/..:/workspace"` mounts the `labs` repository root, not just this lab folder, so Specmatic can access the git repository metadata.
+- `--user "$(id -u):$(id -g)"` runs the container as your host user, which avoids git ownership issues when the mounted repository is inspected inside the container.
 - `--base-branch origin/main` tells Specmatic which tracked baseline to compare against.
 - `--target-path backward-compatibility-testing/products.yaml` tells Specmatic to compare the working tree version of this file with the tracked version on `origin/main`.
 
-The check fails (exit code 1) and writes an HTML report.
-
 ### Read the HTML report
-After the run, open this file in your browser. It is written to the `build/` directory at the root of the `labs` repository:
-
-```
-build/reports/specmatic/backward_compatibility/html/index.html
-```
+After the run, open this file in your browser. It is written to the `build/` directory: [build/reports/specmatic/backward_compatibility/html/index.html](build/reports/specmatic/backward_compatibility/html/index.html)
 
 The landing page lists every operation that was checked, each with a compatibility status. Here `GET /products/{id}` is flagged **Incompatible**:
 
@@ -142,32 +168,6 @@ Read the breaking-change card top to bottom:
 Why this fails:
 - Adding optional `category` is safe.
 - Changing `name` from `string` to `number` is a breaking change for existing consumers.
-
-### The console output
-The same result is printed to the terminal. The breaking change appears in the incompatibility report:
-
-```terminaloutput
-The Incompatibility Report:
-
-  In scenario "Get product by id. Response: Product details"
-  API: GET /products/(id:number) -> 200
-
-    >> RESPONSE.BODY.name (backward-compatibility-testing/products.yaml:25:19)
-
-        This is number in the new specification response but string in the old specification
-```
-
-followed by the verdict:
-
-```terminaloutput
-(INCOMPATIBLE) This spec contains breaking changes to the API
-```
-
-On Windows (PowerShell/CMD), use the single-line form of the command:
-
-```powershell
-docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
-```
 
 ## Part C: Fix the contract and re-run
 Open `products.yaml`.
@@ -194,13 +194,15 @@ Alternatively, apply that fix with a single command:
 docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc 'sed -i "/properties:/,/sku:/s/type: number/type: string/" products.yaml'
 ```
 
-Re-run the same command:
+## Part D: Re-run the check
+Run the same command again:
 
 *Unix/Mac:
 ```shell
 docker run --rm \
-  -v ..:/workspace \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
+  --user "$(id -u):$(id -g)" \
+  -v "${PWD}/..:/workspace" \
+  -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   -w /workspace \
   specmatic/enterprise:latest \
   backward-compatibility-check \
@@ -208,32 +210,30 @@ docker run --rm \
   --target-path backward-compatibility-testing/products.yaml
 ```
 
-This time the check passes (exit code 0).
-
-### Read the HTML report
-Open the report again:
-
-```
-build/reports/specmatic/backward_compatibility/html/index.html
-```
-
-`GET /products/{id}` is now flagged **Compatible**. Adding the optional `category` field is a safe, additive change, so existing consumers are unaffected:
-
-![Backward Compatibility Report showing the operation is now compatible](assets/bcc-report-compatible.png)
-
 ### The console output
-The terminal shows the passing verdict:
+This time the check passes (exit code 0). The terminal shows the passing verdict:
 
 ```terminaloutput
 Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
   (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
 ```
 
-On Windows (PowerShell/CMD), use the single-line form of the command:
-
+Windows PowerShell single-line:
 ```powershell
-docker run --rm -v ..:/workspace -v ../license.txt:/specmatic/specmatic-license.txt:ro -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
+docker run --rm --user "$(id -u):$(id -g)" -v "$((Resolve-Path ..).Path):/workspace" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
 ```
+
+```terminaloutput
+Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
+  (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
+```
+
+### Read the HTML report
+Open the report again [build/reports/specmatic/backward_compatibility/html/index.html](build/reports/specmatic/backward_compatibility/html/index.html)
+
+`GET /products/{id}` is now flagged **Compatible**. Adding the optional `category` field is a safe, additive change, so existing consumers are unaffected:
+
+![Backward Compatibility Report showing the operation is now compatible](assets/bcc-report-compatible.png)
 
 ## Clean up
 Restore the tracked file:
