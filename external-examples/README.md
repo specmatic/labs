@@ -46,8 +46,8 @@ Test Run Cmd (Linux/Mac OSX)
 
 ```shell
 docker run --rm \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
+  -v "${PWD}:/usr/src/app" \
+  -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   specmatic/enterprise:latest \
   validate
 ```
@@ -57,10 +57,10 @@ docker run --rm \
 [FAIL] Examples: 1 passed and 3 failed out of 4 total
 ```
 
-Windows (PowerShell/CMD) single-line:
+Windows PowerShell single-line:
 
-```shell
-docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
+```powershell
+docker run --rm -v "$($PWD.Path):/usr/src/app" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" specmatic/enterprise:latest validate
 ```
 
 Expected output:
@@ -93,14 +93,28 @@ In Studio, update the failing examples:
 3. `examples/test_accepted_order_request.json`
    - Add missing required property `count` (for example `2`) in request body.
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc '
+sed -i "s/\"to-date\": \"today\"/\"to-date\": \"2025-11-28\"/" examples/test_find_available_products_book_200.json &&
+sed -i "s/\"type\": \"movie\"/\"type\": \"book\"/" examples/test_accepted_product_request.json &&
+sed -i "s/\"inventory\": \"five\"/\"inventory\": 5/" examples/test_accepted_product_request.json &&
+sed -i "s/\"productid\": 1234/\"productid\": 1234,/" examples/test_accepted_order_request.json &&
+sed -i "/\"productid\": 1234,/a\\      \"count\": 2" examples/test_accepted_order_request.json
+'
+```
+
 #### 4. Generate missing examples in the same Studio flow
 Still in Studio, generate examples for:
 - `POST /products` with response `201`
 - `POST /orders` with response `201`
 
-Expected output:
-```terminaloutput
-[OK] Examples: 6 passed and 0 failed out of 6 total
+
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc 'cp .backup/* examples/'
 ```
 
 ### Final Phase
@@ -111,8 +125,8 @@ Test Run Cmd (Linux/Mac OSX)
 
 ```shell
 docker run --rm \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
+  -v "${PWD}:/usr/src/app" \
+  -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   specmatic/enterprise:latest \
   validate
 ```
@@ -122,10 +136,10 @@ docker run --rm \
 [OK] Examples: 6 passed and 0 failed out of 6 total
 ```
 
-Windows (PowerShell/CMD) single-line:
+Windows PowerShell single-line:
 
-```shell
-docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
+```powershell
+docker run --rm -v "$($PWD.Path):/usr/src/app" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" specmatic/enterprise:latest validate
 ```
 
 Expected output:

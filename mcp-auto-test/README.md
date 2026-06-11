@@ -98,6 +98,12 @@ Make these two fixes:
 
 Do not change anything else.
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#\"damage\": 0.0#\"damaged\": 0.0#; s#order\\[\"shipment\"\\]#order[\"shipmentStatus\"]#' service/order_service.py"
+```
+
 ## Part C: Re-run tests (expected to pass)
 Run:
 
@@ -140,6 +146,12 @@ Overall Success Rate: 94.3%
 ```
 
 This is not required for the lab goal. It is a follow-up to explore how Specmatic mutates valid tool inputs to probe validation boundaries. Try to pass all 35 tests.
+
+Clean up:
+
+```shell
+docker compose down -v
+```
 
 ## Pass criteria
 - Baseline run fails with two tool execution failures.

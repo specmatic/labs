@@ -7,7 +7,7 @@ systemUnderTest:
     data:
       examples:
         - directories:
-            - "${EX_DIR:examples}"
+            - "${EX_DIR:examples/async-order-service}"
 
 dependencies:
   services:
@@ -18,7 +18,7 @@ dependencies:
         data:
           examples:
             - directories:
-                - "${EX_DIR:examples}"
+                - "${EX_DIR:examples/tax-service}"
 
 components:
   sources:
@@ -46,7 +46,7 @@ components:
       asyncapi:
         type: test
         servers:
-          - host: "${KAFKA_BROKER_HOST:localhost:9092}"
+          - host: "${KAFKA_BROKER_HOST:kafka:9092}"
             protocol: kafka
     taxServiceMock:
       openapi:

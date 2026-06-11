@@ -42,7 +42,7 @@ This lab will help you understand how to identify such mismatches and use Specma
 Run:
 
 ```shell
-docker compose up
+docker compose up -d
 ```
 
 ## 2. Trigger the mismatch from browser (intentional failure)
@@ -101,11 +101,17 @@ Run:
 chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
 ```
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i '/^specmatic:/i\  data:\n    adapters:\n      pre_specmatic_request_processor: ./hooks/pre_specmatic_request_processor.sh\n      post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh\n' specmatic.yaml && chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh"
+```
+
 ## 6. Restart mock + UI
 Run:
 
 ```shell
-docker compose up
+docker compose up -d
 ```
 
 ## 7. Trigger the matching request/response from browser
@@ -144,7 +150,7 @@ git update-index --chmod=+x hooks/pre_specmatic_request_processor.sh hooks/post_
 
 - Ensure hook files use LF line endings (not CRLF). In Git Bash:
 
-```shell
+```powershell
 sed -i 's/\r$//' hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
 ```
 

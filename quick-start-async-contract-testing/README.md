@@ -45,7 +45,7 @@ docker compose up contract-test --build --abort-on-container-exit
 ```
 
 ```terminaloutput
-Tests run: 1, Successes: 0, Failures: 1, Errors: 0
+Tests run: 1, Successes: 0, Failures: 1, WIP: 0, Errors: 0
 ```
 
 Expected failure signal:
@@ -73,6 +73,12 @@ To:
 "status": "INITIATED",
 ```
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#\"status\": \"STARTED\"#\"status\": \"INITIATED\"#' service/processor.py"
+```
+
 ## Pass criteria
 Re-run:
 
@@ -83,7 +89,7 @@ docker compose up contract-test --build --abort-on-container-exit
 Expected pass signal:
 
 ```terminaloutput
-Tests run: 1, Successes: 1, Failures: 0, Errors: 0
+Tests run: 1, Successes: 1, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Then clean up:
