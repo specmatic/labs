@@ -32,7 +32,7 @@ docker compose up --abort-on-container-exit
 Expected baseline output:
 
 ```terminaloutput
-Tests run: 136, Successes: 20, Failures: 114, Errors: 2
+Tests run: 136, Successes: 18, Failures: 114, WIP: 4, Errors: 0
 ```
 
 Clean up:
@@ -87,6 +87,12 @@ Stop Studio:
 docker compose --profile studio down -v
 ```
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i \"/baseUrl: http:\\/\\/localhost:8080/a\\        filter: \\\"PATH!='/health,/monitor/{id},/swagger' && STATUS='200,201'\\\"\" specmatic.yaml"
+```
+
 ## 5. Verify from CLI (with persisted filters)
 Run:
 
@@ -97,7 +103,7 @@ docker compose up --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 20, Successes: 20, Failures: 0, Errors: 0
+Tests run: 20, Successes: 18, Failures: 0, WIP: 2, Errors: 0
 ```
 
 Clean up:
@@ -109,7 +115,7 @@ docker compose down -v
 ## Pass Criteria
 - Baseline run shows `136` tests with many failures.
 - After applying and exporting filters, CLI run shows:
-  - `Tests run: 20, Successes: 20, Failures: 0, Errors: 0`
+  - `Tests run: 20, Successes: 18, Failures: 0, WIP: 2, Errors: 0`
 
 ## Why this lab matters
 - Filters help teams focus on critical scenarios while they triage known failures.

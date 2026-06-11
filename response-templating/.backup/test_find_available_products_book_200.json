@@ -1,0 +1,44 @@
+{
+  "http-request": {
+    "path": "/findAvailableProducts",
+    "method": "GET",
+    "query": {
+      "from-date": "2026-02-15",
+      "to-date": "2026-02-15",
+      "type": "(TYPE:ProductType)"
+    },
+    "headers": {
+      "pageSize": "10"
+    }
+  },
+  "http-response": {
+    "status": 200,
+    "body": {
+      "id": "$(dataLookup.products[TYPE].id)",
+      "name": "$(dataLookup.products[TYPE].name)",
+      "type": "$(TYPE)",
+      "inventory": "$(dataLookup.products[TYPE].inventory)",
+      "createdOn": "$(dataLookup.products[TYPE].createdOn)"
+    },
+    "status-text": "OK",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  },
+  "dataLookup": {
+    "products": {
+      "book": {
+        "id": 1,
+        "name": "Larry Potter",
+        "inventory": 100,
+        "createdOn": "2026-02-15"
+      },
+      "gadget": {
+        "id": 2,
+        "name": "iPhone",
+        "inventory": 500,
+        "createdOn": "2026-02-15"
+      }
+    }
+  }
+}

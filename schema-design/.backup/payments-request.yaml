@@ -1,0 +1,94 @@
+openapi: 3.0.0
+info:
+  title: Payment API
+  version: "1.0"
+servers:
+  - url: http://localhost:8080
+paths:
+  /payments:
+    post:
+      summary: Create a payment
+      operationId: createPayment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentRequest"
+      responses:
+        "201":
+          description: Payment accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentAccepted"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+components:
+  schemas:
+    CardPaymentRequest:
+      type: object
+      required:
+        - paymentType
+        - cardNumber
+        - cardExpiry
+        - cardCvv
+      properties:
+        paymentType:
+          type: string
+          enum: [ card ]
+        cardNumber:
+          type: string
+        cardExpiry:
+          type: string
+        cardCvv:
+          type: string
+    BankTransferPaymentRequest:
+      type: object
+      required:
+        - paymentType
+        - bankAccountNumber
+        - bankRoutingNumber
+        - bankAccountHolder
+      properties:
+        paymentType:
+          type: string
+          enum: [ bank_transfer ]
+        bankAccountNumber:
+          type: string
+        bankRoutingNumber:
+          type: string
+        bankAccountHolder:
+          type: string
+    PaymentRequest:
+      oneOf:
+        - $ref: "#/components/schemas/CardPaymentRequest"
+        - $ref: "#/components/schemas/BankTransferPaymentRequest"
+      discriminator:
+        propertyName: paymentType
+        mapping:
+          card: "#/components/schemas/CardPaymentRequest"
+          bank_transfer: "#/components/schemas/BankTransferPaymentRequest"
+    PaymentAccepted:
+      type: object
+      additionalProperties: false
+      properties:
+        id:
+          type: integer
+        status:
+          type: string
+      required:
+        - id
+        - status
+    ErrorResponse:
+      type: object
+      additionalProperties: false
+      properties:
+        message:
+          type: string
+      required:
+        - message

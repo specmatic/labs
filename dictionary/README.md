@@ -25,7 +25,7 @@ docker compose up suite --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 3, Successes: 0, Failures: 3, Errors: 0
+Tests run: 3, Successes: 0, Failures: 3, WIP: 0, Errors: 0
 ```
 
 ### Root cause of the failed tests
@@ -42,11 +42,11 @@ docker compose down -v
 Generate dictionary data from existing examples:
 
 ```shell
-docker run --rm -v .:/usr/src/app specmatic/enterprise examples dictionary --examples-dir examples --spec-file specs/simple-openapi-spec.yaml --out specs/dictionary.yaml
+docker run --rm -v "${PWD}:/usr/src/app" specmatic/enterprise examples dictionary --examples-dir examples --spec-file specs/simple-openapi-spec.yaml --out specs/dictionary.yaml
 ```
 
 ```terminaloutput
-Generated dictionary file at specs/dictionary.yaml
+Dictionary file written to /usr/src/app/specs/dictionary.yaml
 ```
 
 Open and understand the [generated dictionary file](specs/dictionary.yaml)
@@ -59,6 +59,13 @@ data:
     path: specs/dictionary.yaml
 ```
 
+Alternatively, just run the following commands:
+
+```shell
+docker run --rm -v "${PWD}:/usr/src/app" specmatic/enterprise examples dictionary --examples-dir examples --spec-file specs/simple-openapi-spec.yaml --out specs/dictionary.yaml
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i '/^specmatic:/i\        data:\n          dictionary:\n            path: specs/dictionary.yaml\n' specmatic.yaml"
+```
+
 ## 3. Re-run the suite after configuring dictionary
 
 ```shell
@@ -68,7 +75,7 @@ docker compose up suite --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 3, Successes: 3, Failures: 0, Errors: 0
+Tests run: 3, Successes: 3, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Clean up:
@@ -78,8 +85,8 @@ docker compose down -v
 ```
 
 ## Pass Criteria
-- Baseline run fails with `Tests run: 3, Successes: 0, Failures: 3, Errors: 0`.
-- After dictionary configuration, run passes with `Tests run: 3, Successes: 3, Failures: 0, Errors: 0`.
+- Baseline run fails with `Tests run: 3, Successes: 0, Failures: 3, WIP: 0, Errors: 0`.
+- After dictionary configuration, run passes with `Tests run: 3, Successes: 3, Failures: 0, WIP: 0, Errors: 0`.
 
 ## Additional Resources
 - [Specmatic Dictionary Documentation](https://docs.specmatic.io/features/dictionary)

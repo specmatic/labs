@@ -74,7 +74,7 @@ docker compose up api-test --build --abort-on-container-exit
 * Expected console output
 
 ```terminaloutput
-Tests run: 4, Successes: 2, Failures: 2, Errors: 0
+Tests run: 4, Successes: 2, Failures: 2, WIP: 0, Errors: 0
 ```
 
 Why the baseline fails:
@@ -99,6 +99,12 @@ In `http-response.body`, change:
 
 Do not change any other fields.
 
+Alternatively, just run the following command for Task A:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#[$]match(exact: approved)#\$match(pattern: approved\|verified)#' examples/test_finance_user_11.json"
+```
+
 Re-run:
 
 ```shell
@@ -108,7 +114,7 @@ docker compose up api-test --build --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 4, Successes: 3, Failures: 1, Errors: 0
+Tests run: 4, Successes: 3, Failures: 1, WIP: 0, Errors: 0
 ```
 
 Clean up:
@@ -128,6 +134,12 @@ In `http-response.body`, change:
 
 Keep `handledBy` and `decision` as exact matches.
 
+Alternatively, just run the following command for Final Phase:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#[$]match(exact: VRF-123456)#\$match(pattern: VRF-[0-9]{6})#; s#[$]match(exact: 2026-03-17)#\$match(dataType: date)#' examples/test_support_user_55.json"
+```
+
 Run:
 
 ```shell
@@ -137,7 +149,7 @@ docker compose up api-test --build --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 4, Successes: 4, Failures: 0, Errors: 0
+Tests run: 4, Successes: 4, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Clean up:

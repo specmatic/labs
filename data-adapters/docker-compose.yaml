@@ -41,6 +41,10 @@ services:
         condition: service_healthy
     entrypoint: ["curl"]
     command:
+      - --connect-timeout
+      - "10"
+      - --max-time
+      - "20"
       - -i
       - -X
       - POST
