@@ -111,12 +111,13 @@ Configure lookup logic based on request query `type` so that:
 - for `type=gadget` return response values matching test expectation (`id=2`, `name=iPhone`, `type=gadget`, `inventory=500`, `createdOn` as valid date)
 
 Note:
-- You can keep this as one lookup-driven mock example instead of creating duplicate mock files.
+- You MUST keep this as one lookup-driven mock example instead of creating duplicate mock files.
+- type's data type should be ProductType not string. type is an enum which allows only specific values and not any string.
 
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc 'cp test_find_available_products_book_200.json examples/mock/test_find_available_products_book_200.json'
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc 'cp .backup/test_find_available_products_book_200.json examples/mock/test_find_available_products_book_200.json'
 ```
 
 ## 4. Final verification
