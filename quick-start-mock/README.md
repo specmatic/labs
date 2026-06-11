@@ -45,7 +45,7 @@ In real projects, consumer teams are often blocked because a dependency is late,
 Start only the consumer:
 
 ```shell
-docker compose up -d consumer --build
+docker compose up -d --wait consumer
 ```
 
 Open [http://127.0.0.1:8081](http://127.0.0.1:8081).
@@ -65,15 +65,14 @@ Why this fails:
 Alternatively, just run the following commands:
 
 ```shell
-docker compose up -d --wait --wait-timeout 30 consumer --build
-docker run --rm --network quick-start-mock_default --entrypoint sh specmatic/enterprise:latest -lc 'curl -s http://mock:9100/pets/1 || echo "Service unavailable"'
+docker run --rm --network quick-start-mock_default --entrypoint sh specmatic/enterprise:latest -lc 'curl --fail --silent --show-error http://127.0.0.1:9100/pets/1 >/dev/null && exit 1 || echo "Request failed as expected"'
 ```
 
 ## Part B: Start contract-generated mock (consumer unblocked)
 With consumer still running, run:
 
 ```shell
-docker compose --profile mock up -d mock
+docker compose --profile mock up -d --wait mock
 ```
 
 Go back to consumer UI and click **Load Pet** again.
@@ -93,11 +92,53 @@ Try additional IDs:
 Alternatively, just run the following commands:
 
 ```shell
-docker compose --profile mock up -d --wait --wait-timeout 30 mock
-docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS http://mock:9100/pets/1
-docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS http://mock:9100/pets/2
-docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS http://mock:9100/pets/2
-docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -i -sS http://mock:9100/pets/abc
+expected='{"id":1,"name":"Scooby","type":"GoldenRetriever","status":"Adopted"}'
+
+actual="$(docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS http://mock:9100/pets/1 | tr -d '\n ' )"
+
+[ "$actual" = "$expected" ] || {
+  echo "Unexpected payload: $actual"
+  exit 1
+}
+```
+
+
+```shell
+first="$(docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS -w '\n%{http_code}' http://mock:9100/pets/2)"
+second="$(docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS -w '\n%{http_code}' http://mock:9100/pets/2)"
+
+first_body="$(printf '%s\n' "$first" | sed '$d')"
+first_status="$(printf '%s\n' "$first" | tail -n 1)"
+
+second_body="$(printf '%s\n' "$second" | sed '$d')"
+second_status="$(printf '%s\n' "$second" | tail -n 1)"
+
+[ "$first_status" = "200" ] || {
+  echo "First call expected 200, got $first_status"
+  exit 1
+}
+
+[ "$second_status" = "200" ] || {
+  echo "Second call expected 200, got $second_status"
+  exit 1
+}
+
+[ "$first_body" != "$second_body" ] || {
+  echo "Expected different response bodies, but both were:"
+  printf '%s\n' "$first_body"
+  exit 1
+}
+
+echo "Both calls returned 200 and different bodies"
+```
+
+```shell
+status="$(docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS -o /dev/null -w '%{http_code}' http://mock:9100/pets/abc)"
+
+[ "$status" = "400" ] || {
+  echo "Expected 400, got $status"
+  exit 1
+}
 ```
 
 ## Part C: Stop only the mock and observe fallback
@@ -115,14 +156,14 @@ Expected output:
 Alternatively, just run the following commands:
 
 ```shell
-docker run --rm --network quick-start-mock_default --entrypoint sh specmatic/enterprise:latest -lc 'curl -s http://mock:9100/pets/1 || echo "Service unavailable"'
+docker run --rm --network quick-start-mock_default --entrypoint sh specmatic/enterprise:latest -lc 'curl --fail --silent --show-error http://127.0.0.1:9100/pets/1 >/dev/null && exit 1 || echo "Request failed as expected"'
 ```
 
 ## Part D: Run mock from Studio and inspect traffic
 Start Studio in a new terminal:
 
 ```shell
-docker compose --profile studio up -d studio
+docker compose --profile studio up -d --wait studio
 ```
 
 Open [http://127.0.0.1:9000/_specmatic/studio](http://127.0.0.1:9000/_specmatic/studio).
@@ -153,10 +194,34 @@ To inspect mock traffic in Studio:
 Alternatively, just run the following commands:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc 'mkdir -p specs/service_examples && cp quick-start-mock-generated/pets_242_GET_200_1.json specs/service_examples/pets_242_GET_200_1.json'
-docker compose --profile mock up -d --wait --wait-timeout 30 mock
-docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS http://mock:9100/pets/242
-docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS http://mock:9100/pets/242
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc 'mkdir -p specs/service_examples && cp .backup/pets_242_GET_200_1.json specs/service_examples/pets_242_GET_200_1.json'
+docker compose exec -T studio sh -lc 'specmatic mock /usr/src/app/specs/service.yaml --port 9100 >/tmp/specmatic-mock.log 2>&1 &'
+first="$(docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS -w '\n%{http_code}' http://studio:9100/pets/242)"
+second="$(docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS -w '\n%{http_code}' http://studio:9100/pets/242)"
+
+first_body="$(printf '%s\n' "$first" | sed '$d')"
+first_status="$(printf '%s\n' "$first" | tail -n 1)"
+
+second_body="$(printf '%s\n' "$second" | sed '$d')"
+second_status="$(printf '%s\n' "$second" | tail -n 1)"
+
+[ "$first_status" = "200" ] || {
+  echo "First call expected 200, got $first_status"
+  exit 1
+}
+
+[ "$second_status" = "200" ] || {
+  echo "Second call expected 200, got $second_status"
+  exit 1
+}
+
+[ "$first_body" = "$second_body" ] || {
+  echo "Expected same response bodies, but both were different:"
+  printf 'First: %s\n\nSecond: %s' "$first_body" "$second_body"
+  exit 1
+}
+
+echo "Both calls returned 200 and the same response body"
 ```
 
 ## Pass criteria
