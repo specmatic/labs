@@ -6,7 +6,10 @@ import textwrap
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
+import sys
 from unittest.mock import patch
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from validate_readme_commands import (
     DEFAULT_LABS,
@@ -39,7 +42,8 @@ from validate_readme_commands import (
 )
 
 
-ROOT_DIR = Path(__file__).resolve().parents[1]
+ROOT_DIR = Path(__file__).resolve().parents[2]
+SCRIPT_PATH = ROOT_DIR / ".github" / "workflows" / "validate_readme_commands.py"
 
 
 class GitRepoTestCase(unittest.TestCase):
@@ -842,7 +846,7 @@ class MainTests(GitRepoTestCase):
             )
 
             completed = subprocess.run(
-                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(lab_path)],
+                ["python3", str(SCRIPT_PATH), str(lab_path)],
                 cwd=str(ROOT_DIR),
                 capture_output=True,
                 text=True,
@@ -877,7 +881,7 @@ class MainTests(GitRepoTestCase):
             )
 
             completed = subprocess.run(
-                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(lab_path)],
+                ["python3", str(SCRIPT_PATH), str(lab_path)],
                 cwd=str(ROOT_DIR),
                 capture_output=True,
                 text=True,
@@ -912,7 +916,7 @@ class MainTests(GitRepoTestCase):
             completed = subprocess.run(
                 [
                     "python3",
-                    str(ROOT_DIR / "validate_readme_commands.py"),
+                    str(SCRIPT_PATH),
                     "--dry-run",
                     str(lab_path),
                 ],
@@ -948,7 +952,7 @@ class MainTests(GitRepoTestCase):
             )
 
             completed = subprocess.run(
-                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(repo_path)],
+                ["python3", str(SCRIPT_PATH), str(repo_path)],
                 cwd=str(repo_path),
                 capture_output=True,
                 text=True,
@@ -981,7 +985,7 @@ class MainTests(GitRepoTestCase):
             )
 
             completed = subprocess.run(
-                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(repo_path)],
+                ["python3", str(SCRIPT_PATH), str(repo_path)],
                 cwd=str(repo_path),
                 capture_output=True,
                 text=True,
@@ -1014,7 +1018,7 @@ class MainTests(GitRepoTestCase):
             )
 
             completed = subprocess.run(
-                ["python3", str(ROOT_DIR / "validate_readme_commands.py"), str(repo_path)],
+                ["python3", str(SCRIPT_PATH), str(repo_path)],
                 cwd=str(repo_path),
                 capture_output=True,
                 text=True,
@@ -1049,7 +1053,7 @@ class MainTests(GitRepoTestCase):
             completed = subprocess.run(
                 [
                     "python3",
-                    str(ROOT_DIR / "validate_readme_commands.py"),
+                    str(SCRIPT_PATH),
                     "--skip-reset",
                     str(repo_path),
                 ],

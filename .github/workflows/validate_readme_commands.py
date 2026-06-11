@@ -54,6 +54,17 @@ DEFAULT_LABS = [
 ]
 
 
+def _find_repo_root_from_script() -> Path:
+    script_path = Path(__file__).resolve()
+    for candidate in script_path.parents:
+        if (candidate / ".git").exists():
+            return candidate
+    return script_path.parents[2]
+
+
+REPO_ROOT = _find_repo_root_from_script()
+
+
 @dataclass(frozen=True)
 class ValidationRunSummary:
     results: list["CommandResult"]
@@ -990,8 +1001,7 @@ def resolve_readme_paths(readme_arg: str | None) -> list[Path]:
     if readme_arg:
         return [(Path(readme_arg).expanduser().resolve() / "README.md")]
 
-    repo_root = Path(__file__).resolve().parent
-    return [(repo_root / lab / "README.md").resolve() for lab in DEFAULT_LABS]
+    return [(REPO_ROOT / lab / "README.md").resolve() for lab in DEFAULT_LABS]
 
 
 def write_run_report(path: Path, report: RunReport) -> None:
@@ -1188,8 +1198,7 @@ def run_preflight(
         return []
 
     results: list[PreflightCheckResult] = []
-    repo_root = Path(__file__).resolve().parent
-    license_path = repo_root / "license.txt"
+    license_path = REPO_ROOT / "license.txt"
 
     def _emit(result: PreflightCheckResult) -> None:
         results.append(result)
@@ -1253,7 +1262,7 @@ def run_preflight(
             )
 
         if docker_ready and license_path.is_file():
-            _emit(_validate_specmatic_license(repo_root))
+            _emit(_validate_specmatic_license(REPO_ROOT))
         else:
             _emit(
                 PreflightCheckResult(
