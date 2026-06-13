@@ -89,7 +89,7 @@ properties:
 
 You now have an uncommitted change in a tracked contract file. Specmatic will compare it to the version on `origin/main`.
 
-Alternatively, just run the following commands:
+Alternatively, apply all three edits with a single command. It bumps the version, changes `name` to `number`, and adds the `category` field:
 
 ```shell
 docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc "sed -i 's/version: 1.0.0/version: 1.1.0/' products.yaml; sed -i '/properties:/,/sku:/s/type: string/type: number/' products.yaml; sed -i '/^                  sku:$/i\\                  category:\\n                    type: string' products.yaml"
@@ -110,10 +110,25 @@ docker run --rm \
   --base-branch origin/main \
   --target-path backward-compatibility-testing/products.yaml
 ```
+### The console output
+The check fails (exit code 1) and followed by the verdict:
 
 ```terminaloutput
 Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
 (INCOMPATIBLE) This spec contains breaking changes to the API
+```
+
+Expected failure highlights: The breaking change appears in the incompatibility report:
+
+```terminaloutput
+The Incompatibility Report:
+
+  In scenario "Get product by id. Response: Product details"
+  API: GET /products/(id:number) -> 200
+
+    >> RESPONSE.BODY.name (backward-compatibility-testing/products.yaml:25:19)
+
+        This is number in the new specification response but string in the old specification
 ```
 
 Windows PowerShell single-line:
@@ -126,31 +141,35 @@ Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
 (INCOMPATIBLE) This spec contains breaking changes to the API
 ```
 
-Expected failure highlights:
-
-```terminaloutput
-The Incompatibility Report:
-
-  In scenario "Get product by id. Response: Product details"
-  API: GET /products/(id:number) -> 200
-
-    >> RESPONSE.BODY.name
-
-        This is number in the new specification response but string in the old specification
-```
-
 Why the command is structured this way:
 - `-v "${PWD}/..:/workspace"` mounts the `labs` repository root, not just this lab folder, so Specmatic can access the git repository metadata.
 - `--user "$(id -u):$(id -g)"` runs the container as your host user, which avoids git ownership issues when the mounted repository is inspected inside the container.
 - `--base-branch origin/main` tells Specmatic which tracked baseline to compare against.
 - `--target-path backward-compatibility-testing/products.yaml` tells Specmatic to compare the working tree version of this file with the tracked version on `origin/main`.
 
+### Read the HTML report
+After the run, open this file in your browser. It is written to the `build/` directory: [build/reports/specmatic/backward_compatibility/html/index.html](build/reports/specmatic/backward_compatibility/html/index.html)
+
+The landing page lists every operation that was checked, each with a compatibility status. Here `GET /products/{id}` is flagged **Incompatible**:
+
+![Backward Compatibility Report landing page](assets/bcc-report-landing.png)
+
+Click that operation to see exactly what broke:
+
+![Breaking change details for GET /products/{id}](assets/bcc-report-breaking-change.png)
+
+Read the breaking-change card top to bottom:
+- **`R1001` Type mismatch** — the backward compatibility rule that was violated, with a short title. Click the rule ID to open its [reference](https://docs.specmatic.io/rules).
+- **ERROR** — the severity of the change.
+- **`RESPONSE.BODY.name`** — the breadcrumb: where the change sits within the request or response. Here, the `name` field of the response body.
+- *This is number in the new specification response but string in the old specification* — a plain-English description of the breaking change.
+- **`Source: backward-compatibility-testing/products.yaml:25:19`** — the exact file, line, and column of the change, so you can jump straight to it instead of scanning the whole spec.
 
 Why this fails:
 - Adding optional `category` is safe.
 - Changing `name` from `string` to `number` is a breaking change for existing consumers.
 
-## Part C: Fix the contract
+## Part C: Fix the contract and re-run
 Open `products.yaml`.
 
 Under the `200` response schema for `GET /products/{id}`, change:
@@ -167,10 +186,9 @@ name:
   type: string
 ```
 
-Keep the new `category` field.
-Keep version `1.1.0`.
+Keep the new `category` field, and keep version `1.1.0`.
 
-Alternatively, just run the following command:
+Alternatively, apply that fix with a single command:
 
 ```shell
 docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc 'sed -i "/properties:/,/sku:/s/type: number/type: string/" products.yaml'
@@ -192,6 +210,9 @@ docker run --rm \
   --target-path backward-compatibility-testing/products.yaml
 ```
 
+### The console output
+This time the check passes (exit code 0). The terminal shows the passing verdict:
+
 ```terminaloutput
 Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
   (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
@@ -206,6 +227,13 @@ docker run --rm --user "$(id -u):$(id -g)" -v "$((Resolve-Path ..).Path):/worksp
 Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
   (COMPATIBLE) The spec is backward compatible with the corresponding spec from origin/main
 ```
+
+### Read the HTML report
+Open the report again [build/reports/specmatic/backward_compatibility/html/index.html](build/reports/specmatic/backward_compatibility/html/index.html)
+
+`GET /products/{id}` is now flagged **Compatible**. Adding the optional `category` field is a safe, additive change, so existing consumers are unaffected:
+
+![Backward Compatibility Report showing the operation is now compatible](assets/bcc-report-compatible.png)
 
 ## Clean up
 Restore the tracked file:
