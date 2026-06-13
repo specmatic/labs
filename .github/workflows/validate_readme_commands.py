@@ -26,6 +26,7 @@ ANSI_RED = "\033[31m"
 ANSI_YELLOW = "\033[33m"
 ANSI_DIM = "\033[2m"
 DOCKER_WARMUP_TIMEOUT_SECONDS = 300.0
+DOCKER_WARMUP_IMAGE = "specmatic/enterprise:latest"
 
 DEFAULT_LABS = [
     "api-coverage",
@@ -786,8 +787,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--timeout",
         type=float,
-        default=120.0,
-        help="Timeout in seconds for each shell command. Default: 120.",
+        default=300.0,
+        help="Timeout in seconds for each shell command. Default: 300.",
     )
     parser.add_argument(
         "--preflight-only",
@@ -1123,14 +1124,32 @@ def warm_docker_images(
         if on_result is not None and not results:
             print("===== Docker Warmup =====")
         try:
-            completed = subprocess.run(
+            warmup_commands = [
                 ["docker", "compose", "pull", "--ignore-buildable"],
-                cwd=str(lab_dir),
-                capture_output=True,
-                text=True,
-                check=False,
-                timeout=timeout_seconds,
-            )
+                ["docker", "pull", DOCKER_WARMUP_IMAGE],
+            ]
+            for command in warmup_commands:
+                completed = subprocess.run(
+                    command,
+                    cwd=str(lab_dir),
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                    timeout=timeout_seconds,
+                )
+                if completed.returncode != 0:
+                    error_output = completed.stderr.strip() or completed.stdout.strip() or "docker warmup failed"
+                    _emit(
+                        DockerWarmupResult(
+                            lab_name=lab_dir.name,
+                            passed=False,
+                            detail=error_output,
+                        )
+                    )
+                    break
+            else:
+                _emit(DockerWarmupResult(lab_name=lab_dir.name, passed=True))
+                continue
         except subprocess.TimeoutExpired:
             _emit(
                 DockerWarmupResult(
@@ -1149,19 +1168,6 @@ def warm_docker_images(
                 )
             )
             continue
-
-        if completed.returncode == 0:
-            _emit(DockerWarmupResult(lab_name=lab_dir.name, passed=True))
-            continue
-
-        error_output = completed.stderr.strip() or completed.stdout.strip() or "docker compose pull failed"
-        _emit(
-            DockerWarmupResult(
-                lab_name=lab_dir.name,
-                passed=False,
-                detail=error_output,
-            )
-        )
 
     return results
 

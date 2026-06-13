@@ -713,11 +713,14 @@ class PreflightTests(GitRepoTestCase):
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0].lab_name, "api-coverage")
         self.assertTrue(results[0].passed)
-        warmup_call = mocked_run.call_args_list[0]
         self.assertEqual(
-            warmup_call.args[0],
-            ["docker", "compose", "pull", "--ignore-buildable"],
+            [call.args[0] for call in mocked_run.call_args_list],
+            [
+                ["docker", "compose", "pull", "--ignore-buildable"],
+                ["docker", "pull", "specmatic/enterprise:latest"],
+            ],
         )
+        warmup_call = mocked_run.call_args_list[0]
         self.assertEqual(warmup_call.kwargs["cwd"], str(ROOT_DIR / "api-coverage"))
         self.assertEqual(warmup_call.kwargs["timeout"], 300.0)
 
@@ -1286,7 +1289,7 @@ class MainTests(GitRepoTestCase):
             readme_path=fake_readmes[1],
             dry_run=False,
             skip_reset=False,
-            timeout_seconds=120.0,
+            timeout_seconds=300.0,
         )
         output = stdout_buffer.getvalue()
         self.assertIn("===== lab-one =====", output)
