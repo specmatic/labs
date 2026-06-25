@@ -96,7 +96,11 @@ services:
       - ./docker-config/schema-registry-jaas.conf:/etc/schema-registry/schema-registry-jaas.conf
       - ./docker-config/password.properties:/etc/schema-registry/password.properties
     healthcheck:
-      test: ["CMD-SHELL", "curl -f -u admin:admin-secret -s http://localhost:8085/subjects > /dev/null"]
+      test:
+        [
+          "CMD-SHELL",
+          "bash -lc 'exec 3<>/dev/tcp/localhost/8085; printf \"GET /subjects HTTP/1.1\\r\\nHost: localhost\\r\\nAuthorization: Basic YWRtaW46YWRtaW4tc2VjcmV0\\r\\nConnection: close\\r\\n\\r\\n\" >&3; head -n 1 <&3 | grep -q \"200 OK\"'",
+        ]
       interval: 5s
       timeout: 5s
       retries: 20
