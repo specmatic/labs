@@ -61,6 +61,22 @@
       "containerId" : "0b5ab4bf-ef5c-40ee-859c-1871961648cb",
       "attributes" : { }
     }, {
+      "id" : "2d7a0e5e-9d0f-4d65-9c26-7f6d2b5e6f10",
+      "name" : "users",
+      "description" : "Orders RBAC role",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "0b5ab4bf-ef5c-40ee-859c-1871961648cb",
+      "attributes" : { }
+    }, {
+      "id" : "b0c9eb52-3c3e-4d53-8b88-2b2d2a7d1f12",
+      "name" : "admins",
+      "description" : "Products RBAC role",
+      "composite" : false,
+      "clientRole" : false,
+      "containerId" : "0b5ab4bf-ef5c-40ee-859c-1871961648cb",
+      "attributes" : { }
+    }, {
       "id" : "e884e41c-9e39-4c4a-a499-db7e2c0548c8",
       "name" : "offline_access",
       "description" : "${role_offline-access}",
@@ -399,7 +415,29 @@
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
-    "realmRoles" : [ "user", "default-roles-specmatic" ],
+    "realmRoles" : [ "users", "default-roles-specmatic" ],
+    "notBefore" : 0,
+    "groups" : [ ]
+  }, {
+    "id" : "c8d2d2c8-4cb4-4d4c-b1f2-2c5f5e6c7a01",
+    "createdTimestamp" : 1695470291837,
+    "username" : "admin1",
+    "enabled" : true,
+    "totp" : false,
+    "emailVerified" : false,
+    "firstName" : "",
+    "lastName" : "",
+    "credentials" : [ {
+      "id" : "2d3b8df2-0dc2-4ed6-a2d7-9d5a0d4fb2f9",
+      "type" : "password",
+      "userLabel" : "My password",
+      "createdDate" : 1695470306299,
+      "secretData" : "{\"value\":\"1A1J63Kp1iAx6XbM5N4TZgK/YpyWKxaCdhjK7YSosh0=\",\"salt\":\"XoLsW5MP5qZmhF8nq4jcgA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "disableableCredentialTypes" : [ ],
+    "requiredActions" : [ ],
+    "realmRoles" : [ "admins", "default-roles-specmatic" ],
     "notBefore" : 0,
     "groups" : [ ]
   } ],

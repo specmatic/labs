@@ -4,6 +4,10 @@ systemUnderTest:
     $ref: "#/components/services/orderService"
     runOptions:
       $ref: "#/components/runOptions/orderServiceTest"
+    data:
+      examples:
+        - directories:
+            - ./auth_examples
     settings:
       schemaResiliencyTests: all
 specmatic:
@@ -19,7 +23,7 @@ components:
     labsContracts:
       git:
         url: https://github.com/specmatic/labs-contracts.git
-        branch: main
+        branch: RBAC
   services:
     orderService:
       description: Order Service with Multiple Auth Schemes
@@ -42,9 +46,6 @@ components:
           - spec:
               id: orderApiSpec
               securitySchemes:
-                oAuth2AuthCode:
-                  type: oauth2
-                  token: ${INVALID_OAUTH_TOKEN:OAUTH1234}
                 basicAuth:
                   type: basicAuth
                   token: ${BASIC_AUTH_TOKEN:dXNlcjppbnZhbGlkcGFzcw==}
