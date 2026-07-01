@@ -23,7 +23,7 @@ components:
     labsContracts:
       git:
         url: https://github.com/specmatic/labs-contracts.git
-        branch: RBAC
+        branch: main
   services:
     orderService:
       description: Order Service with Multiple Auth Schemes
