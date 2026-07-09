@@ -40,5 +40,5 @@ paths:
                   value:
                     id: 1
                     name: Scooby
-                    type: Golden Retriever
+                    type: GoldenRetriever
                     status: Adopted

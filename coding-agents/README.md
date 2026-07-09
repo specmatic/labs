@@ -17,6 +17,12 @@ Coding agents are fast, but they can drift when they generate code without a str
 
 ## Prerequisites
 - Docker is installed and running.
+- Pull the latest specmatic docker image:
+
+```bash
+docker pull specmatic/specmatic
+```
+
 - Node.js 20+ and npm are available on your machine.
 - You have an MCP-capable coding agent available, such as Claude Code or Codex.
 - You are in `labs/coding-agents`.
@@ -52,7 +58,7 @@ This lab starts with only an API Spec and guidance files. There is no applicatio
 - Build the backend before the frontend.
 
 ## Specmatic references
-- Specmatic MCP overview: [https://github.com/specmatic/specmatic-mcp-server](https://github.com/specmatic/specmatic-mcp-server)
+- Specmatic MCP overview: [https://docs.specmatic.io/features/specmatic_mcp](https://docs.specmatic.io/features/specmatic_mcp)
 - Contract testing: [https://docs.specmatic.io/documentation/contract_tests.html](https://docs.specmatic.io/documentation/contract_tests.html)
 - Service virtualization: [https://docs.specmatic.io/documentation/service_virtualization_tutorial.html](https://docs.specmatic.io/documentation/service_virtualization_tutorial.html)
 - Resiliency testing: [https://docs.specmatic.io/documentation/resiliency_techniques.html](https://docs.specmatic.io/documentation/resiliency_techniques.html)
@@ -89,7 +95,7 @@ These examples only cover MCP registration and session startup. The lab flow aft
 Register a local stdio server:
 
 ```bash
-claude mcp add --transport stdio specmatic -- npx -y specmatic-mcp
+claude mcp add specmatic -- docker run --rm -i -v ".:/usr/src/app" specmatic/specmatic mcp server
 ```
 
 Start Claude Code in this lab folder:
@@ -107,7 +113,7 @@ Prompt handling:
 Register a local stdio server:
 
 ```bash
-codex mcp add specmatic -- npx -y specmatic-mcp
+codex mcp add specmatic -- docker run --rm -i -v ".:/usr/src/app" specmatic/specmatic mcp server
 ```
 
 Start Codex in this lab folder:
@@ -121,7 +127,32 @@ Prompt handling:
 - If Codex shows a plan first, review it, then continue with execution.
 - If Codex asks for command approval or MCP usage approval, approve the requested action so it can run the Specmatic workflow.
 
-If you use a different coding agent, register `specmatic-mcp` using that tool's MCP setup flow before continuing.
+
+#### Gemini
+If you are using Gemini Agent through Antigravity, paste this MCP config into the agent's config file used for MCP servers.
+
+```json
+{
+  "mcpServers": {
+    "specmatic": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "-v",
+        ".:/usr/src/app",
+        "specmatic/specmatic",
+        "mcp",
+        "server"
+      ]
+    }
+  }
+}
+```
+
+If you use a different coding agent, register `specmatic mcp` using that tool's MCP setup flow before continuing.
+
 
 ## Part B: Build and verify the backend
 Ask your coding agent to read:
@@ -212,7 +243,6 @@ Expected outcome:
 - If the coding agent ignores the guidance files, explicitly tell it to read `AGENT.md` and the relevant subfolder `AGENT.md` before writing code.
 - If the backend is built but not verified, ask the agent to use Specmatic MCP contract and resiliency tools before it claims completion.
 - If the frontend still points to the mock during integration, ask the agent to switch the API base URL to `http://localhost:3000`.
-- If `npx` prompts for package installation, rerun the MCP registration command with `-y`.
 - If port `3000`, `4000`, or `9001` is busy, stop the conflicting process before retrying.
 - If your agent requires explicit permission before using MCP tools, approve the Specmatic MCP server when prompted.
 

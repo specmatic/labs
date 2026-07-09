@@ -9,7 +9,6 @@ Your job is to fix the service so it matches the retry and DLQ behavior already 
 Run the async contract tests, observe the intentional failure, update the Python provider so it handles retry and DLQ correctly, and verify a passing run.
 
 ## Time required to complete this lab
-
 15-20 minutes.
 
 ## Prerequisites
@@ -68,7 +67,7 @@ Expected failure shape:
 Preferred failure summary:
 
 ```terminaloutput
-Tests run: 6, Successes: 4, Failures: 2, Errors: 0
+Tests run: 6, Successes: 4, Failures: 2, WIP: 0, Errors: 0
 ```
 
 The failing scenarios should be:
@@ -99,6 +98,12 @@ What to look for:
 
 Do not change the contract, examples, or Compose wiring.
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's/# threading.Thread/threading.Thread/' service/app.py"
+```
+
 ## Pass criteria
 
 Re-run:
@@ -110,17 +115,22 @@ docker compose up contract-test --build --abort-on-container-exit
 Expected passing output:
 
 ```terminaloutput
-Tests run: 6, Successes: 6, Failures: 0, Errors: 0
+Tests run: 6, Successes: 6, Failures: 0, WIP: 0, Errors: 0
 ```
 
 The message count report should show:
 
 ```terminaloutput
-| Topic/queue name        | Actual | Expected |
-| place-order-topic       |   6    |    6     |
-| place-order-queue       |   4    |    4     |
-| place-order-retry-topic |   2    |    2     |
-| place-order-dlq-topic   |   2    |    2     |
++-------------------------+-------------------------+----------+
+| Topic                   | No of messages received            |
++-------------------------+-------------------------+----------+
+|                         | Actual                  | Expected |
++-------------------------+-------------------------+----------+
+| place-order-topic       | 6                       | 6        |
+| place-order-queue       | 4                       | 4        |
+| place-order-dlq-topic   | 2                       | 2        |
+| place-order-retry-topic | 2                       | 2        |
++-------------------------+-------------------------+----------+
 ```
 
 Clean up:

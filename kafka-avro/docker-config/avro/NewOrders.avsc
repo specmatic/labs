@@ -15,10 +15,22 @@
           "type": "record",
           "name": "Item",
           "fields": [
-            { "name": "id", "type": "int" },
-            { "name": "name", "type": "string" },
-            { "name": "quantity", "type": "int" },
-            { "name": "price", "type": "int" }
+            {
+              "name": "id",
+              "type": "int"
+            },
+            {
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "name": "quantity",
+              "type": "int"
+            },
+            {
+              "name": "price",
+              "type": "int"
+            }
           ]
         }
       }

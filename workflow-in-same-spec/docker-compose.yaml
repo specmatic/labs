@@ -17,6 +17,7 @@ services:
     working_dir: /usr/src/app
     volumes:
       - .:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
     command: ["test"]
     environment:
       TASKS_BASE_URL: http://tasks-service:8090
@@ -30,6 +31,7 @@ services:
     working_dir: /usr/src/app
     volumes:
       - .:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
     ports:
       - "9000:9000"
       - "9001:9001"

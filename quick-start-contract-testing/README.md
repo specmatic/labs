@@ -13,7 +13,7 @@ This is the core contract-driven development loop:
 
 If teams do this continuously, contract breaks are caught before release instead of in integration or production.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
@@ -47,7 +47,7 @@ docker compose up test --build --abort-on-container-exit
 ```
 
 ```terminaloutput
-Request to http://petstore:8080 at <date-time-stamp>
+Request to http://petstore:8080 at 
   GET /pets/1
   Specmatic-Response-Code: 200
   Host: petstore:8080
@@ -55,10 +55,10 @@ Request to http://petstore:8080 at <date-time-stamp>
   Accept: */*
   Content-Type: NOT SENT
   
-Response at <date-time-stamp>
+Response at 
   200 OK
-  Server: BaseHTTP/0.6 Python/3.14.3
-  Date: <date-time-stamp>
+  Server: BaseHTTP/0.6 Python/
+  Date: 
   Content-Type: application/json
   Content-Length: 79
   
@@ -74,7 +74,7 @@ Scenario: GET /pets/(petid:number) -> 200 with the request from the example 'SCO
 
 Expected output:
 ```terminaloutput
-Tests run: 1, Successes: 0, Failures: 1, Errors: 0
+Tests run: 1, Successes: 0, Failures: 1, WIP: 0, Errors: 0
 ```
 
 How did Specmatic generate the GET request for /pets with ID `1`?
@@ -108,6 +108,12 @@ with:
 
 Do not change anything else.
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's/"petType"/"type"/g' service/server.py"
+```
+
 ## Part C: Re-run tests (expected to pass)
 Run:
 
@@ -117,7 +123,7 @@ docker compose up test --build --abort-on-container-exit
 
 Expected output:
 ```terminaloutput
-Tests run: 1, Successes: 1, Failures: 0, Errors: 0
+Tests run: 1, Successes: 1, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Clean up:

@@ -1,10 +1,14 @@
+<!---
+test_counts: false
+--->
+
 # Request/Response Adapters Lab
 
 ## Objective
 If a client fails against a spec-driven mock, it usually means there is a mismatch between the client's request/response and the provider's expected request/response format. 
 This lab will help you understand how to identify such mismatches and use Specmatic's data adapter to temporarily adapt the provider service's interface to match the consumer's expected interface. This allows you to continue development and testing without waiting for the provider to fix their specification, while still ensuring that your expectations are valid against the specification.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
@@ -36,19 +40,29 @@ This lab will help you understand how to identify such mismatches and use Specma
 
 ## 1. Start mock + UI
 Run:
-```bash
-docker compose up
-```
 
-Check services:
-```bash
-docker compose ps
+```shell
+docker compose up -d
 ```
 
 ## 2. Trigger the mismatch from browser (intentional failure)
 1. Open `http://127.0.0.1:8080`.
 2. Keep default values and click **Submit** button.
 3. Observe a 400 bad-request response in the result panel.
+
+You can verify the same failure directly against the service running on 9090:
+
+```shell
+docker compose --profile test run --rm verifier
+```
+
+```terminaloutput
+HTTP/1.1 400 Bad Request
+```
+
+Expected result:
+- The response status should be `400 Bad Request`.
+- This confirms that, before adapters are configured, the service on `9090` rejects the PascalCase request because the service expects camelCase fields.
 
 Why it fails:
 - The UI sends PascalCase fields (`RequestQuery`, `RequestHeader`, `RequestKey`).
@@ -58,9 +72,11 @@ This fail-first behavior is expected in this lab.
 
 ## 3. Cleanup
 Run:
-```bash
-docker compose down -v
+
+```shell
+docker compose down -v --remove-orphans
 ```
+
 ## 4. Configure hooks in `specmatic.yaml`
 Add the following `data` block under `dependencies` in `specmatic.yaml` so that it sits alongside `services`:
 
@@ -80,14 +96,22 @@ Why both hooks are needed:
 
 ## 5. Ensure hook scripts are executable
 Run:
-```bash
+
+```shell
 chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
+```
+
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i '/^specmatic:/i\  data:\n    adapters:\n      pre_specmatic_request_processor: ./hooks/pre_specmatic_request_processor.sh\n      post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh\n' specmatic.yaml && chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh"
 ```
 
 ## 6. Restart mock + UI
 Run:
-```bash
-docker compose up
+
+```shell
+docker compose up -d
 ```
 
 ## 7. Trigger the matching request/response from browser
@@ -95,28 +119,50 @@ docker compose up
 2. Keep default values and click **Submit** button.
 3. Observe a 200 response in the result panel.
 
-## 8. Cleanup
+## 8. Verify the service call directly via Curl
 Run:
-```bash
-docker compose down -v
+
+```shell
+docker compose --profile test run --rm verifier
+```
+
+```terminaloutput
+HTTP/1.1 200 OK
+```
+
+Expected result:
+- The response status should be `200 OK`.
+- The response should include the adapted response fields, showing that the mock on `9090` is now accepting the PascalCase request and returning a successful response through the configured adapters.
+
+## 9. Cleanup
+Run:
+
+```shell
+docker compose down -v --remove-orphans
 ```
 
 ## Windows Notes
 - If you use PowerShell or CMD, `chmod` may not work. Use Git Bash for this step, or run:
-```powershell
+
+```shell
 git update-index --chmod=+x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
 ```
+
 - Ensure hook files use LF line endings (not CRLF). In Git Bash:
-```bash
+
+```powershell
 sed -i 's/\r$//' hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh
 ```
+
 - If the test still fails with the same `RequestQuery/requestQuery` mismatch after adding adapters, it usually means hook scripts were not executed. Re-check execute bit and LF line endings.
 
-## 9. Verify in Studio (Optional)
+## 10. Verify in Studio (Optional)
 Start Studio:
-```bash
+
+```shell
 docker compose --profile studio up -d studio ui
 ```
+
 1. Open `http://127.0.0.1:9000/_specmatic/studio`, 
 2. Open `specmatic.yaml`, run the suite or start the mock from the `Mock` tab, and use port `9090`. If you want to inspect the contract file in Studio, open `.specmatic/repos/labs-contracts/openapi/data-adapters/camelCase.yaml` from the left panel after the repo is checked out.
 3. Open `http://127.0.0.1:8080`.
@@ -124,10 +170,11 @@ docker compose --profile studio up -d studio ui
 5. Observe a 200 response in the result panel.
 6. Go to the `Mock` tab and look at the request and response payloads. You should see how the data adapters have transformed the field names in both directions.
 
-## 10. Cleanup
+## 11. Cleanup
 Run:
-```bash
-docker compose --profile studio down -v
+
+```shell
+docker compose --profile studio down -v --remove-orphans
 ```
 
 ## Next step

@@ -3,7 +3,7 @@
 This lab demonstrates how to use Specmatic's schema resiliency testing features to ensure your API operates as expected by HTTP standards. 
 Here we'll send contract-invalid requests and ensure the API handles it gracefully.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
@@ -16,6 +16,7 @@ Here we'll send contract-invalid requests and ensure the API handles it graceful
 - `specmatic.yaml` - Specmatic config file that defines the Spec, and it's example files.
 
 ## Start Studio using Docker Compose
+
 ```shell
 docker compose --profile studio up studio
 ```
@@ -32,7 +33,7 @@ Then go to the Test tab, set url as `http://localhost:8080` and click on the "Ru
 You should see 
 
 ```terminaloutput
-Tests run: 3, Successes: 3, Failures: 0, Errors: 0
+Tests run: 3, Successes: 3, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Stop Studio before moving to the next steps:
@@ -47,15 +48,17 @@ Start docker containers
 ```shell
 docker compose up --abort-on-container-exit
 ```
+
 This will run the suite, start the dependency mock, and run the tests against it. You should see the same results in the terminal output as you did in Studio:
 
 Expected console output:
 
 ```terminaloutput
-Tests run: 3, Successes: 3, Failures: 0, Errors: 0
+Tests run: 3, Successes: 3, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Clean up
+
 ```shell
 docker compose down -v
 ```
@@ -65,6 +68,12 @@ The goal of this lab is to try different schema resiliency testing levels and se
 
 ### Positive Only Tests
 In `specmatic.yaml` change `schemaResiliencyTests: none` to `schemaResiliencyTests: positiveOnly`
+
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#schemaResiliencyTests: none#schemaResiliencyTests: positiveOnly#' specmatic.yaml"
+```
 
 #### Run Positive only Tests
 
@@ -77,16 +86,23 @@ docker compose up --abort-on-container-exit
 Expected console output:
 
 ```terminaloutput
-Tests run: 42, Successes: 42, Failures: 0, Errors: 0
+Tests run: 42, Successes: 42, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Clean up
+
 ```shell
 docker compose down -v
 ```
 
 ### Positive and Negative Tests (ALL)
 In `specmatic.yaml` change `schemaResiliencyTests: positiveOnly` to `schemaResiliencyTests: all`
+
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#schemaResiliencyTests: positiveOnly#schemaResiliencyTests: all#' specmatic.yaml"
+```
 
 #### Run all Tests
 
@@ -103,6 +119,7 @@ Tests run: 600, Successes: 600, Failures: 0
 ```
 
 Clean up
+
 ```shell
 docker compose down -v
 ```

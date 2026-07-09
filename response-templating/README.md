@@ -30,7 +30,7 @@ Participants will:
 * Understand when to use substitution vs lookup, and how both improve contract-test realism with minimal example duplication.
 * By the end, participants will be able to design mocks that are deterministic, reusable, and closer to production-like behavior.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
@@ -58,7 +58,7 @@ docker compose up --abort-on-container-exit
 
 Expected output:
 ```terminaloutput
-Tests run: 4, Successes: 1, Failures: 3, Errors: 0
+Tests run: 4, Successes: 1, Failures: 3, WIP: 0, Errors: 0
 ```
 
 Clean up:
@@ -81,14 +81,21 @@ Change response templating so:
 
 Keep `id` as-is.
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#\"productid\": 1#\"productid\": \"(PRODUCTID:number)\"#; s#\"count\": 100#\"count\": \"(COUNT:number)\"#; s#\"productid\": \"\$match(dataType:number)\"#\"productid\": \"\$(PRODUCTID)\"#; s#\"count\": 1#\"count\": \"\$(COUNT)\"#' examples/mock/test_accepted_order_request.json"
+```
+
 ### Checkpoint after Task A
 Run:
 ```shell
 docker compose up --abort-on-container-exit
 ```
+
 Expected checkpoint output:
 ```terminaloutput
-Tests run: 4, Successes: 2, Failures: 2, Errors: 0
+Tests run: 4, Successes: 2, Failures: 2, WIP: 0, Errors: 0
 ```
 Clean up:
 ```shell
@@ -104,7 +111,14 @@ Configure lookup logic based on request query `type` so that:
 - for `type=gadget` return response values matching test expectation (`id=2`, `name=iPhone`, `type=gadget`, `inventory=500`, `createdOn` as valid date)
 
 Note:
-- You can keep this as one lookup-driven mock example instead of creating duplicate mock files.
+- You MUST keep this as one lookup-driven mock example instead of creating duplicate mock files.
+- type's data type should be ProductType not string. type is an enum which allows only specific values and not any string.
+
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc 'cp .backup/test_find_available_products_book_200.json examples/mock/test_find_available_products_book_200.json'
+```
 
 ## 4. Final verification
 Run:
@@ -114,7 +128,7 @@ docker compose up --abort-on-container-exit
 
 Expected final output:
 ```terminaloutput
-Tests run: 4, Successes: 4, Failures: 0, Errors: 0
+Tests run: 4, Successes: 4, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Clean up:

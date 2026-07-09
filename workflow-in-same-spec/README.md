@@ -42,13 +42,15 @@ The `workflow` section is intentionally missing under:
 (in `specmatic.yaml`).
 
 Run:
-```bash
+
+```shell
 docker compose --profile test up test --build --abort-on-container-exit
 ```
 
 Expected baseline result:
+
 ```terminaloutput
-Tests run: 4, Successes: 1, Failures: 3, Errors: 0
+Tests run: 4, Successes: 1, Failures: 3, WIP: 0, Errors: 0
 ```
 
 You should see failures for:
@@ -62,14 +64,15 @@ Why it fails:
 - `GET`, `PUT` and `DELETE` examples validate response `id` as the created task ID, so random IDs do not match.
 
 Cleanup:
-```bash
-docker compose --profile test down -v
+
+```shell
+docker compose --profile test down -v --remove-orphans
 ```
 
 ## Check in Studio
 Run Studio with the provider service:
 
-```bash
+```shell
 docker compose --profile studio up studio --build
 ```
 
@@ -81,8 +84,9 @@ Open Studio:
 5. Look at the request/response details for the failed GET/PUT/DELETE tests and observe that we are not using the ID created by POST /tasks.
 
 Stop Studio:
-```bash
-docker compose --profile studio down -v
+
+```shell
+docker compose --profile studio down -v --remove-orphans
 ```
 
 ## Fix path
@@ -101,19 +105,28 @@ workflow:
       use: "PATH.task_id"
 ```
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i '/^specmatic:/i\        workflow:\n          ids:\n            \"POST /tasks -> 200\":\n              extract: \"BODY.tasks.[0].id\"\n            \"GET /tasks/(task_id:string) -> 200\":\n              use: \"PATH.task_id\"\n            \"PUT /tasks/(task_id:string) -> 200\":\n              use: \"PATH.task_id\"\n            \"DELETE /tasks/(task_id:string) -> 204\":\n              use: \"PATH.task_id\"\n' specmatic.yaml"
+```
+
 Re-run:
-```bash
+
+```shell
 docker compose --profile test up test --build --abort-on-container-exit
 ```
 
 Expected passing result:
+
 ```terminaloutput
-Tests run: 4, Successes: 4, Failures: 0, Errors: 0
+Tests run: 4, Successes: 4, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Cleanup:
-```bash
-docker compose --profile test down -v
+
+```shell
+docker compose --profile test down -v --remove-orphans
 ```
 
 ## Next step

@@ -4,7 +4,7 @@ services:
   # Shared Infrastructure (Kafka + Database)
   # ---------------------------------------------------------------------------
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: apache/kafka:latest
     ports:
       - "9092:9092"
     environment:
@@ -20,7 +20,7 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-      KAFKA_CONTROLLER_CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+      CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
     healthcheck:
       test: ["CMD-SHELL", "bash -c '</dev/tcp/localhost/9092'"]
       interval: 10s
@@ -124,6 +124,9 @@ services:
     profiles: ["studio"]
     volumes:
       - ./specs:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    environment:
+      SPECMATIC_LICENSE_PATH: /specmatic/specmatic-license.txt
     command: ["studio"]
     ports:
       - "9000:9000"

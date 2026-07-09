@@ -96,7 +96,7 @@ services:
       - ./docker-config/schema-registry-jaas.conf:/etc/schema-registry/schema-registry-jaas.conf
       - ./docker-config/password.properties:/etc/schema-registry/password.properties
     healthcheck:
-      test: ["CMD-SHELL", "curl -f -u admin:admin-secret -s http://localhost:8085/subjects > /dev/null"]
+      test: ["CMD-SHELL", "ub sr-ready localhost 8085 5 --username admin --password admin-secret"]
       interval: 5s
       timeout: 5s
       retries: 20
@@ -117,6 +117,7 @@ services:
         sh -c /usr/src/app/schemas/register-schemas.sh
     volumes:
       - ./docker-config/avro:/usr/src/app/schemas
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
     healthcheck:
       test: ["CMD-SHELL", "curl -f -u admin:admin-secret -s http://schema-registry:8085/subjects/new-orders-value/versions/latest > /dev/null && curl -f -u admin:admin-secret -s http://schema-registry:8085/subjects/wip-orders-value/versions/latest > /dev/null"]
       interval: 5s
@@ -157,7 +158,7 @@ services:
       - ./specmatic.yaml:/usr/src/app/specmatic.yaml
       - ./api-specs:/usr/src/app/api-specs
       - ./build:/usr/src/app/build
-      - ../license.txt:/specmatic/specmatic-license.txt
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
     command: ["test"]
 
 networks:

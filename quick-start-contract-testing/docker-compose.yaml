@@ -18,6 +18,8 @@ services:
     volumes:
       - ./:/usr/src/app
       - ../license.txt:/specmatic/specmatic-license.txt:ro
+    environment:
+      SPECMATIC_LICENSE_PATH: /specmatic/specmatic-license.txt
     depends_on:
       petstore:
         condition: service_healthy
@@ -30,6 +32,8 @@ services:
     volumes:
       - ./:/usr/src/app
       - ../license.txt:/specmatic/specmatic-license.txt:ro
+    environment:
+      SPECMATIC_LICENSE_PATH: /specmatic/specmatic-license.txt
     depends_on:
       petstore:
         condition: service_healthy

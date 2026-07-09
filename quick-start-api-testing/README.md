@@ -18,7 +18,7 @@ Real services often return a mix of stable and unstable values:
 
 This lab shows how to express each of those expectations with the right matcher on the test side.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
@@ -51,7 +51,9 @@ This lab shows how to express each of those expectations with the right matcher 
 - Matchers: [https://docs.specmatic.io/features/matchers](https://docs.specmatic.io/features/matchers)
 - Contract testing overview: [https://docs.specmatic.io/documentation/contract_testing.html](https://docs.specmatic.io/documentation/contract_testing.html)
 
-## Problem context
+## Lab Implementation Phases
+
+### Baseline Phase
 Your verification service returns:
 - `handledBy`, which is always `verification-service`
 - `decision`, which may be `approved` or `verified`
@@ -63,18 +65,21 @@ The service is already contract-compliant. The problem is in the test examples:
 - another example is too strict about a runtime timestamp and a patterned code
 - another example is too strict about a runtime date and a patterned code
 
-## 1. Run the baseline contract tests (intentional failure)
 Run:
 
 ```shell
 docker compose up api-test --build --abort-on-container-exit
 ```
 
-Expected output:
+* Expected console output
 
 ```terminaloutput
-Tests run: 4, Successes: 2, Failures: 2, Errors: 0
+Tests run: 4, Successes: 2, Failures: 2, WIP: 0, Errors: 0
 ```
+
+Why the baseline fails:
+- `test_finance_user_11.json` expects `decision` to be exactly `approved`, but the service may return `approved` or `verified` for that request.
+- `test_support_user_55.json` expects one hardcoded date and one exact reference code, but the service generates fresh valid values every time.
 
 Clean up:
 
@@ -86,19 +91,21 @@ docker compose down -v
 - `test_finance_user_11.json` expects `decision` to be exactly `approved`, but the service may return `approved` or `verified` for that request.
 - `test_support_user_55.json` expects one hardcoded date and one exact reference code, but the service generates fresh valid values every time.
 
-## 2. Task A: use `pattern` for a valid enum value
-Edit:
-
-- `examples/test_finance_user_11.json`
+### Intermediate Phase: Task A
+Edit `examples/test_finance_user_11.json`.
 
 In `http-response.body`, change:
-
 - `decision` from `$match(exact: approved)` to `$match(pattern: approved|verified)`
 
 Do not change any other fields.
 
-### Checkpoint after Task A
-Run:
+Alternatively, just run the following command for Task A:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#[$]match(exact: approved)#\$match(pattern: approved\|verified)#' examples/test_finance_user_11.json"
+```
+
+Re-run:
 
 ```shell
 docker compose up api-test --build --abort-on-container-exit
@@ -107,7 +114,7 @@ docker compose up api-test --build --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 4, Successes: 3, Failures: 1, Errors: 0
+Tests run: 4, Successes: 3, Failures: 1, WIP: 0, Errors: 0
 ```
 
 Clean up:
@@ -116,19 +123,23 @@ Clean up:
 docker compose down -v
 ```
 
-## 3. Task B: use `dataType` and `pattern` for dynamic values
-Edit:
+### Final Phase
+Use `dataType` and `pattern` for dynamic values
 
-- `examples/test_support_user_55.json`
+Edit `examples/test_support_user_55.json`.
 
 In `http-response.body`, change:
-
 - `processedOn` from the exact date to `$match(dataType: date)`
 - `referenceCode` from the exact code to `$match(pattern: VRF-[0-9]{6})`
 
 Keep `handledBy` and `decision` as exact matches.
 
-## 4. Final verification
+Alternatively, just run the following command for Final Phase:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#[$]match(exact: VRF-123456)#\$match(pattern: VRF-[0-9]{6})#; s#[$]match(exact: 2026-03-17)#\$match(dataType: date)#' examples/test_support_user_55.json"
+```
+
 Run:
 
 ```shell
@@ -138,7 +149,7 @@ docker compose up api-test --build --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 4, Successes: 4, Failures: 0, Errors: 0
+Tests run: 4, Successes: 4, Failures: 0, WIP: 0, Errors: 0
 ```
 
 Clean up:
@@ -147,7 +158,7 @@ Clean up:
 docker compose down -v
 ```
 
-## Pass criteria
+## Pass Criteria
 - Baseline run shows `2` failures.
 - After Task A, only `1` failure remains.
 - After Task B, all `4` tests pass.
@@ -155,6 +166,9 @@ docker compose down -v
 ## Troubleshooting
 - If you get a stale result after changing the test examples, rerun with `--build` and then `docker compose down -v`.
 - If all tests pass on the first run, confirm you only edited the two allowed test files and did not save the matcher fixes already.
+
+## Cleanup
+Each implementation phase already ends with `docker compose down -v`, so no additional cleanup is required after the final phase.
 
 ## What you learned
 - `exact` is good when one business value must stay fixed.

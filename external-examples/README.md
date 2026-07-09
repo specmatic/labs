@@ -1,3 +1,9 @@
+<!---
+reports:
+  ctrf: false
+  html: false
+--->
+
 # Studio Lab: Validate, Fix, and Generate External Examples
 
 Teams often keep executable examples outside the OpenAPI file so domain teams can update test cases without editing the contract itself. This lab shows how Specmatic validates those external examples and catches drift early.
@@ -15,7 +21,7 @@ Use Specmatic Studio (and `validate`) to:
 ## Prerequisites
 - Docker is installed and running.
 - You are in `labs/external-examples`.
-- Ports `9000` and `9001` are free (for Studio).
+- Ports `9000` and `9001` are free for Studio.
 
 ## External Examples Overview Video
 [![Watch the video](https://img.youtube.com/vi/TcNayIEP4sw/hqdefault.jpg)](https://www.youtube.com/watch?v=TcNayIEP4sw)
@@ -32,38 +38,51 @@ Bring external examples to a fully valid state and ensure all required create-sc
 - Do not edit the shared contract in `.specmatic/repos/labs-contracts/common/openapi/order-bff/product_search_bff_v6.yaml`.
 - Edit only files under `examples/`.
 
-## 1. Intentional failure (baseline run)
-Run:
+## Lab Implementation Phases
+
+### Baseline Phase
+
+Test Run Cmd (Linux/Mac OSX)
 
 ```shell
 docker run --rm \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
+  -v "${PWD}:/usr/src/app" \
+  -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   specmatic/enterprise:latest \
   validate
 ```
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
-```
 
-Expected output:
 ```terminaloutput
 [OK] Specification product_search_bff_v6.yaml: PASSED
 [FAIL] Examples: 1 passed and 3 failed out of 4 total
 ```
 
-Use Studio to easily fix these spec invalid examples.
+Windows PowerShell single-line:
 
-### 2. Start Studio
+```powershell
+docker run --rm -v "$($PWD.Path):/usr/src/app" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" specmatic/enterprise:latest validate
+```
+
+Expected output:
+
+```terminaloutput
+[OK] Specification product_search_bff_v6.yaml: PASSED
+[FAIL] Examples: 1 passed and 3 failed out of 4 total
+```
+
+### Studio Phase
+
+Start Studio:
+
 ```shell
 docker compose --profile studio up
 ```
+
 In Studio, open `product_search_bff_v6.yaml` which should be under `.specmatic/repos/labs-contracts/common/openapi/order-bff` from the left sidebar. You will see that 3 examples have failed validation on the `examples` tab.
 
 Click on each failed example to see the validation errors and fix them. You can either fix the examples manually or use the "Fix" button in Studio to automatically fix the issues.
 
-### 3. Auto-Fix the 3 failing external examples (tiny actions)
+#### 3. Auto-Fix the 3 failing external examples (tiny actions)
 In Studio, update the failing examples:
 
 1. `examples/test_find_available_products_book_200.json`
@@ -74,29 +93,62 @@ In Studio, update the failing examples:
 3. `examples/test_accepted_order_request.json`
    - Add missing required property `count` (for example `2`) in request body.
 
-### 4. Generate missing examples in the same Studio flow
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc '
+sed -i "s/\"to-date\": \"today\"/\"to-date\": \"2025-11-28\"/" examples/test_find_available_products_book_200.json &&
+sed -i "s/\"type\": \"movie\"/\"type\": \"book\"/" examples/test_accepted_product_request.json &&
+sed -i "s/\"inventory\": \"five\"/\"inventory\": 5/" examples/test_accepted_product_request.json &&
+sed -i "s/\"productid\": 1234/\"productid\": 1234,/" examples/test_accepted_order_request.json &&
+sed -i "/\"productid\": 1234,/a\\      \"count\": 2" examples/test_accepted_order_request.json
+'
+```
+
+#### 4. Generate missing examples in the same Studio flow
 Still in Studio, generate examples for:
 - `POST /products` with response `201`
 - `POST /orders` with response `201`
 
-### 5. Re-run validation and verify pass state
+
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc 'cp .backup/* examples/'
+```
+
+### Final Phase
+
+#### 5. Re-run validation and verify pass state
+
+Test Run Cmd (Linux/Mac OSX)
+
 ```shell
 docker run --rm \
-  -v .:/usr/src/app \
-  -v ../license.txt:/specmatic/specmatic-license.txt:ro \
+  -v "${PWD}:/usr/src/app" \
+  -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   specmatic/enterprise:latest \
   validate
 ```
-Windows (PowerShell/CMD) single-line:
-```shell
-docker run --rm -v .:/usr/src/app -v ../license.txt:/specmatic/specmatic-license.txt:ro specmatic/enterprise:latest validate
-```
 
-Expected final output:
 ```terminaloutput
 [OK] Specification product_search_bff_v6.yaml: PASSED
 [OK] Examples: 6 passed and 0 failed out of 6 total
 ```
+
+Windows PowerShell single-line:
+
+```powershell
+docker run --rm -v "$($PWD.Path):/usr/src/app" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" specmatic/enterprise:latest validate
+```
+
+Expected output:
+
+```terminaloutput
+[OK] Specification product_search_bff_v6.yaml: PASSED
+[OK] Examples: 6 passed and 0 failed out of 6 total
+```
+
 
 Clean up Studio:
 ```shell

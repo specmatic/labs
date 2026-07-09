@@ -3,7 +3,7 @@
 ## Objective
 Use a Specmatic overlay to patch a contract path mismatch at test time, without modifying the source contract.
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
@@ -54,7 +54,7 @@ docker compose up test --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 1, Successes: 0, Failures: 1, Errors: 0
+Tests run: 1, Successes: 0, Failures: 1, WIP: 0, Errors: 0
 ```
 
 - The test run fails because requests are generated for `/api/users/{id}` while the provider serves `/api/v1/users/{id}`.
@@ -108,8 +108,15 @@ Uncomment this line:
 overlayFilePath: ./overlays/path-prefix.overlay.yaml
 ```
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc 'cp .backup/path-prefix.overlay.yaml overlays/path-prefix.overlay.yaml && sed -i "s/^#            overlayFilePath:/            overlayFilePath:/" specmatic.yaml'
+```
+
 ## Pass verification
 Run:
+
 ```shell
 docker compose up test --abort-on-container-exit
 ```
@@ -117,7 +124,7 @@ docker compose up test --abort-on-container-exit
 Expected output:
 
 ```terminaloutput
-Tests run: 1, Successes: 1, Failures: 0, Errors: 0
+Tests run: 1, Successes: 1, Failures: 0, WIP: 0, Errors: 0
 ```
 
 - Contract tests pass, because Specmatic applies the overlay before running tests.

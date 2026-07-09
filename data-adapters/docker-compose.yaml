@@ -4,6 +4,7 @@ services:
     image: specmatic/enterprise:latest
     volumes:
       - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
     command: ["mock"]
     ports:
       - "9090:9090"
@@ -32,12 +33,38 @@ services:
       retries: 30
       start_period: 2s
 
+  verifier:
+    image: specmatic/enterprise:latest
+    profiles: ["test"]
+    depends_on:
+      camelCaseService:
+        condition: service_healthy
+    entrypoint: ["curl"]
+    command:
+      - --connect-timeout
+      - "10"
+      - --max-time
+      - "20"
+      - -i
+      - -X
+      - POST
+      - "http://camelCaseService:9090/test?RequestQuery=books"
+      - -H
+      - "Content-Type: application/json"
+      - -H
+      - "RequestHeader: header-value"
+      - -d
+      - '{"RequestKey":"request-value"}'
+
   studio:
     container_name: specmatic-studio
     image: specmatic/enterprise:latest
     profiles: ["studio"]
     volumes:
       - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    environment:
+      SPECMATIC_LICENSE_PATH: /specmatic/specmatic-license.txt
     command: ["studio"]
     ports:
       - "9000:9000"

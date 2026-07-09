@@ -9,7 +9,6 @@ Your job is to make those hidden rules explicit in the Avro schemas and then upd
 Run the async contract tests, observe the intentional failure, update the Avro schemas and examples, and verify a passing run.
 
 ## Time required to complete this lab
-
 15-20 minutes.
 
 ## Prerequisites
@@ -77,18 +76,30 @@ docker compose up specmatic-test --abort-on-container-exit
 Expected failure signal:
 
 ```terminaloutput
-Timeout waiting for a message on topic 'wip-orders'.
-Refer to Message Count Report to verify the message counts on different topics.
+Unsuccessful Scenarios:
+  "Upon receiving a message on 'new-orders' channel, should send a message on 'wip-orders' channel. Example: PLACE_MACBOOK_ORDER FAILED"
+         Reason:
+    Timeout waiting for a message on topic 'wip-orders'.
+    Refer to Message Count Report to verify the message counts on different topics.
 
-Tests run: 2, Successes: 0, Failures: 2, Errors: 0
+  "Upon receiving a message on 'new-orders' channel, should send a message on 'wip-orders' channel. Example: PLACE_IPHONE_ORDER FAILED"
+         Reason:
+    Timeout waiting for a message on topic 'wip-orders'.
+    Refer to Message Count Report to verify the message counts on different topics.
+
+Tests run: 2, Successes: 0, Failures: 2, WIP: 0, Errors: 0
 ```
 
 The message count report should show:
 
 ```terminaloutput
-| topic      | Actual | Expected |
-| new-orders |    2   |    2     |
-| wip-orders |    0   |    2     |
++------------+-------------------------+----------+
+| Topic      | No of messages received            |
++------------+-------------------------+----------+
+|            | Actual                  | Expected |
++------------+-------------------------+----------+
+| new-orders | 2                       | 2        |
++------------+-------------------------+----------+
 ```
 
 Clean up before making changes:
@@ -188,6 +199,20 @@ Replace `docker-config/avro/WipOrders.avsc` with:
 }
 ```
 
+Alternatively, just run the following command:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc "sed -i -e '/^      \"name\": \"id\",$/{n;s/^      \"type\": \"int\"$/&,\\
+      \"x-minimum\": 1,\\
+      \"x-maximum\": 100/;}' /usr/src/app/docker-config/avro/WipOrders.avsc && sed -i -e '/^      \"name\": \"id\",$/{n;s/^      \"type\": \"int\"$/&,\\
+      \"x-minimum\": 1,\\
+      \"x-maximum\": 100/;}' -e '/^              \"name\": \"name\",$/{n;s/^              \"type\": \"string\"$/&,\\
+              \"x-minLength\": 2,\\
+              \"x-maxLength\": 10,\\
+              \"x-regex\": \"^[A-Za-z]{2,10}$\"/;}' -e '/^              \"name\": \"price\",$/{n;s/^              \"type\": \"int\"$/&,\\
+              \"x-minimum\": 1000/;}' /usr/src/app/docker-config/avro/NewOrders.avsc"
+```
+
 ### Step 2: Update the examples
 
 In both files under `api-specs/order-service-async-avro-v3_0_0_examples/`, replace the current invalid values with values that satisfy the new schema constraints.
@@ -259,6 +284,12 @@ Replace `api-specs/order-service-async-avro-v3_0_0_examples/PLACE_MACBOOK_ORDER.
 }
 ```
 
+Alternatively, just run the following commands:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc "sed -i 's/\"id\": 101/\"id\": 1/; s/iPhone 14 Pro Max/iPhone/; s/\"price\": 500/\"price\": 5000/; s/exact:101/exact:1/; s#\"status\": \".*\"#\"status\": \"\$match(exact:PROCESSING)\"#' api-specs/order-service-async-avro-v3_0_0_examples/PLACE_IPHONE_ORDER.json && sed -i 's/\"id\": 102/\"id\": 2/; s/Macbook Mini Pro M5/Macbook/; s/\"price\": 600/\"price\": 6000/; s/exact:102/exact:2/; s#\"status\": \".*\"#\"status\": \"\$match(exact:PROCESSING)\"#' api-specs/order-service-async-avro-v3_0_0_examples/PLACE_MACBOOK_ORDER.json"
+```
+
 ## Verify the fix
 
 Re-run the contract tests:
@@ -270,15 +301,20 @@ docker compose up specmatic-test --abort-on-container-exit
 Expected passing output:
 
 ```terminaloutput
-Tests run: 2, Successes: 2, Failures: 0, Errors: 0
+Tests run: 2, Successes: 2, Failures: 0, WIP: 0, Errors: 0
 ```
 
 The message count report should now show:
 
 ```terminaloutput
-| topic      | Actual | Expected |
-| new-orders |    2   |    2     |
-| wip-orders |    2   |    2     |
++------------+-------------------------+----------+
+| Topic      | No of messages received            |
++------------+-------------------------+----------+
+|            | Actual                  | Expected |
++------------+-------------------------+----------+
+| new-orders | 2                       | 2        |
+| wip-orders | 2                       | 2        |
++------------+-------------------------+----------+
 ```
 
 Clean up:

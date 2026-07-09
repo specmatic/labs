@@ -15,7 +15,7 @@ This project includes a consumer (`OrderService`) that implements the following 
 
 ![Order Application Workflow](assets/order-application-workflow.gif)
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Objective
@@ -75,15 +75,21 @@ Together, `receive`/`send` plus `before`/`after` fixtures let you express full e
 ## Run the contract tests using Specmatic Studio
 1. Start Kafka, the sample service, and Specmatic Studio.
 ```shell
-docker compose up
+docker compose up -d
 ```
    
 2. Go to [Studio](http://127.0.0.1:9000/_specmatic/studio) and open the [specmatic.yaml](specmatic.yaml) file from the left sidebar, click on "Run Suite", and use the checked-out contract under `.specmatic/repos/labs-contracts/asyncapi/async-event-flow/async-order-service.yaml` if you want to inspect the loaded AsyncAPI file in Studio.
 
 You should first see 2 passing tests and 2 failing tests:
 
+Alternatively, just run the following commands:
+
+```shell
+docker compose exec -T studio specmatic run-suite
+```
+
 ```terminaloutput
-Tests run: 4, Successes: 2, Failures: 2, Errors: 0
+Tests run: 4, Successes: 2, Failures: 2, WIP: 0, Errors: 0
 ```
 
 3. Fix the examples:
@@ -114,22 +120,49 @@ Tests run: 4, Successes: 2, Failures: 2, Errors: 0
   }
 ],
 ```
-- In `examples/async-order-service/outForDeliveryOrder.json`, fix the `after` fixture so we expect the TaxService example to be invoked once instead of twice.
+- In `examples/async-order-service/outForDeliveryOrder.json`, fix the `after` fixture by changing:
+
+```json
+"tax-invoice-for-order-456": "$match(exact: 2)"
+```
+
+To:
+
+```json
+"tax-invoice-for-order-456": "$match(exact: 1)"
+```
+
+Alternatively, just run the following commands:
+
+```shell
+docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc 'cp .backup/acceptOrder-with-before.json examples/async-order-service/acceptOrder.json && cp .backup/outForDeliveryOrder-with-before.json examples/async-order-service/outForDeliveryOrder.json'
+```
 
 4. Restart Docker Containers
+
 ```shell
-docker compose down -v && docker compose up
+docker compose down -v
+docker compose up -d
 ```
 
 5. Re-run the suite from Studio.
 
+Alternatively, just run the following commands:
+
+```shell
+docker compose exec -T studio specmatic run-suite
+```
+
 You should now see:
 
 ```terminaloutput
-Tests run: 4, Successes: 4, Failures: 0, Errors: 0
+Tests run: 4, Successes: 4, Failures: 0, WIP: 0, Errors: 0
 ```
 
-6. Bring down the Kafka broker after the tests are done.
+### Cleanup
+
+Bring down the Kafka broker after the tests are done.
+
 ```shell
 docker compose down -v
 ```

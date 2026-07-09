@@ -37,3 +37,7 @@ components:
               aws.secret.access.key: test
           - host: kafka:9092
             protocol: kafka
+
+specmatic:
+  license:
+    path: /specmatic/specmatic-license.txt

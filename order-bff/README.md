@@ -16,7 +16,7 @@ Following are the specifications used in this project:
 ### Contract Testing Setup
 ![Contract testing setup with Specmatic](assets/specmatic-contract-test-setup.gif)
 
-## Time required to complete this lab:
+## Time required to complete this lab
 10-15 minutes.
 
 ## Prerequisites
@@ -43,7 +43,7 @@ Tests run: 269, Successes: 265, Failures: 0, Errors: 4
 In the Studio UI, you might see 2 more Excluded tests. Total: 233.
 
 ```shell
-docker compose --profile studio down -v
+docker compose --profile studio down -v --remove-orphans
 ```
 
 ### 2. Using Docker (Recommended for CI)
@@ -58,7 +58,7 @@ Tests run: 269, Successes: 265, Failures: 0, Errors: 4
 ```
 
 ```shell
-docker compose --profile test down -v
+docker compose --profile test down -v --remove-orphans
 ```
 
 Also look at the [detailed contract report](build/reports/specmatic/test/html/index.html) to see the details of the tests that were run.
