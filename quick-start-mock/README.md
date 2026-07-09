@@ -50,6 +50,17 @@ docker compose up -d --wait consumer
 
 Open [http://127.0.0.1:8081](http://127.0.0.1:8081).
 
+Start the mock
+```shell
+specmatic-enterprise mock specs/service.yaml --port 9100
+```
+
+Start Studio in a new terminal:
+
+```shell
+docker compose --profile studio up -d --wait studio
+```
+
 In the UI:
 - Base URL: `http://127.0.0.1:9100`
 - Pet ID: `1`
