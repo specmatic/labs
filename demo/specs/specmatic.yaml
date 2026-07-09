@@ -1,20 +1,71 @@
-version: 2
-contracts:
-  - filesystem:
-      directory: .
-    provides:
-      - specs:
-        - product_search_bff_v5.yaml
-        baseUrl: http://order-bff:8080
-    consumes:
-      - port: 9090
+version: 3
+systemUnderTest:
+  service:
+    definitions:
+    - definition:
+        source:
+          filesystem:
+            directory: "."
         specs:
-        - proxy_generated.yaml
-      - port: 9092
+        - spec:
+            id: "product-search-bff-v5"
+            path: "product_search_bff_v5.yaml"
+    runOptions:
+      openapi:
         specs:
-        - kafka.yaml
-      - port: 8095
-        specs:
-          - inventory.wsdl
-hooks:
-  post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh
+        - spec:
+            id: "product-search-bff-v5"
+            baseUrl: "http://order-bff:8080"
+dependencies:
+  services:
+  - service:
+      definitions:
+      - definition:
+          source:
+            filesystem:
+              directory: "."
+          specs:
+          - spec:
+              id: "proxy-generated"
+              path: "proxy_generated.yaml"
+      runOptions:
+        openapi:
+          specs:
+          - spec:
+              id: "proxy-generated"
+              port: 9090
+  - service:
+      definitions:
+      - definition:
+          source:
+            filesystem:
+              directory: "."
+          specs:
+          - spec:
+              id: "kafka"
+              path: "kafka.yaml"
+      runOptions:
+        openapi:
+          specs:
+          - spec:
+              id: "kafka"
+              port: 9092
+  - service:
+      definitions:
+      - definition:
+          source:
+            filesystem:
+              directory: "."
+          specs:
+          - spec:
+              id: "inventory"
+              path: "inventory.wsdl"
+      runOptions:
+        wsdl:
+          specs:
+          - spec:
+              id: "inventory"
+              port: 8095
+  data:
+    adapters:
+      post_specmatic_response_processor: "./hooks/post_specmatic_response_processor.sh"
