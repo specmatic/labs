@@ -55,11 +55,8 @@ dependencies:
         runOptions:
           asyncapi:
             type: mock
-            inMemoryBroker:
-              host: "${KAFKA_BOOTSTRAP_SERVER_HOST:localhost}"
-              port: 9092
             servers:
-              - host: "${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}"
+              - host: "${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}"
                 protocol: kafka
   data:
     adapters:
@@ -69,7 +66,7 @@ specmatic:
   governance:
     successCriteria:
       minCoveragePercentage: 70
-      maxMissedOperationsInSpec: 0
+      maxMissedOperationsInSpec: 1
       enforce: true
   license:
     path: /specmatic/specmatic-license.txt

@@ -37,10 +37,10 @@ In Studio, on the left sidebar, open `specmatic.yaml` and click on `Run Suite` t
 When the tests complete, you should see the following in the status header indicating that the contract tests run successfully:
 
 ```terminaloutput
-Tests run: 269, Successes: 265, Failures: 0, Errors: 4
+Tests run: 269, Successes: 265, Failures: 0, WIP: 4, Errors: 0
 ```
 
-In the Studio UI, you might see 2 more Excluded tests. Total: 233.
+In the Studio UI, you might see 7 more Excluded tests. Total: 276.
 
 ```shell
 docker compose --profile studio down -v --remove-orphans
@@ -48,13 +48,13 @@ docker compose --profile studio down -v --remove-orphans
 
 ### 2. Using Docker (Recommended for CI)
 ```shell
-docker compose --profile test up --abort-on-container-exit
+docker compose --profile test up suite --abort-on-container-exit
 ```
 
 In the logs, you should see the following lines indicating that the contract tests run successfully:
 
 ```terminaloutput
-Tests run: 269, Successes: 265, Failures: 0, Errors: 4
+Tests run: 269, Successes: 265, Failures: 0, WIP: 4, Errors: 0
 ```
 
 ```shell
