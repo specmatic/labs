@@ -41,14 +41,14 @@ components:
         type: test
         filter: "PATH!='/internal/metrics'"
         baseUrl: ${APP_BASE_URL:http://localhost:8080}
-        actuatorUrl: http://localhost:8080/actuator/mappings
+        actuatorUrl: ${APP_BASE_URL:http://localhost:8080}/actuator/mappings
         specs:
           - spec:
               id: orderApiSpec
               securitySchemes:
                 basicAuth:
                   type: basicAuth
-                  token: ${BASIC_AUTH_TOKEN:dXNlcjppbnZhbGlkcGFzcw==}
+                  token: ${BASIC_AUTH_TOKEN:dXNlcjpwYXNzd29yZA==}
                 apiKeyAuth:
                   type: apiKey
-                  token: ${API_KEY:INVALID_APIKEY1234}
+                  token: ${API_KEY:APIKEY1234}
