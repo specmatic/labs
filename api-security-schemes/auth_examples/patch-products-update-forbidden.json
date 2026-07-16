@@ -1,15 +1,13 @@
 {
   "partial": {
     "http-request": {
-      "path": "/orders",
-      "method": "POST",
+      "path": "/products/10",
+      "method": "PATCH",
       "headers": {
         "Content-Type": "application/json",
         "Authorization": "Bearer fixed-invalid-demo-token"
       },
-      "body": {
-        "productid": 10
-      }
+      "body": {}
     },
     "http-response": {
       "status": 403,

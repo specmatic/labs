@@ -1,26 +1,25 @@
 {
   "http-request": {
-    "path": "/products/449.0",
+    "path": "/products",
     "method": "POST",
     "headers": {
       "Content-Type": "application/json",
-      "Authorization": "Bearer provident"
+      "Authorization": "Bearer dolores"
     },
     "body": {
-      "id": 674,
-      "name": "Sleek Marble Chair",
+      "name": "Diogenes",
       "type": "book",
-      "inventory": 406
+      "inventory": 833
     }
   },
   "http-response": {
     "status": 401,
     "body": {
-      "error": "Extension Required",
+      "error": "Loop Detected",
       "timestamp": "2026-07-01T12:26:22+05:30",
       "status": 401,
       "message": "Unauthorized",
-      "path": "/products/449.0"
+      "path": "/products"
     },
     "status-text": "Unauthorized",
     "headers": {

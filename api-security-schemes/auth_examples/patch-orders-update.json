@@ -1,8 +1,8 @@
 {
   "partial": {
     "http-request": {
-      "path": "/products",
-      "method": "POST",
+      "path": "/orders/(id:number)",
+      "method": "PATCH",
       "headers": {
         "Content-Type": "application/json",
         "Authorization": "Bearer fixed-invalid-demo-token"
@@ -10,10 +10,10 @@
       "body": {}
     },
     "http-response": {
-      "status": 201,
-      "body": {},
+      "status": 200,
+      "body": "success",
       "headers": {
-        "Content-Type": "application/json"
+        "Content-Type": "text/plain"
       }
     }
   }

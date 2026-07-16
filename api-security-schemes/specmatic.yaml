@@ -23,7 +23,7 @@ components:
     labsContracts:
       git:
         url: https://github.com/specmatic/labs-contracts.git
-        branch: main
+        branch: codex/api-security-lab
   services:
     orderService:
       description: Order Service with Multiple Auth Schemes
@@ -39,7 +39,7 @@ components:
     orderServiceTest:
       openapi:
         type: test
-        filter: "PATH!='/internal/metrics'"
+        filter: "PATH!='/internal/metrics' && PATH!='/health'"
         baseUrl: ${APP_BASE_URL:http://localhost:8080}
         actuatorUrl: ${APP_BASE_URL:http://localhost:8080}/actuator/mappings
         specs:
@@ -48,7 +48,7 @@ components:
               securitySchemes:
                 basicAuth:
                   type: basicAuth
-                  token: ${BASIC_AUTH_TOKEN:dXNlcjppbnZhbGlkcGFzcw==}
+                  token: ${BASIC_AUTH_TOKEN:missing-vault-basic-auth-token}
                 apiKeyAuth:
                   type: apiKey
-                  token: ${API_KEY:INVALID_APIKEY1234}
+                  token: ${API_KEY:missing-vault-api-key}

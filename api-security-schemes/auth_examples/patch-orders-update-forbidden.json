@@ -1,20 +1,18 @@
 {
   "partial": {
     "http-request": {
-      "path": "/orders",
-      "method": "POST",
+      "path": "/orders/10",
+      "method": "PATCH",
       "headers": {
         "Content-Type": "application/json",
         "Authorization": "Bearer fixed-invalid-demo-token"
       },
-      "body": {
-        "productid": 10
-      }
+      "body": {}
     },
     "http-response": {
       "status": 403,
       "body": {
-        "timestamp": "2026-07-01T12:26:22+05:30",
+        "timestamp": "2026-07-01T12:26:23+05:30",
         "status": 403,
         "error": "Forbidden",
         "message": "(string)"
