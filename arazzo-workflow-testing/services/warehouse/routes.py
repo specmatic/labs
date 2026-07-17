@@ -1,7 +1,7 @@
 from typing import Annotated
 
 import httpx
-from fastapi import APIRouter, HTTPException, Query, status
+from fastapi import APIRouter, HTTPException, Query, Response, status
 from sqlmodel import select
 
 from common.config import Settings
@@ -32,13 +32,14 @@ async def update_inventory(order_id: Annotated[int, Query(alias="orderId")], ses
     session.add(inventory_level)
     session.commit()
     await notify_order_placed(order_id)
+    return Response(status_code=status.HTTP_200_OK)
 
 
 async def notify_order_placed(order_id: int):
     url = f"http://order:{settings.order_service_port}/orders"
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.post(url, json={"order_id": order_id})
+            response = await client.post(url, json={"orderId": order_id})
             response.raise_for_status()
         except httpx.HTTPStatusError as e:
             raise HTTPException(status_code=400, detail=f"Order service rejected request: {e.response.text}") from e
