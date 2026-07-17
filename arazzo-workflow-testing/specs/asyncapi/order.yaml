@@ -100,8 +100,7 @@ components:
           - inventory
         properties:
           userId:
-            type: string
-            format: uuid
+            type: integer
           productId:
             type: integer
           inventory:
