@@ -1,13 +1,45 @@
 {
   "id": "order-out-for-delivery",
   "name": "ORDER_OUT_FOR_DELIVERY",
+  "data": {
+    "dataLookups": {
+      "delivery": {
+        "*": {
+          "orderId": 123,
+          "deliveryAddress": "1234 Elm Street, Springfield",
+          "deliveryDate": "2025-04-14",
+          "taxInvoiceExampleId": "tax-invoice-for-order-123"
+        }
+      }
+    }
+  },
+  "before": [
+    {
+      "type": "http",
+      "http-request": {
+        "baseUrl": "http://sut:8080",
+        "path": "/orders/$(dataLookups.delivery[ORDER_ID].orderId)?status=SHIPPED",
+        "method": "GET"
+      },
+      "http-response": {
+        "status": 200,
+        "body": {
+          "id": "(ORDER_ID:number)",
+          "orderItems": [],
+          "lastUpdatedDate": "(PREVIOUS_UPDATED_AT:string)",
+          "status": "SHIPPED"
+        }
+      },
+      "timeout": "PT10S"
+    }
+  ],
   "receive": {
     "topic": "out-for-delivery-orders",
-    "key": 456,
+    "key": "$(ORDER_ID)",
     "payload": {
-      "orderId": 456,
-      "deliveryAddress": "1234 Elm Street, Springfield",
-      "deliveryDate": "2025-04-14"
+      "orderId": "$(ORDER_ID)",
+      "deliveryAddress": "$(dataLookups.delivery[ORDER_ID].deliveryAddress)",
+      "deliveryDate": "$(dataLookups.delivery[ORDER_ID].deliveryDate)"
     }
   },
   "after": [
@@ -16,16 +48,16 @@
       "wait": "PT2S",
       "http-request": {
         "baseUrl": "http://sut:8080",
-        "path": "/orders/456?status=SHIPPED",
+        "path": "/orders/$(ORDER_ID)?status=SHIPPED",
         "method": "GET"
       },
       "http-response": {
         "status": 200,
         "body": {
-          "id": "$match(exact: 456)",
+          "id": "(ORDER_ID:number)",
           "orderItems": [],
-          "lastUpdatedDate": "$match(dataType: datetime)",
-          "status": "$match(exact: SHIPPED)"
+          "lastUpdatedDate": "(DELIVERY_DATE:string)",
+          "status": "(ORDER_STATUS:string)"
         }
       },
       "timeout": "PT10S"
@@ -34,13 +66,13 @@
       "type": "http",
       "http-request": {
         "baseUrl": "http://localhost:8090",
-        "path": "/_specmatic/verify?exampleIds=tax-invoice-for-order-456",
+        "path": "/_specmatic/verify?exampleIds=$(dataLookups.delivery[ORDER_ID].taxInvoiceExampleId)",
         "method": "GET"
       },
       "http-response": {
         "status": 200,
         "body": {
-          "tax-invoice-for-order-456": "$match(exact: 2)"
+          "tax-invoice-for-order-123": "$match(exact: 2)"
         }
       },
       "timeout": "PT20S"

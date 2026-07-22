@@ -1,13 +1,71 @@
 {
   "id": "accept-order",
   "name": "ACCEPT_ORDER",
+  "data": {
+    "dataLookups": {
+      "acceptance": {
+        "*": {
+          "orderId": 123,
+          "invoiceDate": "2025-04-14",
+          "timestamp": "2025-04-12T14:30:00Z"
+        }
+      }
+    }
+  },
+  "before": [
+    {
+      "type": "http",
+      "http-request": {
+        "baseUrl": "http://localhost:8090",
+        "path": "/tax/invoices",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "orderId": "$(dataLookups.acceptance[ORDER_ID].orderId)",
+          "invoiceDate": "$(dataLookups.acceptance[ORDER_ID].invoiceDate)"
+        }
+      },
+      "http-response": {
+        "status": 201,
+        "body": {
+          "invoiceId": "(INVOICE_ID:string)",
+          "status": "SHIPPED",
+          "orderId": "(ORDER_ID:number)"
+        }
+      },
+      "timeout": "PT10S"
+    },
+    {
+      "type": "http",
+      "wait": "PT1S",
+      "http-request": {
+        "baseUrl": "http://sut:8080",
+        "path": "/orders",
+        "method": "PUT",
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": {
+          "id": "$(ORDER_ID)",
+          "status": "ACCEPTED",
+          "timestamp": "$(dataLookups.acceptance[ORDER_ID].timestamp)"
+        }
+      },
+      "http-response": {
+        "status": 200
+      },
+      "timeout": "PT30S"
+    }
+  ],
   "send": {
     "topic": "accepted-orders",
-    "key": 123,
+    "key": "$(ORDER_ID)",
     "payload": {
-      "id": 123,
+      "id": "$(ORDER_ID)",
       "status": "ACCEPTED",
-      "timestamp": "2025-04-12T14:30:00Z"
+      "timestamp": "$(dataLookups.acceptance[ORDER_ID].timestamp)"
     }
   }
 }
