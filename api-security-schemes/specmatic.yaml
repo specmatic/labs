@@ -51,4 +51,4 @@ components:
                   token: ${BASIC_AUTH_TOKEN:ZGVmYXVsdC11c2VyOmRlZmF1bHQtdXNlcgo=}
                 apiKeyAuth:
                   type: apiKey
-                  token: ${API_KEY:ZGVmYXVsdC10b2tlbgo=}
+                  token: ${API_KEY:INVALID_APIKEY1234}

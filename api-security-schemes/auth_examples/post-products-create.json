@@ -6,7 +6,7 @@
         "scenarios": "all"
       },
       "http-request": {
-        "baseUrl": "${KEYCLOAK_BASE_URL:http://localhost:8083}",
+        "baseUrl": "${KEYCLOAK_BASE_URL:http://keycloak:8080}",
         "path": "/realms/specmatic/protocol/openid-connect/token",
         "method": "POST",
         "headers": {
@@ -30,8 +30,7 @@
       "path": "/products",
       "method": "POST",
       "headers": {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $(ACCESS_TOKEN)"
+        "Content-Type": "application/json"
       },
       "body": {}
     },

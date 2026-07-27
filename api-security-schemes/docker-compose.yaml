@@ -85,6 +85,8 @@ services:
       - /bin/bash
       - -lc
       - |
+        source /vault/config/import-oauth-secrets.sh
+        source /vault/config/import-static-auth-secrets.sh
         exec /usr/local/bin/enterprise test
     volumes:
       - .:/usr/src/app
