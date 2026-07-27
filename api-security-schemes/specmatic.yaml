@@ -48,7 +48,7 @@ components:
               securitySchemes:
                 basicAuth:
                   type: basicAuth
-                  token: ${BASIC_AUTH_TOKEN:missing-vault-basic-auth-token}
+                  token: ${BASIC_AUTH_TOKEN:ZGVmYXVsdC11c2VyOmRlZmF1bHQtdXNlcgo=}
                 apiKeyAuth:
                   type: apiKey
-                  token: ${API_KEY:missing-vault-api-key}
+                  token: ${API_KEY:ZGVmYXVsdC10b2tlbgo=}

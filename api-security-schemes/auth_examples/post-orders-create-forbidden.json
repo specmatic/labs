@@ -1,28 +1,51 @@
 {
-  "partial": {
-    "http-request": {
-      "path": "/orders",
-      "method": "POST",
-      "headers": {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer fixed-invalid-demo-token"
+  "before": [
+    {
+      "type": "http",
+      "http-request": {
+        "baseUrl": "${KEYCLOAK_BASE_URL:http://localhost:8083}",
+        "path": "/realms/specmatic/protocol/openid-connect/token",
+        "method": "POST",
+        "headers": {
+          "Content-Type": "application/x-www-form-urlencoded"
+        },
+        "body": "grant_type=password&client_id=order-api&username=${KEYCLOAK_SERVICE_ACCOUNT_USERNAME:default-username}&password=${KEYCLOAK_SERVICE_ACCOUNT_PASSWORD:default-password}"
       },
-      "body": {
-        "productid": 10
+      "http-response": {
+        "status": 200,
+        "body": {
+          "access_token": "(ACCESS_TOKEN:string)"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
       }
+    }
+  ],
+  "http-request": {
+    "path": "/orders",
+    "method": "POST",
+    "headers": {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer $(ACCESS_TOKEN)"
     },
-    "http-response": {
+    "body": {
+      "productid": 10,
+      "count": 1,
+      "status": "pending"
+    }
+  },
+  "http-response": {
+    "status": 403,
+    "body": {
+      "timestamp": "2026-07-01T12:26:22+05:30",
       "status": 403,
-      "body": {
-        "timestamp": "2026-07-01T12:26:22+05:30",
-        "status": 403,
-        "error": "Forbidden",
-        "message": "(string)"
-      },
-      "status-text": "Forbidden",
-      "headers": {
-        "Content-Type": "application/json"
-      }
+      "error": "Forbidden",
+      "message": "Forbidden"
+    },
+    "status-text": "Forbidden",
+    "headers": {
+      "Content-Type": "application/json"
     }
   }
 }

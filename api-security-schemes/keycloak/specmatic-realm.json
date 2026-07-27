@@ -406,12 +406,9 @@
     "firstName" : "",
     "lastName" : "",
     "credentials" : [ {
-      "id" : "4acabc56-1d24-4b33-9ddf-0dc75131ca48",
       "type" : "password",
-      "userLabel" : "My password",
-      "createdDate" : 1695470306299,
-      "secretData" : "{\"value\":\"1A1J63Kp1iAx6XbM5N4TZgK/YpyWKxaCdhjK7YSosh0=\",\"salt\":\"XoLsW5MP5qZmhF8nq4jcgA==\",\"additionalParameters\":{}}",
-      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+      "value" : "User1-Orders!2026",
+      "temporary" : false
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
