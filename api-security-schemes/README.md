@@ -16,20 +16,22 @@ The lab starts in an intentionally broken state. Your job is to observe the fail
 
 - `Vault` stores the credentials used by the contract tests, and `vault-init` loads the demo credentials into Vault.
 - `Keycloak` acts as the OAuth2 authorization server for `POST` and `PATCH` requests.
-- `Order API` is the system under test and enforces:
-  - OAuth2 + RBAC for `POST` and `PATCH`
+- `Order API` is the system under test, requires mTLS, and enforces:
+  - OAuth2 scopes and RBAC for `POST` and `PATCH`
   - Basic Auth for `GET`
   - API key auth for `DELETE`
 
-The application validates OAuth2 tokens by calling the ```spring.security.oauth2.resourceserver.jwt.issuer-uri``` url defined in the ```application.properties``` file.
+The application uses the issuer configured by ```spring.security.oauth2.resourceserver.jwt.issuer-uri``` to validate OAuth2 tokens and checks the granted scope before allowing each protected operation.
 
 ## Security Schemes
 
-The application uses three security schemes:
+The OpenAPI contract uses three application-level security schemes:
 
-- **OAuth2 (POST and PATCH endpoints)**: Requires a bearer token with the appropriate role.
+- **OAuth2 (POST and PATCH endpoints)**: Requires a bearer token with the appropriate operation scope.
 - **Basic Authentication (GET endpoints)**: Requires valid username/password credentials.
 - **API Key (DELETE endpoints)**: Requires a valid `X-API-Key` header.
+
+The Order API also requires Specmatic to present a trusted client certificate. This is configured under `runOptions.openapi.cert` in [`specmatic.yaml`](specmatic.yaml). The certificates under [`certs/`](./certs) are public, demo-only fixtures and must not be reused outside this lab.
 
 The OpenAPI contract defines these schemes:
 
@@ -91,12 +93,12 @@ specs:
 
 Unlike the Basic Auth and API key schemes, OAuth is not configured here as a single static token value in [`specmatic.yaml`](specmatic.yaml).
 
-Instead, the OAuth/RBAC `POST` examples under [`auth_examples/`](./auth_examples) use Specmatic `before` fixtures:
-1. The `before` fixture calls the Keycloak token endpoint.
+Instead, the OAuth/RBAC `POST` and `PATCH` examples under [`auth_examples/`](./auth_examples) use Specmatic `before` fixtures:
+1. The `before` fixture calls the Keycloak token endpoint and requests either `order:create` or `product:create`.
 2. The fixture captures `access_token` as `ACCESS_TOKEN`.
 3. The protected API request should use this captured token in the `Authorization` header.
 
-This sample defines two roles: `users` and `admins`, Users can interact with the order `POST` endpoints, while admins can interact with the product `POST` endpoints.
+Keycloak uses the `users` and `admins` roles to determine which scope each account may obtain. `user1` may obtain `order:create`, while `service_account` may obtain `product:create`. The Order API authorizes the request using the granted scope in the token.
 
 ## Lab Rules
 
@@ -177,7 +179,7 @@ Generated test reports:
 
 ## Troubleshooting
 
-- If Docker ports `8080`, `8083`, or `8200` are already in use, stop the conflicting process and try again.
+- If Docker ports `8443`, `8083`, or `8200` are already in use, stop the conflicting process and try again.
 - If containers from a previous run are still present, run `docker compose down -v` before retrying.
 - If Keycloak takes a little longer to start, wait for the compose run to finish; the test container already includes readiness checks.
 - If the OAuth token request succeeds but the protected `POST` or `PATCH` still fails, check whether the example request is missing the `Authorization` header.

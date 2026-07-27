@@ -33,7 +33,7 @@ services:
       - "8200:8200"
 
   keycloak:
-    image: quay.io/keycloak/keycloak
+    image: quay.io/keycloak/keycloak:22.0.5
     command: start-dev --import-realm
     environment:
       KEYCLOAK_IMPORT: /opt/keycloak/data/import/specmatic-realm.json
@@ -52,21 +52,34 @@ services:
       - "8083:8080"
 
   order-api:
-    image: specmaticdemo/specmatic-order-api-java-with-oauth
+    image: specmaticdemo/specmatic-order-api-java-with-oauth:latest
     depends_on:
       keycloak:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/specmatic
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_AUDIENCES: order-api
+      SERVER_SSL_KEY_STORE: file:/certs/server-keystore.jks
+      SERVER_SSL_KEY_STORE_PASSWORD: changeit
+      SERVER_SSL_KEY_PASSWORD: changeit
+      SERVER_SSL_TRUST_STORE: file:/certs/server-truststore.jks
+      SERVER_SSL_TRUST_STORE_PASSWORD: changeit
+      SERVER_SSL_CLIENT_AUTH: need
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health >/dev/null"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl -fsS --cacert /certs/ca.crt --cert /certs/specmatic-client.crt --key /certs/specmatic-client.key https://localhost:8443/health >/dev/null",
+        ]
       interval: 5s
       timeout: 3s
       retries: 18
       start_period: 10s
+    volumes:
+      - ./certs:/certs:ro
     ports:
-      - "8080:8080"
+      - "8443:8443"
     restart: on-failure
 
   specmatic-test:
@@ -79,8 +92,11 @@ services:
       order-api:
         condition: service_healthy
     environment:
-      APP_BASE_URL: http://order-api:8080
+      APP_BASE_URL: https://order-api:8443
       KEYCLOAK_BASE_URL: http://keycloak:8080
+      SPECMATIC_CLIENT_KEYSTORE: /usr/src/app/certs/specmatic-client.jks
+      SPECMATIC_CLIENT_KEYSTORE_PASSWORD: changeit
+      SPECMATIC_CLIENT_KEY_PASSWORD: changeit
     entrypoint:
       - /bin/bash
       - -lc

@@ -63,7 +63,7 @@
     }, {
       "id" : "2d7a0e5e-9d0f-4d65-9c26-7f6d2b5e6f10",
       "name" : "users",
-      "description" : "Orders RBAC role",
+      "description" : "Eligibility for the order:create client scope",
       "composite" : false,
       "clientRole" : false,
       "containerId" : "0b5ab4bf-ef5c-40ee-859c-1871961648cb",
@@ -71,7 +71,7 @@
     }, {
       "id" : "b0c9eb52-3c3e-4d53-8b88-2b2d2a7d1f12",
       "name" : "admins",
-      "description" : "Products RBAC role",
+      "description" : "Eligibility for the product:create client scope",
       "composite" : false,
       "clientRole" : false,
       "containerId" : "0b5ab4bf-ef5c-40ee-859c-1871961648cb",
@@ -438,6 +438,12 @@
   "scopeMappings" : [ {
     "clientScope" : "offline_access",
     "roles" : [ "offline_access" ]
+  }, {
+    "clientScope" : "order:create",
+    "roles" : [ "users" ]
+  }, {
+    "clientScope" : "product:create",
+    "roles" : [ "admins" ]
   } ],
   "clientScopeMappings" : {
     "account" : [ {
@@ -579,7 +585,7 @@
     "alwaysDisplayInConsole" : false,
     "clientAuthenticatorType" : "client-secret",
     "redirectUris" : [ "*" ],
-    "webOrigins" : [ "http://localhost:8080" ],
+    "webOrigins" : [ "https://localhost:8443" ],
     "notBefore" : 0,
     "bearerOnly" : false,
     "consentRequired" : false,
@@ -597,11 +603,24 @@
       "backchannel.logout.session.required" : "true",
       "backchannel.logout.revoke.offline.tokens" : "false"
     },
+    "protocolMappers" : [ {
+      "id" : "9578617c-ec18-4a34-9cd8-8d22ba194eb4",
+      "name" : "order-api audience",
+      "protocol" : "openid-connect",
+      "protocolMapper" : "oidc-audience-mapper",
+      "consentRequired" : false,
+      "config" : {
+        "included.client.audience" : "order-api",
+        "id.token.claim" : "false",
+        "access.token.claim" : "true",
+        "introspection.token.claim" : "true"
+      }
+    } ],
     "authenticationFlowBindingOverrides" : { },
     "fullScopeAllowed" : true,
     "nodeReRegistrationTimeout" : -1,
     "defaultClientScopes" : [ "web-origins", "acr", "profile", "roles", "email" ],
-    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
+    "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt", "order:create", "product:create" ]
   }, {
     "id" : "a93a804b-f47f-4b5e-9916-94589f0efd85",
     "clientId" : "realm-management",
@@ -676,6 +695,26 @@
     "optionalClientScopes" : [ "address", "phone", "offline_access", "microprofile-jwt" ]
   } ],
   "clientScopes" : [ {
+    "id" : "a028dfb2-9a32-43b7-812a-f8411bf572e3",
+    "name" : "order:create",
+    "description" : "Allows creation and update of orders",
+    "protocol" : "openid-connect",
+    "attributes" : {
+      "include.in.token.scope" : "true",
+      "display.on.consent.screen" : "false"
+    },
+    "protocolMappers" : [ ]
+  }, {
+    "id" : "d351ced7-2ab9-4826-ae24-fbbbf194c5c8",
+    "name" : "product:create",
+    "description" : "Allows creation and update of products",
+    "protocol" : "openid-connect",
+    "attributes" : {
+      "include.in.token.scope" : "true",
+      "display.on.consent.screen" : "false"
+    },
+    "protocolMappers" : [ ]
+  }, {
     "id" : "c6e4d3ef-c8b4-442d-b762-a215986852ec",
     "name" : "profile",
     "description" : "OpenID Connect built-in scope: profile",

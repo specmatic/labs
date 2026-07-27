@@ -9,7 +9,7 @@
         "headers": {
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        "body": "grant_type=password&client_id=order-api&username=${KEYCLOAK_SERVICE_ACCOUNT_USERNAME:default-username}&password=${KEYCLOAK_SERVICE_ACCOUNT_PASSWORD:default-password}"
+        "body": "grant_type=password&client_id=order-api&username=${KEYCLOAK_SERVICE_ACCOUNT_USERNAME:default-username}&password=${KEYCLOAK_SERVICE_ACCOUNT_PASSWORD:default-password}&scope=order:create"
       },
       "http-response": {
         "status": 200,
@@ -22,29 +22,29 @@
       }
     }
   ],
-  "http-request": {
-    "path": "/orders",
-    "method": "POST",
-    "headers": {
-      "Content-Type": "application/json"
+  "partial": {
+    "http-request": {
+      "path": "/orders",
+      "method": "POST",
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "body": {
+        "productid": 10
+      }
     },
-    "body": {
-      "productid": 10,
-      "count": 1,
-      "status": "pending"
-    }
-  },
-  "http-response": {
-    "status": 403,
-    "body": {
-      "timestamp": "2026-07-01T12:26:22+05:30",
+    "http-response": {
       "status": 403,
-      "error": "Forbidden",
-      "message": "Forbidden"
-    },
-    "status-text": "Forbidden",
-    "headers": {
-      "Content-Type": "application/json"
+      "body": {
+        "timestamp": "2026-07-01T12:26:22+05:30",
+        "status": 403,
+        "error": "Forbidden",
+        "message": "(string)"
+      },
+      "status-text": "Forbidden",
+      "headers": {
+        "Content-Type": "application/json"
+      }
     }
   }
 }

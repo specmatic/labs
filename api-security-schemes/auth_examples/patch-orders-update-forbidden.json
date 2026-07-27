@@ -9,7 +9,7 @@
         "headers": {
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        "body": "grant_type=password&client_id=order-api&username=${KEYCLOAK_SERVICE_ACCOUNT_USERNAME:default-username}&password=${KEYCLOAK_SERVICE_ACCOUNT_PASSWORD:default-password}"
+        "body": "grant_type=password&client_id=order-api&username=${KEYCLOAK_SERVICE_ACCOUNT_USERNAME:default-username}&password=${KEYCLOAK_SERVICE_ACCOUNT_PASSWORD:default-password}&scope=order:create"
       },
       "http-response": {
         "status": 200,
