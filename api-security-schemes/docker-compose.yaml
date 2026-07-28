@@ -95,8 +95,6 @@ services:
       APP_BASE_URL: https://order-api:8443
       KEYCLOAK_BASE_URL: http://keycloak:8080
       SPECMATIC_CLIENT_KEYSTORE: /usr/src/app/certs/specmatic-client.jks
-      SPECMATIC_CLIENT_KEYSTORE_PASSWORD: changeit
-      SPECMATIC_CLIENT_KEY_PASSWORD: changeit
     entrypoint:
       - /bin/bash
       - -lc
