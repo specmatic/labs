@@ -63,7 +63,7 @@
     }, {
       "id" : "2d7a0e5e-9d0f-4d65-9c26-7f6d2b5e6f10",
       "name" : "users",
-      "description" : "Eligibility for the order:create client scope",
+      "description" : "RBAC role granting eligibility for the order:create client scope",
       "composite" : false,
       "clientRole" : false,
       "containerId" : "0b5ab4bf-ef5c-40ee-859c-1871961648cb",
@@ -71,7 +71,7 @@
     }, {
       "id" : "b0c9eb52-3c3e-4d53-8b88-2b2d2a7d1f12",
       "name" : "admins",
-      "description" : "Eligibility for the product:create client scope",
+      "description" : "RBAC role granting eligibility for the product:create client scope",
       "composite" : false,
       "clientRole" : false,
       "containerId" : "0b5ab4bf-ef5c-40ee-859c-1871961648cb",
@@ -406,9 +406,12 @@
     "firstName" : "",
     "lastName" : "",
     "credentials" : [ {
+      "id" : "4acabc56-1d24-4b33-9ddf-0dc75131ca48",
       "type" : "password",
-      "value" : "User1-Orders!2026",
-      "temporary" : false
+      "userLabel" : "My password",
+      "createdDate" : 1695470306299,
+      "secretData" : "{\"value\":\"2f+SnMKbCSRt1QXYOql748L6AwHsbRhFdFhFmE+hzLI=\",\"salt\":\"A1XB2VkKKrkUw28ZaEb2IA==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
@@ -425,9 +428,12 @@
     "firstName" : "",
     "lastName" : "",
     "credentials" : [ {
+      "id" : "2d3b8df2-0dc2-4ed6-a2d7-9d5a0d4fb2f9",
       "type" : "password",
-      "value" : "SvcAcct-Products!2026",
-      "temporary" : false
+      "userLabel" : "My password",
+      "createdDate" : 1695470306300,
+      "secretData" : "{\"value\":\"0gUdM/lG/YQl2bi5ix2eWkml8bgYL6Mr+QbInPzU/J8=\",\"salt\":\"nBl2wvAZH1e4Vgrw0LHb5Q==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
     } ],
     "disableableCredentialTypes" : [ ],
     "requiredActions" : [ ],
