@@ -94,7 +94,10 @@ services:
     environment:
       APP_BASE_URL: https://order-api:8443
       KEYCLOAK_BASE_URL: http://keycloak:8080
-      SPECMATIC_CLIENT_KEYSTORE: /usr/src/app/certs/specmatic-client.jks
+      SPECMATIC_CLIENT_KEYSTORE: /usr/src/app/api-security-schemes/certs/specmatic-client.jks
+      GITHUB_HEAD_REF: ${GITHUB_HEAD_REF:-}
+      GITHUB_REF_NAME: ${GITHUB_REF_NAME:-}
+    working_dir: /usr/src/app/api-security-schemes
     entrypoint:
       - /bin/bash
       - -lc
@@ -103,7 +106,7 @@ services:
         source /vault/config/import-static-auth-secrets.sh
         exec /usr/local/bin/enterprise test
     volumes:
-      - .:/usr/src/app
+      - ..:/usr/src/app
       - ../license.txt:/specmatic/specmatic-license.txt:ro
       - ./vault:/vault/config:ro
       - vault-agent-auth:/vault/agent-auth:ro
