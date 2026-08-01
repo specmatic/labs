@@ -1,7 +1,7 @@
 {
   "http-request": {
     "path": "/products/449.0",
-    "method": "POST",
+    "method": "PATCH",
     "headers": {
       "Content-Type": "application/json",
       "Authorization": "Bearer provident"

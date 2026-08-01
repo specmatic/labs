@@ -23,7 +23,7 @@ components:
     labsContracts:
       git:
         url: https://github.com/specmatic/labs-contracts.git
-        branch: main
+        matchBranch: true
   services:
     orderService:
       description: Order Service with Multiple Auth Schemes
@@ -34,21 +34,27 @@ components:
             specs:
               - spec:
                   id: orderApiSpec
-                  path: openapi/security/order-api-with-auth.yaml
+                  path: openapi/security/order-api-with-auth_v2.yaml
   runOptions:
     orderServiceTest:
       openapi:
         type: test
-        filter: "PATH!='/internal/metrics'"
-        baseUrl: ${APP_BASE_URL:http://localhost:8080}
-        actuatorUrl: ${APP_BASE_URL:http://localhost:8080}/actuator/mappings
+        filter: "PATH!='/internal/metrics' && PATH!='/health'"
+        baseUrl: ${APP_BASE_URL:https://localhost:8443}
+        actuatorUrl: ${APP_BASE_URL:https://localhost:8443}/actuator/mappings
+        cert:
+          keyStore:
+            file: ${SPECMATIC_CLIENT_KEYSTORE:./certs/specmatic-client.jks}
+            alias: specmatic-client
+            password: ${SPECMATIC_CLIENT_KEY_PASSWORD:changeit}
+          keyStorePassword: ${SPECMATIC_CLIENT_KEYSTORE_PASSWORD:changeit}
         specs:
           - spec:
               id: orderApiSpec
               securitySchemes:
-                basicAuth:
+                basic-auth:
                   type: basicAuth
-                  token: ${BASIC_AUTH_TOKEN:dXNlcjppbnZhbGlkcGFzcw==}
-                apiKeyAuth:
+                  token: ${BASIC_AUTH_TOKEN:ZGVmYXVsdC11c2VyOmRlZmF1bHQtdXNlcgo=}
+                api-key-auth:
                   type: apiKey
                   token: ${API_KEY:INVALID_APIKEY1234}

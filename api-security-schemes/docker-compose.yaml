@@ -1,11 +1,44 @@
 services:
+  vault-init:
+    image: hashicorp/vault:2.0.3
+    user: "0:0"
+    depends_on:
+      vault:
+        condition: service_healthy
+    env_file:
+      - ./vault/vault.env
+      - ./vault/demo-secrets.env
+    environment:
+      VAULT_ADDR: http://vault:8200
+    entrypoint: ["/bin/sh", "/vault/config/bootstrap.sh"]
+    volumes:
+      - ./vault:/vault/config:ro
+      - vault-agent-auth:/vault/agent-auth
+
+  vault:
+    image: hashicorp/vault:2.0.3
+    env_file:
+      - ./vault/vault.env
+    environment:
+      VAULT_ADDR: http://127.0.0.1:8200
+      VAULT_DEV_LISTEN_ADDRESS: 0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+    healthcheck:
+      test: ["CMD", "vault", "status"]
+      interval: 2s
+      timeout: 2s
+      retries: 15
+    ports:
+      - "8200:8200"
+
   keycloak:
-    image: quay.io/keycloak/keycloak
+    image: quay.io/keycloak/keycloak:22.0.5
     command: start-dev --import-realm
     environment:
       KEYCLOAK_IMPORT: /opt/keycloak/data/import/specmatic-realm.json
       KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: admin
+      KEYCLOAK_ADMIN_PASSWORD: Keycloak-Admin!2026
     healthcheck:
       test:
         ["CMD", "bash", "-lc", "exec 3<>/dev/tcp/localhost/8080 && printf 'GET /realms/specmatic/.well-known/openid-configuration HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && head -n 1 <&3 | grep -q '200 OK'"]
@@ -19,38 +52,64 @@ services:
       - "8083:8080"
 
   order-api:
-    image: specmaticdemo/specmatic-order-api-java-with-oauth
+    image: specmaticdemo/specmatic-order-api-java-with-oauth:latest
     depends_on:
       keycloak:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/specmatic
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_AUDIENCES: order-api
+      SERVER_SSL_KEY_STORE: file:/certs/server-keystore.jks
+      SERVER_SSL_KEY_STORE_PASSWORD: changeit
+      SERVER_SSL_KEY_PASSWORD: changeit
+      SERVER_SSL_TRUST_STORE: file:/certs/server-truststore.jks
+      SERVER_SSL_TRUST_STORE_PASSWORD: changeit
+      SERVER_SSL_CLIENT_AUTH: need
     healthcheck:
-      test: ["CMD-SHELL", "status=$$(curl -fsS -o /dev/null -w '%{http_code}' http://localhost:8080/actuator/mappings || true); [ \"$$status\" = \"200\" ] || [ \"$$status\" = \"401\" ]"]
+      test:
+        [
+          "CMD-SHELL",
+          "curl -fsS --cacert /certs/ca.crt --cert /certs/specmatic-client.crt --key /certs/specmatic-client.key https://localhost:8443/health >/dev/null",
+        ]
       interval: 5s
       timeout: 3s
       retries: 18
       start_period: 10s
+    volumes:
+      - ./certs:/certs:ro
     ports:
-      - "8080:8080"
+      - "8443:8443"
     restart: on-failure
 
   specmatic-test:
     image: specmatic/enterprise:latest
     depends_on:
+      vault-init:
+        condition: service_completed_successfully
       keycloak:
         condition: service_healthy
       order-api:
         condition: service_healthy
     environment:
-      APP_BASE_URL: http://order-api:8080
+      APP_BASE_URL: https://order-api:8443
       KEYCLOAK_BASE_URL: http://keycloak:8080
-      KEYCLOAK_USER_USERNAME: user1
-      KEYCLOAK_USER_PASSWORD: password
-      KEYCLOAK_ADMIN_USERNAME: admin1
-      KEYCLOAK_ADMIN_PASSWORD: password
+      SPECMATIC_CLIENT_KEYSTORE: /usr/src/app/api-security-schemes/certs/specmatic-client.jks
+      GITHUB_HEAD_REF: ${GITHUB_HEAD_REF:-}
+      GITHUB_REF_NAME: ${GITHUB_REF_NAME:-}
+    working_dir: /usr/src/app/api-security-schemes
+    entrypoint:
+      - /bin/bash
+      - -lc
+      - |
+        source /vault/config/import-oauth-secrets.sh
+        source /vault/config/import-static-auth-secrets.sh
+        exec /usr/local/bin/enterprise test
     volumes:
-      - .:/usr/src/app
+      - ..:/usr/src/app
       - ../license.txt:/specmatic/specmatic-license.txt:ro
-    command: ["test"]
+      - ./vault:/vault/config:ro
+      - vault-agent-auth:/vault/agent-auth:ro
+
+volumes:
+  vault-agent-auth:
