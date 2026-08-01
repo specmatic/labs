@@ -1,4 +1,4 @@
-# Specmatic Sample Application to demonstrate OpenAPI Multiple Security Schemes Support
+# Specmatic Sample Application to demonstrate OpenAPI Multiple Security Schemes with mTLS Support
 ![Specmatic Sample Application to demonstrate OpenAPI OAuth2 security scheme support](assets/SpecmaticOAuth.gif)
 
 This project demonstrates how to leverage OpenAPI specifications as a Contract Test with Specmatic when the specification includes multiple [security schemes](https://spec.openapis.org/oas/v3.0.1#security-scheme-object) to protect different endpoints based on HTTP methods.
