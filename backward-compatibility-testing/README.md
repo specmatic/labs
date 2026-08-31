@@ -102,6 +102,9 @@ Run:
 ```shell
 docker run --rm \
   --user "$(id -u):$(id -g)" \
+  -e GIT_CONFIG_COUNT=1 \
+  -e GIT_CONFIG_KEY_0=safe.directory \
+  -e GIT_CONFIG_VALUE_0='*' \
   -v "${PWD}/..:/workspace" \
   -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   -w /workspace \
@@ -133,7 +136,7 @@ The Incompatibility Report:
 
 Windows PowerShell single-line:
 ```powershell
-docker run --rm --user "$(id -u):$(id -g)" -v "$((Resolve-Path ..).Path):/workspace" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
+docker run --rm --user "$(id -u):$(id -g)" -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0='*' -v "$((Resolve-Path ..).Path):/workspace" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
 ```
 
 ```terminaloutput
@@ -143,7 +146,8 @@ Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
 
 Why the command is structured this way:
 - `-v "${PWD}/..:/workspace"` mounts the `labs` repository root, not just this lab folder, so Specmatic can access the git repository metadata.
-- `--user "$(id -u):$(id -g)"` runs the container as your host user, which avoids git ownership issues when the mounted repository is inspected inside the container.
+- `--user "$(id -u):$(id -g)"` runs the container as your host user, which avoids file-permission issues when the mounted repository is inspected inside the container.
+- `-e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0='*'` marks the mounted repository as a trusted (`safe.directory`) location for git. Docker Desktop (notably on macOS, sometimes on Windows) can present the bind-mounted repo as owned by a different user than the container's, even with `--user` set. Without this, git refuses to read the repository and Specmatic fails with `Unexpected error ... Could not access 'origin/main'`. Since `--user` leaves no writable `$HOME`, the config is passed via environment variables instead of `git config --global`.
 - `--base-branch origin/main` tells Specmatic which tracked baseline to compare against.
 - `--target-path backward-compatibility-testing/products.yaml` tells Specmatic to compare the working tree version of this file with the tracked version on `origin/main`.
 
@@ -201,6 +205,9 @@ Run the same command again:
 ```shell
 docker run --rm \
   --user "$(id -u):$(id -g)" \
+  -e GIT_CONFIG_COUNT=1 \
+  -e GIT_CONFIG_KEY_0=safe.directory \
+  -e GIT_CONFIG_VALUE_0='*' \
   -v "${PWD}/..:/workspace" \
   -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   -w /workspace \
@@ -220,7 +227,7 @@ Verdict for spec /workspace/backward-compatibility-testing/products.yaml:
 
 Windows PowerShell single-line:
 ```powershell
-docker run --rm --user "$(id -u):$(id -g)" -v "$((Resolve-Path ..).Path):/workspace" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
+docker run --rm --user "$(id -u):$(id -g)" -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0='*' -v "$((Resolve-Path ..).Path):/workspace" -v "$((Resolve-Path ..\license.txt).Path):/specmatic/specmatic-license.txt:ro" -w /workspace specmatic/enterprise:latest backward-compatibility-check --base-branch origin/main --target-path backward-compatibility-testing/products.yaml
 ```
 
 ```terminaloutput
@@ -299,6 +306,7 @@ What was verified in Studio:
 - Running the command from another directory. The README assumes you are in `labs/backward-compatibility-testing`.
 - Expecting Specmatic to compare two arbitrary files. In this lab it compares your working tree change to the tracked version on `origin/main`.
 - Mounting only the current folder into Docker. Specmatic needs the `labs` repo root mounted so git metadata is available inside the container.
+- Seeing `Unexpected error while running ... backward compatibility check: Error executing git diff origin/main HEAD --name-status` / `ERRORS: error: Could not access 'origin/main'`. This happens on Docker Desktop (notably macOS) when the mounted repo appears owned by a different user than the container user, even with `--user` set — git's `dubious ownership` protection blocks it, and Specmatic surfaces it as this less obvious error. The `-e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0='*'` flags in the commands above work around this.
 - In Studio, saving first and checking later. For this workflow, use the **Test Backward Compatibility** check button on the **Spec** tab before saving.
 
 ## What you learned
