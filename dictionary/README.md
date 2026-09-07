@@ -54,10 +54,14 @@ Open and understand the [generated dictionary file](specs/dictionary.yaml)
 Update `specmatic.yaml` under `dependencies.services[0].service` to add:
 
 ```yaml
-data:
-  dictionary:
-    path: specs/dictionary.yaml
+        data:
+          dictionary:
+            path: specs/dictionary.yaml
 ```
+
+Paste this directly below the `runOptions:` block inside `dependencies.services[0].service`, at the same indentation (8 spaces) as `runOptions:` itself — it must be a sibling of `definitions`/`runOptions` inside `service:`, not a top-level key of the file.
+
+> **Note:** Placing `data:` at column 0 (as a sibling of `dependencies:`/`specmatic:`) will fail with `data is not a valid property in the configuration file`, since `data` is only a valid key nested inside a `service:` block, not at the top level.
 
 Alternatively, just run the following commands:
 
