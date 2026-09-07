@@ -30,6 +30,18 @@ Participants will:
 * Understand when to use substitution vs lookup, and how both improve contract-test realism with minimal example duplication.
 * By the end, participants will be able to design mocks that are deterministic, reusable, and closer to production-like behavior.
 
+## How response templating works
+
+Both Direct Substitution and Data Lookup share the same building block: capture a request value into a named variable, then reference that variable in the response. Every token below is a full JSON string value — keep the surrounding double quotes.
+
+**Capturing a value** — in `http-request`, replace a literal value with `"(<your variable name>:<type>)"`. For example, `"productid": "(PRODUCTID:number)"` captures whatever number is sent as `PRODUCTID`. `<type>` can be a built-in Specmatic type token (see the table at the bottom of this doc) or a schema-defined type from the spec, e.g. `ProductType`.
+
+**Direct Substitution** — echo a captured value straight into the response with `"$(<your variable name>)"`. For example, `"productid": "$(PRODUCTID)"` returns whatever was actually captured, instead of a fixed number.
+
+**Data Lookup** — map a captured value to a set of correlated response fields via a lookup table that you author yourself (Specmatic does not populate it for you). You must add one entry for every input value you want to support — anything not listed has no matching entry to look up:
+1. Add a top-level `dataLookup` object to the example file, as a sibling of `http-request`/`http-response`. Under it, hand-write one entry per input value you want to handle — e.g. one entry for `book`, one for `gadget` — each holding the response fields that value should produce.
+2. Reference into it from the response with `"$(dataLookup.<path>[<your variable name>].<field>)"`. The `[<your variable name>]` part is replaced at runtime with whatever value was actually captured, so it acts like a lookup-table key. For example, if `dataLookup.products` maps `"book"` and `"gadget"` to their own `{id, name, inventory, createdOn}` objects, and you captured the query param `type` as `TYPE`, then `"id": "$(dataLookup.products[TYPE].id)"` returns the `id` for whichever `type` was actually requested.
+
 ## Time required to complete this lab
 10-15 minutes.
 
@@ -72,12 +84,15 @@ docker compose down -v
 - `GET /findAvailableProducts (type=gadget)`: response values are not deterministically mapped for gadget scenario.
 
 ## 2. Task A: Fix order response using Direct Substitution
+
+Use Direct Substitution (see "How response templating works" above) to make `productid` and `count` echo back whatever was sent in the request.
+
 Edit:
 - `examples/mock/test_accepted_order_request.json`
 
 Change response templating so:
-- `http-response.body.productid` is copied from `http-request.body.productid`.
-- `http-response.body.count` is copied from `http-request.body.count`.
+- `http-response.body.productid` is copied from `http-request.body.productid` — capture it as `PRODUCTID` in the request and reference `$(PRODUCTID)` in the response.
+- `http-response.body.count` is copied from `http-request.body.count` — capture it as `COUNT` in the request and reference `$(COUNT)` in the response.
 
 Keep `id` as-is.
 
@@ -103,6 +118,9 @@ docker compose down -v
 ```
 
 ## 3. Task B: Fix product search using Data Lookup
+
+Use Data Lookup (see "How response templating works" above) to map the captured `type` query value to a set of correlated response fields.
+
 Edit:
 - `examples/mock/test_find_available_products_book_200.json`
 
