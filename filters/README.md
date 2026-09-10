@@ -38,7 +38,7 @@ Tests run: 136, Successes: 18, Failures: 114, WIP: 4, Errors: 0
 Clean up:
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## 2. Start Studio
@@ -84,7 +84,7 @@ In Studio:
 Stop Studio:
 
 ```shell
-docker compose --profile studio down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 Alternatively, just run the following command:
@@ -109,7 +109,7 @@ Tests run: 20, Successes: 18, Failures: 0, WIP: 2, Errors: 0
 Clean up:
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Pass Criteria

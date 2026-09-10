@@ -115,7 +115,7 @@ Total missed operations: 1 is greater than the maximum threshold of 0.
 Clean up:
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 Also inspect the generated HTML report after the run:
@@ -177,7 +177,7 @@ Expected coverage outcome:
 Clean up:
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Verify generated HTML report
@@ -219,7 +219,7 @@ What to observe before fixing the checked-in spec:
 Stop Studio and the provider:
 
 ```shell
-docker compose --profile studio down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Pass criteria
@@ -229,7 +229,7 @@ docker compose --profile studio down -v
 - After fixing the typo in `specs/service.yaml`, the rerun passes with `2/2` successful tests and no missed or unimplemented paths.
 
 ## Troubleshooting
-- If the test runner starts before the provider is ready, rerun after `docker compose down -v`.
+- If the test runner starts before the provider is ready, rerun after `docker compose --profile "*" down -v --remove-orphans`.
 - If results look stale, use `--build` exactly as documented.
 - If you do not see `/pets/find` in Swagger UI, confirm the provider is running on `127.0.0.1:8080`.
 - If the first run does not fail as expected, confirm the checked-in spec still says `/pets/search` and not `/pets/find`.

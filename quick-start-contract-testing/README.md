@@ -91,7 +91,7 @@ Ignore:
 Clean up:
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Part B: Fix the provider implementation
@@ -129,7 +129,7 @@ Tests run: 1, Successes: 1, Failures: 0, WIP: 0, Errors: 0
 Clean up:
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Optional: Run the same check in Studio
@@ -173,7 +173,7 @@ How to inspect the evidence:
 
 Stop services:
 ```shell
-docker compose --profile studio down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Pass criteria

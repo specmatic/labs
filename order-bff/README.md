@@ -43,7 +43,7 @@ Tests run: 269, Successes: 265, Failures: 0, WIP: 4, Errors: 0
 In the Studio UI, you might see 7 more Excluded tests. Total: 276.
 
 ```shell
-docker compose --profile studio down -v --remove-orphans
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ### 2. Using Docker (Recommended for CI)
@@ -58,7 +58,7 @@ Tests run: 269, Successes: 265, Failures: 0, WIP: 4, Errors: 0
 ```
 
 ```shell
-docker compose --profile test down -v --remove-orphans
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 Also look at the [detailed contract report](build/reports/specmatic/test/html/index.html) to see the details of the tests that were run.

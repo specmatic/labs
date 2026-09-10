@@ -77,7 +77,7 @@ The failing scenarios should be:
 Clean up before making changes:
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Learner task
@@ -136,7 +136,7 @@ The message count report should show:
 Clean up:
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Run in Studio
@@ -150,7 +150,7 @@ Open [Studio](http://127.0.0.1:9000/_specmatic/studio), load `specmatic.yaml`, a
 Stop Studio:
 
 ```shell
-docker compose --profile studio down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Troubleshooting
@@ -158,7 +158,7 @@ docker compose --profile studio down -v
 - `port is already allocated`:
   Free `4566`, `9092`, `9000`, and `9001`, then retry.
 - The suite still fails after fixing `app.py`:
-  Bring the stack down with `docker compose down -v` and run again so Kafka and LocalStack state is reset.
+  Bring the stack down with `docker compose --profile "*" down -v --remove-orphans` and run again so Kafka and LocalStack state is reset.
 - Retry scenario still never reaches SQS:
   Check that the retry consumer thread is started and polling `place-order-retry-topic`.
 - First run is slow:

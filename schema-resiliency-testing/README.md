@@ -38,7 +38,7 @@ Tests run: 3, Successes: 3, Failures: 0, WIP: 0, Errors: 0
 
 Stop Studio before moving to the next steps:
 ```shell
-docker compose --profile studio down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ### 2. Loop Test using CLI
@@ -60,7 +60,7 @@ Tests run: 3, Successes: 3, Failures: 0, WIP: 0, Errors: 0
 Clean up
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Goal of this lab
@@ -92,7 +92,7 @@ Tests run: 42, Successes: 42, Failures: 0, WIP: 0, Errors: 0
 Clean up
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ### Positive and Negative Tests (ALL)
@@ -121,7 +121,7 @@ Tests run: 600, Successes: 600, Failures: 0
 Clean up
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ### Out of License Limit

@@ -152,7 +152,7 @@ Expected output:
 
 Clean up Studio:
 ```shell
-docker compose --profile studio down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Pass Criteria

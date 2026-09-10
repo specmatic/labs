@@ -296,7 +296,7 @@ Optional extension:
 Clean up:
 
 ```shell
-docker compose --profile studio down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 What was verified in Studio:

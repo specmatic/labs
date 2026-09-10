@@ -63,7 +63,7 @@ Tests run: 4, Successes: 1, Failures: 3, WIP: 0, Errors: 0
 
 Clean up:
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ### What is failing now
@@ -99,7 +99,7 @@ Tests run: 4, Successes: 2, Failures: 2, WIP: 0, Errors: 0
 ```
 Clean up:
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## 3. Task B: Fix product search using Data Lookup
@@ -133,7 +133,7 @@ Tests run: 4, Successes: 4, Failures: 0, WIP: 0, Errors: 0
 
 Clean up:
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Specmatic Types to OpenAPI Types Mapping

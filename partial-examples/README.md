@@ -95,7 +95,7 @@ Expected output:
 Stop Studio after the examples are saved:
 
 ```shell
-docker compose --profile studio down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 Alternatively, just run the following command:
@@ -155,7 +155,7 @@ Expected: `7` tests passing and `0` failing.
 ### Stop Studio
 
 ```shell
-docker compose --profile studio down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ### Why 7 tests?
@@ -177,7 +177,7 @@ Tests run: 7, Successes: 6, Failures: 0, WIP: 1, Errors: 0
 ```
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Pass Criteria

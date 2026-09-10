@@ -209,7 +209,7 @@ echo "Both calls returned 200 and the same response body"
 - After stopping mock: consumer returns to `Service unavailable`.
 
 ## Common confusion points
-- Using `down` during Part C can stop consumer too; use `Ctrl+C` or `stop mock` to stop only mock.
+- Using `down` during Part C can stop consumer too; use `docker compose --profile mock stop mock` to stop only the mock.
 - Trying to open Studio on `localhost` in environments where IPv6 causes issues; use `127.0.0.1`.
 - Assuming this lab needs `specmatic.yaml`; this quick-start runs mock directly from `specs/service.yaml`.
 
@@ -217,10 +217,8 @@ echo "Both calls returned 200 and the same response body"
 From lab folder, stop and remove all containers (consumer, mock, and studio) at once:
 
 ```shell
-docker compose down -v --remove-orphans
+docker compose --profile "*" down -v --remove-orphans
 ```
-
-`down` is not restricted by `--profile`, so this single command cleans up every service in this lab regardless of which profiles were started.
 
 ## What you learned
 - Mocking lets consumer teams continue independently of dependency readiness.
