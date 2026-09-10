@@ -214,19 +214,13 @@ echo "Both calls returned 200 and the same response body"
 - Assuming this lab needs `specmatic.yaml`; this quick-start runs mock directly from `specs/service.yaml`.
 
 ## Cleanup
-From lab folder:
+From lab folder, stop and remove all containers (consumer, mock, and studio) at once:
 
 ```shell
-docker compose --profile mock down -v --remove-orphans
+docker compose down -v --remove-orphans
 ```
 
-If consumer is still running in another terminal, stop it with `Ctrl+C`.
-
-If Studio is still running, stop it with:
-
-```shell
-docker compose --profile studio down -v --remove-orphans
-```
+`down` is not restricted by `--profile`, so this single command cleans up every service in this lab regardless of which profiles were started.
 
 ## What you learned
 - Mocking lets consumer teams continue independently of dependency readiness.
