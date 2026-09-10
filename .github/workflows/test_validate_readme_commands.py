@@ -128,7 +128,10 @@ class ParseReadmeCommandsTests(GitRepoTestCase):
             "docker compose up test --build --abort-on-container-exit\n",
         )
         self.assertEqual(len(commands[0].expected_outputs), 3)
-        self.assertEqual(commands[1].command, "docker compose down -v\n")
+        self.assertEqual(
+            commands[1].command,
+            'docker compose --profile "*" down -v --remove-orphans\n',
+        )
         self.assertEqual(commands[1].expected_outputs, [])
 
     def _write_readme(self, content: str) -> Path:
