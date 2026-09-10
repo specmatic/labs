@@ -92,7 +92,7 @@ You now have an uncommitted change in a tracked contract file. Specmatic will co
 Alternatively, apply all three edits with a single command. It bumps the version, changes `name` to `number`, and adds the `category` field:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc "sed -i 's/version: 1.0.0/version: 1.1.0/' products.yaml; sed -i '/properties:/,/sku:/s/type: string/type: number/' products.yaml; sed -i '/^                  sku:$/i\\                  category:\\n                    type: string' products.yaml"
+docker compose run --rm --no-deps --entrypoint sh studio -lc "sed -i 's/version: 1.0.0/version: 1.1.0/' products.yaml; sed -i '/properties:/,/sku:/s/type: string/type: number/' products.yaml; sed -i '/^                  sku:$/i\\                  category:\\n                    type: string' products.yaml"
 ```
 
 ## Part B: Run the backward compatibility check
@@ -197,7 +197,7 @@ Keep the new `category` field, and keep version `1.1.0`.
 Alternatively, apply that fix with a single command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/workspace" -w /workspace specmatic/enterprise:latest -lc 'sed -i "/properties:/,/sku:/s/type: number/type: string/" products.yaml'
+docker compose run --rm --no-deps --entrypoint sh studio -lc 'sed -i "/properties:/,/sku:/s/type: number/type: string/" products.yaml'
 ```
 
 ## Part D: Re-run the check

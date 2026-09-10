@@ -65,7 +65,7 @@ Why this fails:
 Alternatively, just run the following commands:
 
 ```shell
-docker run --rm --network quick-start-mock_default --entrypoint sh specmatic/enterprise:latest -lc 'curl --fail --silent --show-error http://127.0.0.1:9100/pets/1 >/dev/null && exit 1 || echo "Request failed as expected"'
+docker compose run --rm --no-deps --entrypoint sh mock -lc 'curl --fail --silent --show-error http://127.0.0.1:9100/pets/1 >/dev/null && exit 1 || echo "Request failed as expected"'
 ```
 
 ## Part B: Start contract-generated mock (consumer unblocked)
@@ -93,13 +93,13 @@ Alternatively, just run the following commands:
 
 ```shell
 expected='{"id":1,"name":"Scooby","type":"GoldenRetriever","status":"Adopted"}'
-actual="$(docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS http://mock:9100/pets/1 | tr -d '\n ' )"
+actual="$(docker compose exec -T mock curl -sS http://127.0.0.1:9100/pets/1 | tr -d '\n ' )"
 [ "$actual" = "$expected" ] || {
   echo "Unexpected payload: $actual"
   exit 1
 }
-first="$(docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS -w '\n%{http_code}' http://mock:9100/pets/2)"
-second="$(docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS -w '\n%{http_code}' http://mock:9100/pets/2)"
+first="$(docker compose exec -T mock curl -sS -w '\n%{http_code}' http://127.0.0.1:9100/pets/2)"
+second="$(docker compose exec -T mock curl -sS -w '\n%{http_code}' http://127.0.0.1:9100/pets/2)"
 first_body="$(printf '%s\n' "$first" | sed '$d')"
 first_status="$(printf '%s\n' "$first" | tail -n 1)"
 second_body="$(printf '%s\n' "$second" | sed '$d')"
@@ -118,7 +118,7 @@ second_status="$(printf '%s\n' "$second" | tail -n 1)"
   exit 1
 }
 echo "Both calls returned 200 and different bodies"
-status="$(docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS -o /dev/null -w '%{http_code}' http://mock:9100/pets/abc)"
+status="$(docker compose exec -T mock curl -sS -o /dev/null -w '%{http_code}' http://127.0.0.1:9100/pets/abc)"
 [ "$status" = "400" ] || {
   echo "Expected 400, got $status"
   exit 1
@@ -140,7 +140,7 @@ Expected output:
 Alternatively, just run the following commands:
 
 ```shell
-docker run --rm --network quick-start-mock_default --entrypoint sh specmatic/enterprise:latest -lc 'curl --fail --silent --show-error http://127.0.0.1:9100/pets/1 >/dev/null && exit 1 || echo "Request failed as expected"'
+docker compose run --rm --no-deps --entrypoint sh mock -lc 'curl --fail --silent --show-error http://127.0.0.1:9100/pets/1 >/dev/null && exit 1 || echo "Request failed as expected"'
 ```
 
 ## Part D: Run mock from Studio and inspect traffic
@@ -178,10 +178,10 @@ To inspect mock traffic in Studio:
 Alternatively, just run the following commands:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc 'mkdir -p specs/service_examples && cp .backup/pets_242_GET_200_1.json specs/service_examples/pets_242_GET_200_1.json'
+docker compose exec -T studio sh -lc 'mkdir -p specs/service_examples && cp .backup/pets_242_GET_200_1.json specs/service_examples/pets_242_GET_200_1.json'
 docker compose exec -T studio sh -lc 'specmatic mock /usr/src/app/specs/service.yaml --port 9100 >/tmp/specmatic-mock.log 2>&1 &'
-first="$(docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS -w '\n%{http_code}' http://studio:9100/pets/242)"
-second="$(docker run --rm --network quick-start-mock_default --entrypoint curl specmatic/enterprise:latest -sS -w '\n%{http_code}' http://studio:9100/pets/242)"
+first="$(docker compose exec -T studio curl -sS -w '\n%{http_code}' http://127.0.0.1:9100/pets/242)"
+second="$(docker compose exec -T studio curl -sS -w '\n%{http_code}' http://127.0.0.1:9100/pets/242)"
 first_body="$(printf '%s\n' "$first" | sed '$d')"
 first_status="$(printf '%s\n' "$first" | tail -n 1)"
 second_body="$(printf '%s\n' "$second" | sed '$d')"

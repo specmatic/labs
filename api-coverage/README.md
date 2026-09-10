@@ -151,7 +151,7 @@ Do not change anything else in the operation.
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's|/pets/search:|/pets/find:|' specs/service.yaml"
+docker compose run --rm --no-deps --entrypoint sh test -lc "sed -i 's|/pets/search:|/pets/find:|' specs/service.yaml"
 ```
 
 ## 3. Re-run the tests and coverage check

@@ -65,7 +65,7 @@ Alternatively, just run the following commands:
 
 ```shell
 docker run --rm -v "${PWD}:/usr/src/app" specmatic/enterprise examples dictionary --examples-dir examples --spec-file specs/simple-openapi-spec.yaml --out specs/dictionary.yaml
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i '/^specmatic:/i\        data:\n          dictionary:\n            path: specs/dictionary.yaml\n' specmatic.yaml"
+docker compose run --rm --no-deps --entrypoint sh suite -lc "sed -i '/^specmatic:/i\        data:\n          dictionary:\n            path: specs/dictionary.yaml\n' specmatic.yaml"
 ```
 
 ## 3. Re-run the suite after configuring dictionary

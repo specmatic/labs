@@ -90,7 +90,7 @@ docker compose --profile "*" down -v --remove-orphans
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i \"/baseUrl: http:\\/\\/localhost:8080/a\\        filter: \\\"PATH!='/health,/monitor/{id},/swagger' && STATUS='200,201'\\\"\" specmatic.yaml"
+docker compose run --rm --no-deps --entrypoint sh suite -lc "sed -i \"/baseUrl: http:\\/\\/localhost:8080/a\\        filter: \\\"PATH!='/health,/monitor/{id},/swagger' && STATUS='200,201'\\\"\" specmatic.yaml"
 ```
 
 ## 5. Verify from CLI (with persisted filters)

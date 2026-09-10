@@ -174,7 +174,7 @@ In each protected request, add the `Authorization` header using the captured `AC
 Alternatively, run the following command:
 
 ```shell
-docker run --rm --entrypoint bash -v "${PWD}:/usr/src/app" -w /usr/src/app specmatic/enterprise -lc 'sed -i "s/basic-auth:/basicAuth:/; s/api-key-auth:/apiKeyAuth:/" specmatic.yaml; find auth_examples -type f -name "*.json" -print0 | while IFS= read -r -d "" file; do tmp="$(mktemp)"; jq --arg auth "Bearer \$(ACCESS_TOKEN)" '"'"'def add_auth: if ((.method? // "" | ascii_upcase) == "POST" or (.method? // "" | ascii_upcase) == "PATCH") then .headers.Authorization = $auth else . end; if has("before") then if has("http-request") then .["http-request"] |= add_auth elif (has("partial") and (.partial | has("http-request"))) then .partial["http-request"] |= add_auth else . end else . end'"'"' "$file" > "$tmp" && mv "$tmp" "$file"; done'
+docker compose run --rm --no-deps --entrypoint bash specmatic-test -lc 'sed -i "s/basic-auth:/basicAuth:/; s/api-key-auth:/apiKeyAuth:/" specmatic.yaml; find auth_examples -type f -name "*.json" -print0 | while IFS= read -r -d "" file; do tmp="$(mktemp)"; jq --arg auth "Bearer \$(ACCESS_TOKEN)" '"'"'def add_auth: if ((.method? // "" | ascii_upcase) == "POST" or (.method? // "" | ascii_upcase) == "PATCH") then .headers.Authorization = $auth else . end; if has("before") then if has("http-request") then .["http-request"] |= add_auth elif (has("partial") and (.partial | has("http-request"))) then .partial["http-request"] |= add_auth else . end else . end'"'"' "$file" > "$tmp" && mv "$tmp" "$file"; done'
 ```
 
 ## Verify the fix

@@ -76,7 +76,7 @@ To:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#\"status\": \"STARTED\"#\"status\": \"INITIATED\"#' service/processor.py"
+docker compose run --rm --no-deps --entrypoint sh contract-test -lc "sed -i 's#\"status\": \"STARTED\"#\"status\": \"INITIATED\"#' service/processor.py"
 ```
 
 ## Pass criteria

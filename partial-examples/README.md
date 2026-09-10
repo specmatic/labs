@@ -101,7 +101,7 @@ docker compose --profile "*" down -v --remove-orphans
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc '
+docker compose run --rm --no-deps --entrypoint sh suite -lc '
 sed -i "2i\\  \\\"partial\\\": {" examples/test_accepted_order_request.json &&
 sed -i "\$i\\  }" examples/test_accepted_order_request.json &&
 sed -i "2i\\  \\\"partial\\\": {" examples/test_accepted_product_request.json &&
