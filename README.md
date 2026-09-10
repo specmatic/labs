@@ -44,8 +44,6 @@ This is a monorepo. Each lab is self-contained and organized in a separate direc
   - [Intelligent service virtualization](quick-start-mock/README.md)
     - Inline Examples as mock data 
     - External examples as mock data
-  - [Stateful Mocking](stateful-mocking/README.md)
-    - Preserve CRUD resource state across requests
   - [API Testing](quick-start-api-testing/README.md)
     - Using matchers to assert specific values in the API response
   - [API Coverage](api-coverage/README.md)
@@ -61,7 +59,9 @@ This is a monorepo. Each lab is self-contained and organized in a separate direc
   - [Filters](filters/README.md)
   - [Request/Response Adapters](data-adapters/README.md)
   - [Overlays](overlays/README.md)
-  - [Workflow within the Same Spec](workflow-in-same-spec/README.md)
+  - Resource Lifecycle Within a Single API Specification
+    - [Testing a resource lifecycle](workflow-in-same-spec/README.md)
+    - [Mocking a resource lifecycle](stateful-mocking/README.md)
   - [Running Contract Tests and Mocks in CI](continuous-integration/README.md)
 - Event Driven Architecture with AsyncAPI
   - [AsyncAPI Contract Testing](quick-start-async-contract-testing/README.md)
@@ -72,7 +72,7 @@ This is a monorepo. Each lab is self-contained and organized in a separate direc
   - [API Security Schemes](api-security-schemes/README.md)
   - [Schema Resiliency Testing](schema-resiliency-testing/README.md)
   - [Schema Design](schema-design/README.md)
-  - [API Workflow Testing](arazzo-workflow-testing/README.md)
+  - [Workflow Testing Across API Specifications with Arazzo](arazzo-workflow-testing/README.md)
   - [API Resiliency Testing](api-resiliency-testing/README.md)
 - GenAI in Action
   - [MCP Auto Test](mcp-auto-test/README.md)
