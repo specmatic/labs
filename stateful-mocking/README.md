@@ -63,7 +63,7 @@ Why this happens:
 Alternatively, verify this from the command line:
 
 ```shell
-./verify-stateless.sh
+docker compose exec -T mock sh ./verify-stateless.sh
 ```
 
 ```terminaloutput
@@ -92,7 +92,8 @@ type: stateful-mock
 Alternatively, make this change from the command line:
 
 ```shell
-sed 's/type: mock/type: stateful-mock/' specmatic.yaml
+docker compose run --rm --no-deps --entrypoint sh mock -c \
+  "sed -i 's/type: mock/type: stateful-mock/' specmatic.yaml && grep -q 'type: stateful-mock' specmatic.yaml"
 ```
 
 Restart the same mock container:
@@ -139,7 +140,7 @@ Why this works:
 Alternatively, verify the complete lifecycle from the command line:
 
 ```shell
-./verify-stateful.sh
+docker compose exec -T mock sh ./verify-stateful.sh
 ```
 
 ```terminaloutput
