@@ -406,6 +406,16 @@ class SkipCommandTests(GitRepoTestCase):
         self.assertFalse(should_skip_command("docker compose up test --build"))
         self.assertFalse(should_skip_command("open specmatic studio"))
 
+    def test_does_not_skip_one_off_compose_run_for_studio_service(self) -> None:
+        self.assertFalse(
+            should_skip_command(
+                "docker compose run --rm --no-deps --entrypoint sh studio -lc 'echo fixed'"
+            )
+        )
+
+    def test_still_skips_compose_exec_for_studio_service(self) -> None:
+        self.assertTrue(should_skip_command("docker compose exec -T studio specmatic run-suite"))
+
 
 class PreflightTests(GitRepoTestCase):
     def test_determine_preflight_requirements_for_non_docker_lab(self) -> None:

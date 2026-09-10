@@ -207,7 +207,15 @@ def _style(text: str, *codes: str) -> str:
 
 def should_skip_command(command: str) -> bool:
     normalized_command = command.lower()
-    return "docker" in normalized_command and "studio" in normalized_command
+    if "docker" not in normalized_command or "studio" not in normalized_command:
+        return False
+
+    try:
+        command_tokens = shlex.split(command)
+    except ValueError:
+        return True
+
+    return command_tokens[:3] != ["docker", "compose", "run"]
 
 
 def parse_readme_commands(readme_path: Path) -> list[CommandSpec]:
