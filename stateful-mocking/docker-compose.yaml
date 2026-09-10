@@ -1,0 +1,35 @@
+services:
+  consumer:
+    container_name: stateful-mocking-consumer
+    image: python:3.14-alpine
+    working_dir: /app
+    volumes:
+      - ./ui:/app:ro
+    command: ["python", "-m", "http.server", "8081", "--bind", "0.0.0.0"]
+    ports:
+      - "8081:8081"
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; req=urllib.request.Request('http://127.0.0.1:8081/', method='HEAD'); urllib.request.urlopen(req, timeout=2)\""]
+      interval: 2s
+      timeout: 2s
+      retries: 10
+      start_period: 1s
+
+  mock:
+    container_name: stateful-mocking-mock
+    image: specmatic/enterprise:latest
+    working_dir: /usr/src/app
+    volumes:
+      - ./:/usr/src/app
+      - ../license.txt:/specmatic/specmatic-license.txt:ro
+    environment:
+      SPECMATIC_LICENSE_PATH: /specmatic/specmatic-license.txt
+    command: ["mock"]
+    ports:
+      - "9100:9100"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9100/actuator/health >/dev/null"]
+      interval: 2s
+      timeout: 2s
+      retries: 20
+      start_period: 2s

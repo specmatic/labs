@@ -44,6 +44,8 @@ This is a monorepo. Each lab is self-contained and organized in a separate direc
   - [Intelligent service virtualization](quick-start-mock/README.md)
     - Inline Examples as mock data 
     - External examples as mock data
+  - [Stateful Mocking](stateful-mocking/README.md)
+    - Preserve CRUD resource state across requests
   - [API Testing](quick-start-api-testing/README.md)
     - Using matchers to assert specific values in the API response
   - [API Coverage](api-coverage/README.md)
