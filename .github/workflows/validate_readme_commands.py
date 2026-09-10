@@ -51,6 +51,7 @@ DEFAULT_LABS = [
     "quick-start-contract-testing",
     "quick-start-mock",
     "schema-resiliency-testing",
+    "stateful-mocking",
     "workflow-in-same-spec",
 ]
 

@@ -20,6 +20,8 @@ A regular mock handles requests independently and may generate fresh contract-va
 - `specmatic.yaml` - Controls whether the mock runs in regular or stateful mode.
 - `ui/index.html` - Consumer UI and API traffic viewer.
 - `docker-compose.yaml` - Consumer and one config-driven mock service.
+- `verify-stateless.sh` - Verifies that the regular mock does not preserve the created Product.
+- `verify-stateful.sh` - Verifies the complete stateful CRUD lifecycle.
 
 ## Learner task
 1. Create and fetch a Product with a regular mock; observe that POST state is not preserved.
@@ -35,12 +37,6 @@ A regular mock handles requests independently and may generate fresh contract-va
 - Stateful Mocking: [https://docs.specmatic.io/contract_driven_development/service_virtualization/stateful_mocking](https://docs.specmatic.io/contract_driven_development/service_virtualization/stateful_mocking)
 
 ## Part A: Regular mock (intentional stateless behavior)
-From the repository root:
-
-```shell
-cd stateful-mocking
-```
-
 Start the consumer and regular mock:
 
 ```shell
@@ -64,6 +60,16 @@ Why this happens:
 - The same ID did not retrieve the created Product.
 - A regular mock handles each request independently and does not remember the POST.
 
+Alternatively, verify this from the command line:
+
+```shell
+./verify-stateless.sh
+```
+
+```terminaloutput
+Stateless behavior verified
+```
+
 ## Part B: Enable Stateful Mocking
 Stop the mock while leaving the consumer running:
 
@@ -81,6 +87,16 @@ to:
 
 ```yaml
 type: stateful-mock
+```
+
+Alternatively, make this change from the command line:
+
+```shell
+if grep -q 'type: mock' specmatic.yaml; then
+  sed 's/type: mock/type: stateful-mock/' specmatic.yaml > specmatic.yaml.tmp
+  mv specmatic.yaml.tmp specmatic.yaml
+fi
+grep -q 'type: stateful-mock' specmatic.yaml
 ```
 
 Restart the same mock container:
@@ -123,6 +139,16 @@ Return to the same UI. Create returns a new `productId`; the UI fills it into Fe
 
 Why this works:
 - Stateful Mocking preserved the Product through create, fetch, update, and delete.
+
+Alternatively, verify the complete lifecycle from the command line:
+
+```shell
+./verify-stateful.sh
+```
+
+```terminaloutput
+Stateful CRUD lifecycle verified
+```
 
 ## Pass criteria
 - Regular mock: POST returns an ID, but GET does not preserve that created Product.
