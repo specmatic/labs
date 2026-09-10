@@ -104,7 +104,7 @@ services:
       - |
         source /vault/config/import-oauth-secrets.sh
         source /vault/config/import-static-auth-secrets.sh
-        exec /usr/local/bin/enterprise test
+        exec specmatic test
     volumes:
       - ..:/usr/src/app
       - ../license.txt:/specmatic/specmatic-license.txt:ro
