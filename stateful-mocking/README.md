@@ -4,7 +4,7 @@
 Understand how Specmatic Stateful Mocking makes it easy to build and test state-dependent consumer workflows without relying on a real provider or changing consumer API calls.
 
 ## Why this lab matters
-A regular mock handles requests independently and may generate fresh contract-valid responses. That is useful for isolated calls, but insufficient when a workflow depends on earlier changes. Stateful Mocking maintains an in-memory resource lifecycle across requests.
+A regular mock is stateless in nature. It handles requests independently (without past history) and responds with fresh contract-valid responses. That is useful when you want to test each API operation in isolation, but insufficient when a workflow depends on earlier state. Stateful Mocking maintains an in-memory resource lifecycle across requests.
 
 ## Time required to complete this lab
 10-15 minutes.
@@ -26,7 +26,7 @@ A regular mock handles requests independently and may generate fresh contract-va
 ## Learner task
 1. Create and fetch a Product with a regular mock; observe that POST state is not preserved.
 2. Stop the mock, enable Stateful Mocking in `specmatic.yaml`, and restart it.
-3. Create, fetch, update, fetch, delete, and fetch with Stateful Mocking.
+3. Create, fetch, update and delete the same Product with Stateful Mocking.
 
 ## Lab Rules
 - Keep the consumer running while switching mocks.
@@ -34,10 +34,10 @@ A regular mock handles requests independently and may generate fresh contract-va
 - Change only the mock type while switching modes.
 
 ## Specmatic reference
-- Stateful Mocking: [https://docs.specmatic.io/contract_driven_development/service_virtualization/stateful_mocking](https://docs.specmatic.io/contract_driven_development/service_virtualization/stateful_mocking)
+- [Stateful Mocking](https://docs.specmatic.io/contract_driven_development/service_virtualization/stateful_mocking)
 
-## Part A: Regular mock (intentional stateless behavior)
-Start the consumer and regular mock:
+## Part A: Regular mock (intentional failure)
+Start the consumer and regular (stateless) mock:
 
 ```shell
 docker compose up -d --wait consumer mock
@@ -48,13 +48,13 @@ Open [http://127.0.0.1:8081](http://127.0.0.1:8081).
 ### 1. Create a Product
 1. Keep the default values and click **Create Product**.
 2. Expand the POST entry in **API Traffic**.
-3. Confirm the response is `HTTP 201` and contains a UUID `productId`, name `Wireless Keyboard`, and price `2499`.
+3. Confirm the response is `HTTP 201` and contains a UUID `id`, name `Wireless Keyboard`, and price `2499`.
 
 ### 2. Fetch the same Product
 1. Open **Fetch Product**. **Product ID** already contains the ID returned by Create.
 2. Without changing the ID, click **Fetch Product**.
 3. Expand the GET entry in **API Traffic** and compare it with POST.
-4. Confirm GET returns a different contract-valid Product or `HTTP 404`. It does not return the Product just created.
+4. Confirm GET returns a different contract-valid Product. **It does not return the Product just created.**
 
 Why this happens:
 - The same ID did not retrieve the created Product.
@@ -92,11 +92,7 @@ type: stateful-mock
 Alternatively, make this change from the command line:
 
 ```shell
-if grep -q 'type: mock' specmatic.yaml; then
-  sed 's/type: mock/type: stateful-mock/' specmatic.yaml > specmatic.yaml.tmp
-  mv specmatic.yaml.tmp specmatic.yaml
-fi
-grep -q 'type: stateful-mock' specmatic.yaml
+sed 's/type: mock/type: stateful-mock/' specmatic.yaml
 ```
 
 Restart the same mock container:
@@ -105,7 +101,7 @@ Restart the same mock container:
 docker compose up -d --wait mock
 ```
 
-Return to the same UI. Create returns a new `productId`; the UI fills it into Fetch, Update, and Delete automatically.
+Return to the same UI. Create returns a new `id`; the UI fills it into Fetch, Update, and Delete automatically.
 
 ### 1. Create a fresh Product
 1. Open **Create Product** and click **Create Product**.

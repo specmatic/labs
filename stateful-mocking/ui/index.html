@@ -159,7 +159,7 @@
     });
 
     const pretty = value => value == null ? "No body" : JSON.stringify(value, null, 2);
-    const sameProduct = (a, b) => a && b && a.productId === b.productId && a.name === b.name && Number(a.price) === Number(b.price);
+    const sameProduct = (a, b) => a && b && a.id === b.id && a.name === b.name && Number(a.price) === Number(b.price);
 
     function hideMessage() {
       message.className = "message";
@@ -183,7 +183,7 @@
         message.appendChild(detail);
       }
       message.appendChild(close);
-      messageTimer = setTimeout(hideMessage, 1800);
+      messageTimer = setTimeout(hideMessage, 3000);
     }
 
     function addTraffic(method, path, requestBody, status, responseBody) {
@@ -242,17 +242,17 @@
       if (!priceInput.value.trim() || !Number.isFinite(price)) { showMessage("err", "Valid price required", "Enter a numeric product price."); return priceInput.focus(); }
       const body = { name, price };
       const outcome = await call("POST", "/products", body);
-      if (!outcome?.response.ok || !outcome.data?.productId) return showMessage("err", "Create failed", "Product service returned an invalid response.");
+      if (!outcome?.response.ok || !outcome.data?.id) return showMessage("err", "Create failed", "Product service returned an invalid response.");
       createdProduct = outcome.data;
       deletedProductId = null;
-      ["fetchId", "updateId", "deleteId"].forEach(id => document.getElementById(id).value = String(outcome.data.productId));
+      ["fetchId", "updateId", "deleteId"].forEach(id => document.getElementById(id).value = String(outcome.data.id));
       syncControls();
       showMessage("ok", "Product created");
     });
 
     document.getElementById("fetch").addEventListener("click", async () => {
       const requestedId = idValue("fetch");
-      const createdId = createdProduct && String(createdProduct.productId);
+      const createdId = createdProduct && String(createdProduct.id);
       const outcome = await call("GET", `/products/${encodeURIComponent(requestedId)}`);
       if (!outcome) return;
       if (outcome.response.status === 404) return requestedId === createdId && requestedId !== deletedProductId
@@ -272,7 +272,7 @@
       const outcome = await call("PATCH", `/products/${encodeURIComponent(requestedId)}`, { price });
       if (!outcome) return;
       if (!outcome.response.ok) return showMessage("err", "Update failed", `HTTP ${outcome.response.status}`);
-      if (createdProduct && requestedId === String(createdProduct.productId)) createdProduct = outcome.data;
+      if (createdProduct && requestedId === String(createdProduct.id)) createdProduct = outcome.data;
       showMessage("ok", "Product updated");
     });
 

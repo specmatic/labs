@@ -12,6 +12,11 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/ProductInput'
+            examples:
+              SUCCESS:
+                value:
+                  name: Wireless Keyboard
+                  price: 2499
       responses:
         '201':
           description: Product created
@@ -19,9 +24,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Product'
-  /products/{productId}:
+              examples:
+                SUCCESS:
+                  value:
+                    id: e96ec30e-7d1e-450c-9e77-ab6c09935615
+                    name: Wireless Keyboard
+                    price: 2499
+  /products/{id}:
     parameters:
-      - name: productId
+      - name: id
         in: path
         required: true
         schema:
@@ -78,10 +89,9 @@ components:
   schemas:
     Product:
       type: object
-      x-id-field: productId
-      required: [productId, name, price]
+      required: [id, name, price]
       properties:
-        productId:
+        id:
           type: string
           format: uuid
         name:

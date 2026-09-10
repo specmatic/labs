@@ -15,7 +15,7 @@ number_field() { printf '%s' "$1" | sed -n "s/.*\"$2\"[[:space:]]*:[[:space:]]*\
 
 call POST /products '{"name":"Wireless Keyboard","price":2499}'
 [ "$status" = 201 ]
-created_id=$(string_field "$body" productId)
+created_id=$(string_field "$body" id)
 created_name=$(string_field "$body" name)
 created_price=$(number_field "$body" price)
 printf '%s' "$created_id" | grep -Eq '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
@@ -23,7 +23,7 @@ printf '%s' "$created_id" | grep -Eq '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]
 call GET "/products/$created_id"
 [ "$status" = 200 ] || [ "$status" = 404 ]
 if [ "$status" = 200 ] &&
-   [ "$(string_field "$body" productId)" = "$created_id" ] &&
+   [ "$(string_field "$body" id)" = "$created_id" ] &&
    [ "$(string_field "$body" name)" = "$created_name" ] &&
    [ "$(number_field "$body" price)" = "$created_price" ]; then
   echo "Regular mock unexpectedly preserved the Product" >&2

@@ -15,18 +15,18 @@ number_field() { printf '%s' "$1" | sed -n "s/.*\"$2\"[[:space:]]*:[[:space:]]*\
 
 call POST /products '{"name":"Wireless Keyboard","price":2499}'
 [ "$status" = 201 ]
-product_id=$(string_field "$body" productId)
+product_id=$(string_field "$body" id)
 printf '%s' "$product_id" | grep -Eq '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
 
 call GET "/products/$product_id"
 [ "$status" = 200 ]
-[ "$(string_field "$body" productId)" = "$product_id" ]
+[ "$(string_field "$body" id)" = "$product_id" ]
 [ "$(string_field "$body" name)" = "Wireless Keyboard" ]
 [ "$(number_field "$body" price)" = 2499 ]
 
 call PATCH "/products/$product_id" '{"price":2199}'
 [ "$status" = 200 ]
-[ "$(string_field "$body" productId)" = "$product_id" ]
+[ "$(string_field "$body" id)" = "$product_id" ]
 [ "$(string_field "$body" name)" = "Wireless Keyboard" ]
 [ "$(number_field "$body" price)" = 2199 ]
 
