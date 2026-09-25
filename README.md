@@ -56,6 +56,7 @@ This is a monorepo. Each lab is self-contained and organized in a separate direc
   - [Domain-aware requests using Dictionary](dictionary/README.md)
   - [Response Templating via Direct substitution and Data lookup](response-templating/README.md)
 - Specmatic Features
+  - [OpenAPI Linting and Governance](openapi-linter/README.md)
   - [Filters](filters/README.md)
   - [Request/Response Adapters](data-adapters/README.md)
   - [Overlays](overlays/README.md)
