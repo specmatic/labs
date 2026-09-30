@@ -1,0 +1,80 @@
+openapi: 3.0.3
+info:
+  title: Users API
+  version: 1.0.0
+  description: Sample API for Specmatic Linter Lab
+servers:
+  - url: https://api.mycompany.com/v1
+    description: Production server
+tags:
+  - name: users
+    description: Operations related to users
+security:
+  - bearerAuth: []
+paths:
+  /users:
+    post:
+      tags:
+        - users
+      summary: Create user
+      description: Creates a new user
+      operationId: createUser
+      # ❌ Error: Content-Type header parameter conflicts with requestBody media type
+      # (content-type-header-overrides-media-type, elevated to error in specmatic-linter.yaml)
+      parameters:
+        - name: Content-Type
+          in: header
+          required: true
+          schema:
+            type: string
+            enum:
+              - application/xml
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  maxLength: 50
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/userResponse"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    userResponse:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/userStatus"
+        userType:
+          $ref: "#/components/schemas/userType"
+
+    # ⚠️ Warning 2: $ref should not have sibling properties in OAS 3.0
+    userStatus:
+      $ref: '#/components/schemas/statusType'
+      description: Status of user account
+
+    statusType:
+      type: string
+      maxLength: 20
+
+    # ⚠️ Warning 1: Enum value "inactive" contradicts integer schema
+    userType:
+      type: integer
+      format: int32
+      minimum: 1
+      maximum: 10
+      enum: [1, 2, "inactive"]
+      description: User account type code

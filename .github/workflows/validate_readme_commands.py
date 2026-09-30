@@ -44,6 +44,7 @@ DEFAULT_LABS = [
     "kafka-avro",
     "kafka-sqs-retry-dlq",
     "mcp-auto-test",
+    "openapi-linter",
     "overlays",
     "partial-examples",
     "quick-start-api-testing",
