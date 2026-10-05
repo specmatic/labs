@@ -73,7 +73,17 @@ Checkpoint after Task A:
 3. Re-run tests.
 
 Checkpoint after Task B:
-- You should see Successes: 20, Failures: 0, Errors: 0, Excluded 4 in Studio.
+- You should see Success: 18, Failed: 0, Skipped: 4, Wip: 4, Excluded: 4, Total: 30 in Studio.
+
+### Task C: Exclude wip failing scenarios
+1. Click on the `Wip: 4` result button on the top to show only WIP tests.
+2. Select the `/orders GET 400` tests with `Missing In Spec` remark.
+3. Click `Exclude`.
+4. Click `Total` to return to the full list and confirm excluded tests appear greyed out. 
+5. Re-run tests.
+
+Checkpoint after Task C:
+- You should see Success: 18, Failed: 0, Skipped: 4, Wip: 2, Excluded: 4, Total: 28 in Studio.
 
 ## 4. Persist filters to config
 In Studio:
@@ -115,7 +125,7 @@ docker compose --profile "*" down -v --remove-orphans
 ## Pass Criteria
 - Baseline run shows `136` tests with many failures.
 - After applying and exporting filters, CLI run shows:
-  - `Tests run: 20, Successes: 18, Failures: 0, WIP: 2, Errors: 0`
+- `Tests run: 20, Successes: 18, Failures: 0, WIP: 2, Errors: 0`
 
 ## Why this lab matters
 - Filters help teams focus on critical scenarios while they triage known failures.
