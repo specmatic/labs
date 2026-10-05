@@ -150,7 +150,7 @@ In Studio, after examples are valid:
 - Go to `Mock` and click `Run` (mock server on port `8080`).
 - Go to `Test`, set URL to `http://127.0.0.1:8080`, then click `Run`.
 
-Expected: `7` tests passing and `0` failing.
+Expected: `6` tests successful, `1` WIP, and `0` failing.
 
 ### Stop Studio
 
