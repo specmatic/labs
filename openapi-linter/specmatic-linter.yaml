@@ -1,0 +1,11 @@
+profiles:
+  default:
+    rules:
+      extends:
+        - starter
+      include:
+        - content-type-header-overrides-media-type
+        - ref-has-siblings
+        - health-endpoint
+      override:
+        content-type-header-overrides-media-type: error
