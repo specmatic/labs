@@ -9,6 +9,7 @@ Learn how to use **Specmatic Linter** to enforce API quality and design consiste
 ## Prerequisites
 - Docker Engine is installed and running on your machine.
 - You are in the `labs/openapi-linter` directory.
+- A valid Specmatic Enterprise license exists at `labs/license.txt`.
 
 ## Why this lab matters
 
@@ -26,15 +27,49 @@ Specmatic Linter provides automated, shift-left governance for API contracts:
 
 ## Files in this lab
 - `openapi.yaml`: OpenAPI 3.0 specification with intentional errors and warnings.
-- `specmatic-linter.yaml`: Empty linter configuration file already present in the lab, which you will populate and tune.
+- `specmatic-linter.yaml`: Linter configuration with the `starter` ruleset, additional rules, and a severity override.
 
 ---
 
-## Step 1: Inspect the OpenAPI Specification
+## Step 1: Run the Linter and Observe the Failure
 
-Open `openapi.yaml`. Notice that it defines a Users API with intentional modeling issues:
+Run the linter on the provided `openapi.yaml` spec file.
 
-1. **Content-Type Header Conflict (`content-type-header-overrides-media-type`)**:
+```shell
+docker run --rm \
+  -v ".:/usr/src/app" \
+  -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
+  -e SPECMATIC_LICENSE_PATH=/specmatic/specmatic-license.txt \
+  specmatic/enterprise:latest \
+  lint openapi.yaml --config specmatic-linter.yaml --format=html
+```
+
+Since we've specified `--format=html`, this command will generate an interactive HTML report to review the lint results.
+
+Expected terminal output:
+```terminaloutput
+Lint report for openapi.yaml generated at /usr/src/app/build/reports/specmatic/lint/openapi/lint-report-openapi.html
+Target: openapi.yaml
+Maturity Level: Gold
+Errors: 1, Warnings: 3, Ignored: 0
+Status: FAILED
+```
+
+> [!NOTE]
+> The command exits with code `1` (`Status: FAILED`) because there is **1 error**.
+
+### Inspect the Diagnostics HTML Report
+Open [build/reports/specmatic/lint/openapi/lint-report-openapi.html](build/reports/specmatic/lint/openapi/lint-report-openapi.html) in your browser.
+
+Confirm that the report shows **1 error** and **3 warnings**. In the next step, trace these diagnostics back to the specification.
+
+---
+
+## Step 2: Understand the Error and Warnings
+
+Keep the lint report open and inspect `openapi.yaml`. The reported error and warnings correspond to these issues in the Users API:
+
+1. **Content-Type Header Conflict (`content-type-header-overrides-media-type`, Error)**:
    Under `POST /users`, the request body declares `application/json`, but an explicit header parameter named `Content-Type` is defined with `application/xml`:
    ```yaml
    paths:
@@ -57,7 +92,7 @@ Open `openapi.yaml`. Notice that it defines a Users API with intentional modelin
    ```
    In OpenAPI 3.x, request media types should be defined in `requestBody.content`. Declaring an explicit `Content-Type` header parameter that contradicts `requestBody.content` creates ambiguity for clients and servers.
 
-2. **Enum Type Contradiction (`no-enum-type-mismatch`)**:
+2. **Enum Type Contradiction (`no-enum-type-mismatch`, Warning)**:
    In schema `userType`, the type is declared as `integer`, but one of the enum values is a string (`"inactive"`):
    ```yaml
        # ⚠️ Type contradiction: enum value "inactive" contradicts integer schema
@@ -68,7 +103,7 @@ Open `openapi.yaml`. Notice that it defines a Users API with intentional modelin
          enum: [1, 2, "inactive"]
    ```
 
-3. **Sibling Properties next to `$ref` (`ref-has-siblings`)**:
+3. **Sibling Properties next to `$ref` (`ref-has-siblings`, Warning)**:
    In schema `userStatus`, `$ref` is placed alongside sibling properties (`description`). In OAS 3.0, any sibling properties alongside `$ref` are ignored by OpenAPI parsers:
    ```yaml
        # ⚠️ Warning: $ref must not have sibling properties in OAS 3.0
@@ -77,13 +112,15 @@ Open `openapi.yaml`. Notice that it defines a Users API with intentional modelin
          description: Status of user account
    ```
 
-Additionally, this specification does not define a standard `/health` monitoring endpoint, which our organization enforces via the `health-endpoint` rule.
+The third warning, `health-endpoint`, flags the missing `/health` monitoring endpoint. This is an organizational standard enforced by the lint configuration.
+
+The error makes the lint command fail. Next, inspect the configuration to understand why these rules were applied and why the Content-Type conflict has severity `error`.
 
 ---
 
-## Step 2: Configure `specmatic-linter.yaml` with `include` and `override`
+## Step 3: Understand `specmatic-linter.yaml` with `include` and `override`
 
-Specmatic Linter reads its configuration from `specmatic-linter.yaml`.
+The lint command you ran loaded `specmatic-linter.yaml` through `--config`. Review this file to understand the policy behind the diagnostics.
 
 ### Understanding Rulesets, Profiles, and Customizations
 - **Ruleset**: A curated bundle of rules with predefined severities (`starter`, `lenient`, `recommended`, `strict`, `complete`). The `starter` ruleset includes core syntax and structural rules.
@@ -96,54 +133,19 @@ In this lab, we start with the `starter` ruleset and selectively pull in:
 - `ref-has-siblings` (advisory warning)
 - `health-endpoint` (organizational health check standard)
 
-Open the empty `specmatic-linter.yaml` file in your editor and add:
-
-```yaml
-profiles:
-  default:
-    rules:
-      extends:
-        - starter
-      include:
-        - content-type-header-overrides-media-type
-        - ref-has-siblings
-        - health-endpoint
-      override:
-        content-type-header-overrides-media-type: error
-```
-
-Alternatively, apply this configuration from the command line:
-
-```shell
-docker run --rm \
-  -v ".:/usr/src/app" \
-  -w /usr/src/app \
-  --entrypoint sh \
-  specmatic/enterprise:latest -c 'cat << "EOF" > specmatic-linter.yaml
-profiles:
-  default:
-    rules:
-      extends:
-        - starter
-      include:
-        - content-type-header-overrides-media-type
-        - ref-has-siblings
-        - health-endpoint
-      override:
-        content-type-header-overrides-media-type: error
-EOF'
-```
+Open `specmatic-linter.yaml` in your editor and review the configuration.
 
 ---
 
-## Step 3: Run `get-rules` to Inspect the Rules Catalog
+## Step 4: Run `get-rules` to Inspect the Rules Catalog
 
-Before running the linter against your API, run the `get-rules` command to see all active rules that will be evaluated under your configured profile.
+Now run `get-rules` with the same configuration to see the active rules and severities used in the initial lint run.
 
 ```shell
 docker run --rm \
   -v ".:/usr/src/app" \
-  -w /usr/src/app \
+  -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
+  -e SPECMATIC_LICENSE_PATH=/specmatic/specmatic-license.txt \
   specmatic/enterprise:latest \
   lint get-rules --config specmatic-linter.yaml
 ```
@@ -159,47 +161,10 @@ Open the generated report in your web browser:
 
 Filter by version using the `+` key and selecting `oas3_0` and filter the severity using the `+` key and selecting `error` or `warn` or both.
 
-Notice that in the table, `content-type-header-overrides-media-type` is now listed with severity **`error`** due to our `override` configuration!
+Notice that in the table, `content-type-header-overrides-media-type` is listed with severity **`error`** due to our `override` configuration!
 You can search for this rule using the `Quick search` feature.
 
-These are all the rules that will be evaluated against the given OpenAPI specification.
-
----
-
-## Step 4: Run the Linter and Inspect Diagnostics
-
-Now run the linter on `openapi.yaml` to detect contract violations. We specify `--format=html` to generate an interactive HTML report alongside console diagnostics.
-
-```shell
-docker run --rm \
-  -v ".:/usr/src/app" \
-  -w /usr/src/app \
-  specmatic/enterprise:latest \
-  lint openapi.yaml --config specmatic-linter.yaml --format=html
-```
-
-Expected terminal output:
-```terminaloutput
-Lint report for openapi.yaml generated at /usr/src/app/build/reports/specmatic/lint/openapi/lint-report-openapi.html
-Target: openapi.yaml
-Maturity Level: Gold
-Errors: 1, Warnings: 3, Ignored: 0
-Status: FAILED
-```
-
-> [!NOTE]
-> The command exits with code `1` (`Status: FAILED`) because there is **1 error**.
-
-### Inspect the Diagnostics HTML Report
-Open [build/reports/specmatic/lint/openapi/lint-report-openapi.html](build/reports/specmatic/lint/openapi/lint-report-openapi.html) in your browser.
-
-Key elements of the report:
-1. **Summary Badges**: Displays total `Errors: 1`, `Warnings: 3`, `Ignored: 0`, and current `Maturity: Gold`.
-2. **Card Breakdown**:
-   - `content-type-header-overrides-media-type` (Error) -> flags the contradictory `Content-Type` header parameter on `POST /users`.
-   - `no-enum-type-mismatch` (Warning) -> flags `"inactive"` in `userType.enum`.
-   - `ref-has-siblings` (Warning) -> flags sibling `description` next to `$ref` in `userStatus`.
-   - `health-endpoint` (Warning) -> flags missing `/health` endpoints.
+This catalog shows the active rules with their severity.
 
 ---
 
@@ -268,80 +233,7 @@ Under `components.schemas.userType`, remove `"inactive"` from the enum values so
 Alternatively, apply the complete corrected specification from the command line:
 
 ```shell
-docker run --rm \
-  -v ".:/usr/src/app" \
-  -w /usr/src/app \
-  --entrypoint sh \
-  specmatic/enterprise:latest -c 'cat << "EOF" > openapi.yaml
-openapi: 3.0.3
-info:
-  title: Users API
-  version: 1.0.0
-  description: Sample API for Specmatic Linter Lab
-servers:
-  - url: https://api.mycompany.com/v1
-    description: Production server
-tags:
-  - name: users
-    description: Operations related to users
-security:
-  - bearerAuth: []
-paths:
-  /users:
-    post:
-      tags:
-        - users
-      summary: Create user
-      description: Creates a new user
-      operationId: createUser
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  maxLength: 50
-      responses:
-        "201":
-          description: User created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/userResponse"
-
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-  schemas:
-    userResponse:
-      type: object
-      properties:
-        status:
-          $ref: "#/components/schemas/userStatus"
-        userType:
-          $ref: "#/components/schemas/userType"
-
-    userStatus:
-      $ref: "#/components/schemas/statusType"
-
-    statusType:
-      type: string
-      maxLength: 20
-      description: Status of user account
-
-    userType:
-      type: integer
-      format: int32
-      minimum: 1
-      maximum: 10
-      enum: [1, 2, 3]
-      description: User account type code
-EOF'
+docker run --rm -v ".:/usr/src/app" --entrypoint sh specmatic/enterprise:latest -c 'cp .backup/openapi-fixed.yaml openapi.yaml'
 ```
 
 ### 5B. Tune Policy Using `exclude:`
@@ -370,25 +262,7 @@ profiles:
 Alternatively, apply this configuration from the command line:
 
 ```shell
-docker run --rm \
-  -v ".:/usr/src/app" \
-  -w /usr/src/app \
-  --entrypoint sh \
-  specmatic/enterprise:latest -c 'cat << "EOF" > specmatic-linter.yaml
-profiles:
-  default:
-    rules:
-      extends:
-        - starter
-      include:
-        - content-type-header-overrides-media-type
-        - ref-has-siblings
-        - health-endpoint
-      override:
-        content-type-header-overrides-media-type: error
-      exclude:
-        - health-endpoint
-EOF'
+docker run --rm -v ".:/usr/src/app" --entrypoint sh specmatic/enterprise:latest -c 'cp .backup/specmatic-linter-exclude.yaml specmatic-linter.yaml'
 ```
 
 ---
@@ -400,7 +274,8 @@ Now re-run the linter to verify that the errors have been resolved and the exclu
 ```shell
 docker run --rm \
   -v ".:/usr/src/app" \
-  -w /usr/src/app \
+  -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
+  -e SPECMATIC_LICENSE_PATH=/specmatic/specmatic-license.txt \
   specmatic/enterprise:latest \
   lint openapi.yaml --config specmatic-linter.yaml --format=html
 ```
@@ -430,7 +305,6 @@ To remove the generated report directory:
 ```shell
 docker run --rm \
   -v ".:/usr/src/app" \
-  -w /usr/src/app \
   --entrypoint sh \
   specmatic/enterprise:latest -c 'rm -rf build'
 ```

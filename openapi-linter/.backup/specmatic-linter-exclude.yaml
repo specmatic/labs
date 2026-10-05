@@ -9,3 +9,5 @@ profiles:
         - health-endpoint
       override:
         content-type-header-overrides-media-type: error
+      exclude:
+        - health-endpoint
