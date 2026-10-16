@@ -110,22 +110,13 @@ Prompt handling:
 - If Claude asks for MCP approval, approve the `specmatic` server before continuing.
 
 #### Codex
-Install the bundled Specmatic plugin from this lab folder (requires a Codex CLI
-version with `codex plugin add` support):
+Install the Codex plugin:
 
 ```bash
 pwd > plugins/specmatic/.lab-directory
 codex plugin marketplace add .
 codex plugin add specmatic@specmatic-labs
 ```
-
-The first command records this checkout's directory for the Docker mount. Repeat
-these setup commands if you move the checkout.
-
-The plugin includes the `build-api-with-specmatic` skill and registers Specmatic
-MCP automatically using `specmatic/enterprise-snapshots:latest`. Keep Docker running
-and use your existing Specmatic license configuration. No separate MCP registration
-or local Java/JAR installation is needed for this plugin.
 
 Start a fresh Codex session in this lab folder:
 
