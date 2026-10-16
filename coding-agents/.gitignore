@@ -1,2 +1,5 @@
 .codex-home/
 plugins/specmatic/.lab-directory
+backend/node_modules/
+.specmatic-mcp/
+.specmatic/

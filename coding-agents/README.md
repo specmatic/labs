@@ -121,7 +121,7 @@ codex plugin add specmatic@specmatic-labs
 Start a fresh Codex session in this lab folder:
 
 ```bash
-codex
+codex --no-daemon
 ```
 
 Prompt handling:
