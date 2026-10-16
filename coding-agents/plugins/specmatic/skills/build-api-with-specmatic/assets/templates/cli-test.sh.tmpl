@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run from the project directory containing specmatic.yaml.
+# Supply project-specific commands and acceptance environment variables.
+: "${APPLICATION_START_COMMAND:?Set a foreground application launch command}"
+SPECMATIC_JAR="${SPECMATIC_JAR:-$HOME/.specmatic/specmatic-enterprise.jar}"
+
+# Job control gives the application and its children their own process group.
+set -m
+application_pid=""
+cleanup() {
+  local status=$?
+  trap - EXIT
+  if [[ -n "$application_pid" ]]; then
+    kill -TERM -- "-$application_pid" 2>/dev/null || true
+    wait "$application_pid" 2>/dev/null || true
+  fi
+  exit "$status"
+}
+trap cleanup EXIT
+trap 'exit 130' INT
+trap 'exit 143' TERM
+
+bash -c "$APPLICATION_START_COMMAND" &
+application_pid=$!
+
+# Optional for applications whose startup must finish before provider tests.
+# Use a declared safe readiness signal; no particular health endpoint is required.
+if [[ -n "${APPLICATION_READY_COMMAND:-}" ]]; then
+  deadline=$((SECONDS + ${APPLICATION_START_TIMEOUT_SECONDS:-30}))
+  while true; do
+    if ! kill -0 "$application_pid" 2>/dev/null; then
+      echo "Application exited before readiness." >&2
+      exit 1
+    fi
+    if bash -c "$APPLICATION_READY_COMMAND"; then
+      break
+    fi
+    if ((SECONDS >= deadline)); then
+      echo "Application startup timed out." >&2
+      exit 1
+    fi
+    sleep 0.2
+  done
+fi
+
+if ! kill -0 "$application_pid" 2>/dev/null; then
+  echo "Application exited before acceptance." >&2
+  exit 1
+fi
+
+java -jar "$SPECMATIC_JAR" run-suite --agent "$@"

@@ -20,7 +20,7 @@ Coding agents are fast, but they can drift when they generate code without a str
 - Pull the latest specmatic docker image:
 
 ```bash
-docker pull specmatic/specmatic
+docker pull specmatic/enterprise-snapshots:latest
 ```
 
 - Node.js 20+ and npm are available on your machine.
@@ -110,13 +110,24 @@ Prompt handling:
 - If Claude asks for MCP approval, approve the `specmatic` server before continuing.
 
 #### Codex
-Register a local stdio server:
+Install the bundled Specmatic plugin from this lab folder (requires a Codex CLI
+version with `codex plugin add` support):
 
 ```bash
-codex mcp add specmatic -- docker run --rm -i -v ".:/usr/src/app" specmatic/specmatic mcp server
+pwd > plugins/specmatic/.lab-directory
+codex plugin marketplace add .
+codex plugin add specmatic@specmatic-labs
 ```
 
-Start Codex in this lab folder:
+The first command records this checkout's directory for the Docker mount. Repeat
+these setup commands if you move the checkout.
+
+The plugin includes the `build-api-with-specmatic` skill and registers Specmatic
+MCP automatically using `specmatic/enterprise-snapshots:latest`. Keep Docker running
+and use your existing Specmatic license configuration. No separate MCP registration
+or local Java/JAR installation is needed for this plugin.
+
+Start a fresh Codex session in this lab folder:
 
 ```bash
 codex

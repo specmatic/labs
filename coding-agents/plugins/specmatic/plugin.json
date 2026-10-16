@@ -1,0 +1,6 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "specmatic",
+  "version": "1.0.0",
+  "description": "Build and verify contract-driven APIs with Specmatic Enterprise"
+}

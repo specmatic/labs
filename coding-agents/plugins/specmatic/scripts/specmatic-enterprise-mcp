@@ -1,0 +1,29 @@
+#!/bin/sh
+set -eu
+
+# Installation records the lab path before Codex copies this plugin to its cache.
+plugin_dir="$(cd "$(dirname "$0")/.." && pwd -P)"
+if [ ! -f "$plugin_dir/.lab-directory" ]; then
+    echo 'Install from the lab README to configure the Docker project mount.' >&2
+    exit 1
+fi
+IFS= read -r project_dir < "$plugin_dir/.lab-directory"
+project_dir="$(cd "$project_dir" && pwd -P)"
+set -- docker run --rm -i \
+    --mount "type=bind,source=$project_dir,target=$project_dir" \
+    --workdir "$project_dir" \
+    --publish 9001:9001 \
+    --add-host host.docker.internal:host-gateway
+
+# Forward existing license inputs without inspecting or printing their contents.
+if [ -n "${SPECMATIC_LICENSE_CONTENT:-}" ]; then
+    set -- "$@" --env SPECMATIC_LICENSE_CONTENT
+elif [ -n "${SPECMATIC_LICENSE_PATH:-}" ]; then
+    set -- "$@" \
+        --mount "type=bind,source=$SPECMATIC_LICENSE_PATH,target=/run/specmatic-license,readonly" \
+        --env SPECMATIC_LICENSE_PATH=/run/specmatic-license
+elif [ -d "$HOME/.specmatic" ]; then
+    set -- "$@" --mount "type=bind,source=$HOME/.specmatic,target=/root/.specmatic,readonly"
+fi
+
+exec "$@" specmatic/enterprise-snapshots:latest mcp server

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build API with Specmatic"
+  short_description: "Build or repair contract-driven APIs"
+  default_prompt: "Use $specmatic-lean:build-api-with-specmatic to build or repair the API, virtualize its downstream dependencies, then run Specmatic acceptance tests and resolve failures."

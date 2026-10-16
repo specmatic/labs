@@ -1,0 +1,17 @@
+{
+  "name": "specmatic-labs",
+  "plugins": [
+    {
+      "name": "specmatic",
+      "source": {
+        "source": "local",
+        "path": "./plugins/specmatic"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

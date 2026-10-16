@@ -1,0 +1,9 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "specmatic-enterprise": {
+      "type": "stdio",
+      "command": "./scripts/specmatic-enterprise-mcp"
+    }
+  }
+}
