@@ -1,6 +1,6 @@
 ---
 name: build-api-with-specmatic
-description: Use for contract testing and spec-driven mocking when implementing or updating a provider API from an API specification. Build the application, then use Specmatic Enterprise for controlled dependency mocks and acceptance tests.
+description: Use for contract testing and spec-driven mocking when implementing or updating a provider API from an API specification, or building a frontend against a Specmatic mock. Build the application, then use Specmatic Enterprise for controlled dependency mocks and acceptance tests.
 ---
 
 # Build an API with Specmatic
@@ -30,7 +30,7 @@ Consult references when the corresponding task arises:
 - To reuse application startup and cleanup during CLI acceptance, optionally use the [minimal wrapper](guides/runtime/cli.md#optional-acceptance-wrapper).
 - Configure service roles, ports, URLs, examples and settings: [configuration v3](guides/configuration-v3.md).
 - Find the runtime and use existing licensing: [runtime](guides/specmatic-runtime.md). For other integration modes: [Docker CLI](guides/runtime/docker-cli.md), [native JVM](guides/runtime/native.md), [Testcontainers](guides/runtime/test-container.md).
-- Control downstream responses and interactions: [dependency mocking](guides/dependency-mocking.md), [examples and matchers](guides/examples-and-matchers.md).
+- Mock an API for frontend development or control downstream responses and interactions: [dependency mocking](guides/dependency-mocking.md), [examples and matchers](guides/examples-and-matchers.md).
 - When verifying asymmetric JWT signatures or testing authentication, preserve application trust keys and isolate test keys: [JWT verification and unit testing](guides/jwt-unit-testing.md).
 - When writing or updating the application's README, document verified setup and acceptance commands: [README generation](guides/readme-generation.md).
 - Set up preconditions or verify side effects: [behavior fixtures](guides/behavior-fixtures.md). For finite or delayed responses: [transient expectations](guides/transient-expectations.md).
@@ -44,8 +44,9 @@ For frontend development and browser checks, read [frontend verification](guides
 for installation readiness, server startup, selectors, and intentional error tests.
 
 Before starting a mock for a frontend or other consumer, read [dependency mocking](guides/dependency-mocking.md)
-and choose its mode from the required workflow. A create-and-list/read flow implies stateful behavior unless the user
-explicitly requests independent responses. Configure `type: stateful-mock`; do not accept a tool's stateless default.
-Verify that a subsequent API read returns the created resource's ID and submitted fields. For UI work, confirm those
-fields appear after the UI fetches the list with the real backend stopped. A successful POST followed by unrelated
-generated rows is incomplete verification; passing the same flow against the real backend does not replace this gate.
+and choose its mode from the required workflow. CRUD flows in which later requests must observe earlier resource
+changes require stateful behavior. Configure `type: stateful-mock`; do not accept a tool's stateless default.
+Verify all available CRUD operations supported by the contract. Where reads are available, confirm they reflect
+creation, updates, and deletion as applicable. For UI work, verify the supported flows through the UI with the real
+backend stopped and confirm state changes after fetching fresh data. Successful writes followed by unrelated
+generated data are incomplete verification; passing the same flow against the real backend does not replace this gate.

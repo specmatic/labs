@@ -19,14 +19,15 @@ project's required build order and ports. Use the environment's browser tools an
 ## Mock and integration checks
 
 Read [dependency mocking](dependency-mocking.md) to choose the mock mode and [MCP runtime](runtime/mcp.md)
-for startup. For a create-and-list flow, use a stateful mock generated from the supplied contract.
+for startup. For CRUD flows that depend on resource state across requests, use a stateful mock generated from the supplied contract.
 
 1. Complete any required backend acceptance gate first. Then stop the real backend for the independent mock check.
 2. Start the mock and frontend in mock mode. Confirm the frontend's effective API URL points to the mock.
-3. Create a distinct entity through the UI. Confirm a subsequent list fetch displays its submitted fields; a
-   successful creation message alone does not prove persistence. Check filtering when required by the project.
+3. Verify all available CRUD operations supported by the contract, exercising those exposed by the UI through the UI.
+   Use distinct entities and confirm subsequent reads reflect creation, updates, and deletion as applicable; successful
+   write messages alone do not prove persistence. Check filtering when required by the project.
 4. Stop the mock, switch the frontend to integration mode, and start the real provider. Confirm the effective API URL,
-   then repeat creation and listing through the UI. Record the observed values and results for both modes separately.
+   then repeat the same supported CRUD flows. Record the observed values and results for both modes separately.
 
 If dependencies or application behavior change during these checks, repeat affected flows against the final build.
 Mock success and real-provider success are separate requirements when the project asks for both.

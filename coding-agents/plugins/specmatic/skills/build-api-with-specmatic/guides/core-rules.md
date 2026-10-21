@@ -19,7 +19,7 @@ Before declaring a defect or blocker, separate the observed failure from its hyp
 supporting the hypothesis and run a bounded check that distinguishes it from plausible alternatives. Keep explanations
 tentative until that check supports them; missing dependency interactions alone do not establish a contract contradiction.
 
-Generate only providers. Derive whether the provider is a proxy, aggregator, orchestrator, or standalone service from
+Build the application components requested by the user. Derive whether a provider is a proxy, aggregator, orchestrator, or standalone service from
 the supplied evidence; do not infer data models, workflows, or dependencies from operation names.
 
 ## Repository instructions

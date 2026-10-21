@@ -208,7 +208,3 @@ Ask the coding agent to add:
 
 ## Next step
 If you are doing this lab as part of an eLearning course, r~eturn to the eLearning site and continue with the next module.
-
-## Generated application
-
-See [APPLICATION.md](APPLICATION.md) for verified startup commands, mock and integration modes, test results, and the UI demo flow.

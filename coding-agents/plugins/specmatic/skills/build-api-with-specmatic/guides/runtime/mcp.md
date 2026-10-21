@@ -65,7 +65,7 @@ support the required lifecycle, report the mock-flow gate as incomplete instead 
 Start the application yourself and confirm the intended build owns its listener. The MCP server must reach its URL and read its contracts, fixtures and configuration. `run_test_suite` starts and stops configured dependency mocks; avoid starting duplicate mocks. Stop the application after verification. For separately managed mocks use `start_mock_server`, `list_mock_servers`, `run_contract_test` and `stop_mock_server` as needed.
 
 For direct OpenAPI startup, `start_mock_server` accepts optional `serverType: "stateful"` or `"stateless"`
-(default). Use stateful mode for resource lifecycles such as create then list:
+(default). Use stateful mode for any resource-lifecycle CRUD flows where later requests must observe earlier resource changes:
 
 ```json
 {"mockId":"products-ui","contractPaths":["/absolute/project/products.yaml"],"port":9001,"serverType":"stateful"}
