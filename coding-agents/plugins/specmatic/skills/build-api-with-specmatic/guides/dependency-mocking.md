@@ -1,6 +1,53 @@
 # Dependency Mocking
 
-Read whenever the provider has a downstream contract. For configuration generation and address fields, see [CLI commands](runtime/cli.md) and [configuration v3](configuration-v3.md).
+Read whenever the provider has a downstream contract or a frontend/consumer needs a contract-driven mock. For configuration generation and address fields, see [CLI commands](runtime/cli.md) and [configuration v3](configuration-v3.md).
+
+## Choose stateless or stateful behavior
+
+Choose the mock mode from the consumer's expected behavior before starting it:
+
+| Expected behavior | OpenAPI run option | What to verify                                                                                                                                                                                                                                       |
+|---|---|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Independent responses, fixed examples, controlled errors, or request/response mapping | `type: mock` | For each request, the mock will return a contract-valid response based on a matching example or will dynamically generate one if no matching examples are provided. A successful POST does not imply that a later GET contains the created resource. |
+| A resource lifecycle across requests, such as create then list/read, update, or delete | `type: stateful-mock` | Later requests observe the resource changes made by earlier requests in the same mock process.                                                                                                                                                       |
+
+Specmatic supports both modes. For a frontend create-and-list flow that must display the newly created product, choose a
+stateful mock and verify that exact product appears. Use deterministic expectations below for response scenarios;
+finite/ordered transient expectations are a separate capability from resource state.
+
+When generating configuration for a named OpenAPI dependency, use `--dependency-server-type=stateful`;
+when adding one with `config update add-dependency`, use `--server-type=stateful`.
+Both accept `stateless`, which is also the default when omitted. See [CLI examples](runtime/cli.md#generate-specmaticyaml).
+With MCP, set `serverType: "stateful"` on the dependency in `generate_config.dependencies`, or at the top level
+of `add_dependency_to_config`; omission or `serverType: "stateless"` selects stateless behavior.
+See the [MCP configuration example](runtime/mcp.md#configuration). If an older tool schema lacks this field,
+set the dependency's OpenAPI run option to `type: stateful-mock` and call `validate_config` before starting the mock.
+
+For direct MCP startup without a configuration, pass `serverType: "stateful"` to `start_mock_server` with
+`contractPaths` and the chosen `port`. Omission or `"stateless"` selects stateless behavior. With `configPath`,
+an explicit selector overrides the configured OpenAPI dependency types for the run; omit it to retain their configured types. See [MCP startup](runtime/mcp.md#provider-and-mocks).
+
+### Resource identity, seed data, and verification
+
+- Stateful mocks use `id` as the resource identifier by default. For another field, the returned object schema uses
+  `x-id-field`; for a collection, this is the array's item schema. Preserve supplied contracts: do not add extensions
+  to an immutable specification merely to make a mock work.
+- Eligible concrete GET/POST examples seed resources at startup. POST request and response fields can be combined
+  into stored state, including APIs whose creation response contains only an ID. Examples with runtime matchers,
+  substitutions, or templates are skipped as seeds. Validate examples and inspect actual starting state rather than
+  assuming an empty collection or exact seed count.
+- POST stores a resource, GET reads stored resources, PATCH/PUT update them, and DELETE removes them. These behaviors
+  apply to operations declared in the contract. Resource bodies must be JSON objects; collection responses are arrays
+  of objects. Query/path parameters filter resources when their names and types match resource fields.
+- State lasts for the mock process and is isolated per specification. Restarting clears changes and reloads seeds.
+  Independent scenarios should start from known state; do not rely on a previous run's resources.
+- For create-and-list verification, submit a distinctive contract-valid resource, capture its returned ID, then list
+  and assert the same ID and submitted fields. Exercise the declared filter as well. For a frontend task, perform the
+  flow through the UI with the real backend stopped and confirm the created row appears after fetching the list.
+  Generated unrelated rows or a local optimistic insertion alone do not prove mock persistence.
+- If lifecycle behavior fails, inspect the effective run option, loaded contract/examples, resource identity and
+  recorded requests before declaring stateful mocking unsupported. Report any contract/runtime incompatibility with
+  evidence; do not silently weaken a required create-and-list check to independent response checks.
 
 ## Configure deterministic mocks
 
@@ -82,7 +129,8 @@ that needs them during startup. These checks are optional troubleshooting tools;
 
 1. Use `--debug` when an expectation is not selected; confirm the file loaded, the outbound request matches the
    dependency contract, and the expected precedence applies.
-2. Restart or explicitly clear stateful expectations between independent runs.
+2. Restart mocks between independent runs to reload known seeds; reset dynamic/transient expectations separately when 
+   used.
 3. Stop only processes started by this workflow so usage reports are flushed.
 
 ## Verify HTTP interactions

@@ -1,6 +1,6 @@
 ---
 name: build-api-with-specmatic
-description: Use when implementing or repairing a provider API from a brief with supplied specifications or examples. Build the application, then use Specmatic Enterprise for controlled dependency mocks and acceptance tests.
+description: Use for contract testing and spec-driven mocking when implementing or updating a provider API from an API specification. Build the application, then use Specmatic Enterprise for controlled dependency mocks and acceptance tests.
 ---
 
 # Build an API with Specmatic
@@ -37,3 +37,15 @@ Consult references when the corresponding task arises:
 - Protocol configuration: [REST](guides/protocols/rest.md), [Kafka](guides/protocols/kafka.md), [GraphQL](guides/protocols/graphql.md), [gRPC](guides/protocols/grpc.md), [SOAP](guides/protocols/soap.md).
 
 Use the selected runtime's `--help`, reports and logs for details not covered here.
+
+## Consumer and frontend mock flows
+
+For frontend development and browser checks, read [frontend verification](guides/frontend-verification.md)
+for installation readiness, server startup, selectors, and intentional error tests.
+
+Before starting a mock for a frontend or other consumer, read [dependency mocking](guides/dependency-mocking.md)
+and choose its mode from the required workflow. A create-and-list/read flow implies stateful behavior unless the user
+explicitly requests independent responses. Configure `type: stateful-mock`; do not accept a tool's stateless default.
+Verify that a subsequent API read returns the created resource's ID and submitted fields. For UI work, confirm those
+fields appear after the UI fetches the list with the real backend stopped. A successful POST followed by unrelated
+generated rows is incomplete verification; passing the same flow against the real backend does not replace this gate.

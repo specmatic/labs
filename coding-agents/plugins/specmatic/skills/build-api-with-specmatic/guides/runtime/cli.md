@@ -23,6 +23,22 @@ java -jar "$SPECMATIC_JAR" config generate \
 
 Omit dependency options for a provider with no downstream contracts. Repeat a contiguous group beginning with `--dependency-name` for each dependency. This generates the root `specmatic.yaml`.
 
+For each named OpenAPI dependency, `--dependency-server-type=stateful` generates `type: stateful-mock`.
+Omitting this option or setting `--dependency-server-type=stateless` generates `type: mock`.
+Choose based on the [required mock behavior](../dependency-mocking.md#choose-stateless-or-stateful-behavior):
+
+```bash
+java -jar "$SPECMATIC_JAR" config generate \
+  --system-under-test=<provider-contract> --system-under-test-url=<provider-url> \
+  --dependency-name=<dependency-name> --dependency-specification=<openapi-contract> \
+  --dependency-base-url=<dependency-url> --dependency-server-type=stateful
+```
+
+`--dependency-server-type` is protocol-specific: OpenAPI accepts `stateful` or `stateless` (default);
+Kafka AsyncAPI accepts `in-memory` (default) or `external`.
+Kafka broker types do not select HTTP mock statefulness. `--dependency-server` and `--dependency-protocol`
+remain Kafka AsyncAPI-only. Keep the type option within its dependency's contiguous named group.
+
 For Kafka, the dependency group can specify a Specmatic-managed broker:
 
 ```bash
@@ -41,9 +57,32 @@ Add a dependency later with:
 java -jar "$SPECMATIC_JAR" config update add-dependency --name=<name> --specification=<contract>
 ```
 
+For OpenAPI, add `--server-type=stateful` for a stateful mock; omit it or use `--server-type=stateless`
+for a stateless mock:
+
+```bash
+java -jar "$SPECMATIC_JAR" config update add-dependency \
+  --name=<name> --specification=<openapi-contract> --base-url=<dependency-url> --server-type=stateful
+```
+
 For Kafka the add-dependency options are `--server=<host:port> --protocol=kafka --server-type=in-memory`.
 
 Addresses and ports belong in the generated configuration's protocol-specific `components.runOptions`, referenced by each service. See [configuration v3](../configuration-v3.md) for the fields. See [dependency mocking](../dependency-mocking.md) for application and fixture wiring.
+
+## Start a direct OpenAPI mock
+
+For a standalone consumer or frontend mock without a configuration file:
+
+```bash
+java -jar "$SPECMATIC_JAR" mock <openapi-contract> --port=9001 --server-type=stateful
+```
+
+`--server-type` accepts `stateful` or `stateless`; omission defaults to stateless for direct startup.
+Use stateful mode when later requests must observe created or updated resources. For v3 config-based startup, an explicit `--server-type` overrides the configured OpenAPI dependency mock types
+for that run, preserving addresses and other settings without rewriting the source file. Omit it to retain each
+service's configured `runOptions.openapi.type`. Existing `--host`, `--port` and `--data` options also apply to direct stateful mocks.
+The CLI and MCP direct startup share the same implementation. Consult `mock --help` for runtime support;
+older runtimes can use configuration-based stateful mocks instead.
 
 ## Run acceptance
 

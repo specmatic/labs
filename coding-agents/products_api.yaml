@@ -106,6 +106,7 @@ components:
         - id
     Product:
       title: Product
+      x-id-field: id
       allOf:
         - $ref: '#/components/schemas/ProductId'
         - $ref: '#/components/schemas/ProductDetails'
