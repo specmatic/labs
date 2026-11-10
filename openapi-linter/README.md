@@ -41,25 +41,27 @@ docker run --rm \
   -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   -e SPECMATIC_LICENSE_PATH=/specmatic/specmatic-license.txt \
   specmatic/enterprise:latest \
-  lint openapi.yaml --config specmatic-linter.yaml --format=html
+  lint openapi.yaml --config specmatic-linter.yaml
 ```
 
-Since we've specified `--format=html`, this command will generate an interactive HTML report to review the lint results.
+The linter generates an interactive HTML report and a SARIF report automatically.
 
 Expected terminal output:
 ```terminaloutput
-Lint report for openapi.yaml generated at /usr/src/app/build/reports/specmatic/lint/openapi/lint-report-openapi.html
+Lint report for openapi.yaml generated at /usr/src/app/build/reports/specmatic/lint/openapi/lint-report-openapi.sarif
 Target: openapi.yaml
-Maturity Level: Gold
+Maturity Level: baseline
 Errors: 1, Warnings: 3, Ignored: 0
 Status: FAILED
+Lint HTML report generated at /usr/src/app/build/reports/specmatic/lint/openapi/html/index.html
+Combined lint SARIF report generated at /usr/src/app/build/reports/specmatic/lint/combined.json
 ```
 
 > [!NOTE]
 > The command exits with code `1` (`Status: FAILED`) because there is **1 error**.
 
 ### Inspect the Diagnostics HTML Report
-Open [build/reports/specmatic/lint/openapi/lint-report-openapi.html](build/reports/specmatic/lint/openapi/lint-report-openapi.html) in your browser.
+Open [build/reports/specmatic/lint/openapi/html/index.html](build/reports/specmatic/lint/openapi/html/index.html) in your browser.
 
 Confirm that the report shows **1 error** and **3 warnings**. In the next step, trace these diagnostics back to the specification.
 
@@ -277,25 +279,27 @@ docker run --rm \
   -v "${PWD}/../license.txt:/specmatic/specmatic-license.txt:ro" \
   -e SPECMATIC_LICENSE_PATH=/specmatic/specmatic-license.txt \
   specmatic/enterprise:latest \
-  lint openapi.yaml --config specmatic-linter.yaml --format=html
+  lint openapi.yaml --config specmatic-linter.yaml
 ```
 
 Expected terminal output:
 ```terminaloutput
-Lint report for openapi.yaml generated at /usr/src/app/build/reports/specmatic/lint/openapi/lint-report-openapi.html
+Lint report for openapi.yaml generated at /usr/src/app/build/reports/specmatic/lint/openapi/lint-report-openapi.sarif
 Target: openapi.yaml
-Maturity Level: Platinum
+Maturity Level: platinum
 Errors: 0, Warnings: 0, Ignored: 1
 Status: PASSED
+Lint HTML report generated at /usr/src/app/build/reports/specmatic/lint/openapi/html/index.html
+Combined lint SARIF report generated at /usr/src/app/build/reports/specmatic/lint/combined.json
 ```
 
 ### Review the Results
-Refresh [build/reports/specmatic/lint/openapi/lint-report-openapi.html](build/reports/specmatic/lint/openapi/lint-report-openapi.html) in your browser:
+Refresh [build/reports/specmatic/lint/openapi/html/index.html](build/reports/specmatic/lint/openapi/html/index.html) in your browser:
 - **`Errors: 0`**: All semantic blockers have been resolved.
 - **`Warnings: 0`**: All contract warnings have been fixed.
 - **`Ignored: 1`**: The excluded rule (`health-endpoint`) is tracked as ignored.
 - **`Status: PASSED`**: The check succeeds with exit code `0`.
-- **`Maturity Level: Platinum`**: The API now satisfies all active maturity rules in this profile.
+- **`Maturity Level: platinum`**: The API now satisfies all active maturity rules in this profile.
 
 ---
 
