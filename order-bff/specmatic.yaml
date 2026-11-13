@@ -58,6 +58,7 @@ dependencies:
             servers:
               - host: "${KAFKA_BOOTSTRAP_SERVERS:kafka:9092}"
                 protocol: kafka
+                type: external
   data:
     adapters:
       post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh

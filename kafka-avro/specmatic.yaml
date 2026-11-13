@@ -28,6 +28,7 @@ systemUnderTest:
         servers:
           - host: ${KAFKA_BROKER:localhost:9092}
             protocol: kafka
+            type: external
             adminCredentials:
               security.protocol: SASL_PLAINTEXT
               sasl.mechanism: PLAIN
