@@ -1,5 +1,6 @@
 import json
 import logging
+from uuid import UUID
 
 from sqlmodel import Session, select
 
@@ -75,9 +76,16 @@ def get_header(headers: list, key: str) -> str | None:
         if k == key:
             val = v.decode("utf-8") if isinstance(v, bytes) else v
             try:
-                return json.loads(val)
+                value = json.loads(val)
             except json.JSONDecodeError:
-                return val
+                value = val
+
+            if key == "requestId":
+                try:
+                    UUID(str(value))
+                except (TypeError, ValueError, AttributeError):
+                    return None
+            return value
     return None
 
 

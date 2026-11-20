@@ -91,7 +91,7 @@ Why they fail:
 Clean up:
 
 ```shell
-docker compose --profile test down -v --remove-orphans
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Task A: Add a transient delay for the `429` scenario
@@ -111,7 +111,7 @@ Keep:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i -e '/^  }$/s//  },/' -e '/^}$/i\  \"transient\": true,' -e '/^}$/i\  \"delay-in-seconds\": 2' examples/order-service/stub_timeout_get_products.json"
+docker compose run --rm --no-deps --entrypoint sh suite -lc "sed -i -e '/^  }$/s//  },/' -e '/^}$/i\  \"transient\": true,' -e '/^}$/i\  \"delay-in-seconds\": 2' examples/order-service/stub_timeout_get_products.json"
 ```
 
 Re-run:
@@ -133,7 +133,7 @@ At this point:
 Clean up:
 
 ```shell
-docker compose --profile test down -v --remove-orphans
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Task B: Add a transient delay for the `202` scenario
@@ -153,7 +153,7 @@ Keep:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i -e '/^  }$/s//  },/' -e '/^}$/i\  \"transient\": true,' -e '/^}$/i\  \"delay-in-seconds\": 2' examples/order-service/stub_timeout_post_product.json"
+docker compose run --rm --no-deps --entrypoint sh suite -lc "sed -i -e '/^  }$/s//  },/' -e '/^}$/i\  \"transient\": true,' -e '/^}$/i\  \"delay-in-seconds\": 2' examples/order-service/stub_timeout_post_product.json"
 ```
 
 Re-run:
@@ -175,7 +175,7 @@ At this point:
 Clean up:
 
 ```shell
-docker compose --profile test down -v --remove-orphans
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Task C: Enable full schema resiliency for `202`
@@ -194,7 +194,7 @@ schemaResiliencyTests: all
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's/schemaResiliencyTests: none/schemaResiliencyTests: all/' specmatic.yaml"
+docker compose run --rm --no-deps --entrypoint sh suite -lc "sed -i 's/schemaResiliencyTests: none/schemaResiliencyTests: all/' specmatic.yaml"
 ```
 
 Re-run:
@@ -268,7 +268,7 @@ Specmatic documentation for this matcher behavior:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#\"type\": \"book\"#\"type\": \"\$match(dataType:ProductType, value:each, times:1)\"#; s#\"inventory\": 9#\"inventory\": \"\$match(dataType:ProductInventory, value:each, times:1)\"#' examples/order-service/stub_timeout_post_product.json"
+docker compose run --rm --no-deps --entrypoint sh suite -lc "sed -i 's#\"type\": \"book\"#\"type\": \"\$match(dataType:ProductType, value:each, times:1)\"#; s#\"inventory\": 9#\"inventory\": \"\$match(dataType:ProductInventory, value:each, times:1)\"#' examples/order-service/stub_timeout_post_product.json"
 ```
 
 Keep:
@@ -296,7 +296,7 @@ Tests run: 249, Successes: 249, Failures: 0, WIP: 0, Errors: 0
 Clean up:
 
 ```shell
-docker compose --profile test down -v --remove-orphans
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Run the same flow in Studio
@@ -323,7 +323,7 @@ Then:
 Stop Studio:
 
 ```shell
-docker compose --profile studio down -v --remove-orphans
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Troubleshooting

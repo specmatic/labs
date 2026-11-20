@@ -74,7 +74,7 @@ This fail-first behavior is expected in this lab.
 Run:
 
 ```shell
-docker compose down -v --remove-orphans
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## 4. Configure hooks in `specmatic.yaml`
@@ -104,7 +104,7 @@ chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i '/^specmatic:/i\  data:\n    adapters:\n      pre_specmatic_request_processor: ./hooks/pre_specmatic_request_processor.sh\n      post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh\n' specmatic.yaml && chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh"
+docker compose run --rm --no-deps --entrypoint sh camelCaseService -lc "sed -i '/^specmatic:/i\  data:\n    adapters:\n      pre_specmatic_request_processor: ./hooks/pre_specmatic_request_processor.sh\n      post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh\n' specmatic.yaml && chmod +x hooks/pre_specmatic_request_processor.sh hooks/post_specmatic_response_processor.sh"
 ```
 
 ## 6. Restart mock + UI
@@ -138,7 +138,7 @@ Expected result:
 Run:
 
 ```shell
-docker compose down -v --remove-orphans
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Windows Notes
@@ -174,7 +174,7 @@ docker compose --profile studio up -d studio ui
 Run:
 
 ```shell
-docker compose --profile studio down -v --remove-orphans
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Next step

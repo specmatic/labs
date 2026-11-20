@@ -48,7 +48,7 @@ def handle_validation_error(_, e: "RequestValidationError|ValidationError"):
     return JSONResponse(
         status_code=400,
         content={
-            "error": "Bad Request",
+            "code": "Bad Request",
             "message": str(e),
         },
     )
@@ -59,7 +59,7 @@ def http_error_handler(_, e: "HTTPException"):
     return JSONResponse(
         status_code=e.status_code,
         content={
-            "error": e.__class__.__name__,
+            "code": e.__class__.__name__,
             "message": e.detail,
         },
     )

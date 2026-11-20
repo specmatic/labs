@@ -1,7 +1,7 @@
 {
   "http-request": {
     "path": "/orders/460",
-    "method": "POST",
+    "method": "PATCH",
     "headers": {
       "Content-Type": "application/json",
       "Authorization": "Bearer nisi"

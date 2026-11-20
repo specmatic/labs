@@ -63,7 +63,7 @@ Tests run: 4, Successes: 1, Failures: 3, WIP: 0, Errors: 0
 
 Clean up:
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ### What is failing now
@@ -84,7 +84,7 @@ Keep `id` as-is.
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's#\"productid\": 1#\"productid\": \"(PRODUCTID:number)\"#; s#\"count\": 100#\"count\": \"(COUNT:number)\"#; s#\"productid\": \"\$match(dataType:number)\"#\"productid\": \"\$(PRODUCTID)\"#; s#\"count\": 1#\"count\": \"\$(COUNT)\"#' examples/mock/test_accepted_order_request.json"
+docker compose run --rm --no-deps --entrypoint sh suite -lc "sed -i 's#\"productid\": 1#\"productid\": \"(PRODUCTID:number)\"#; s#\"count\": 100#\"count\": \"(COUNT:number)\"#; s#\"productid\": \"\$match(dataType:number)\"#\"productid\": \"\$(PRODUCTID)\"#; s#\"count\": 1#\"count\": \"\$(COUNT)\"#' examples/mock/test_accepted_order_request.json"
 ```
 
 ### Checkpoint after Task A
@@ -99,7 +99,7 @@ Tests run: 4, Successes: 2, Failures: 2, WIP: 0, Errors: 0
 ```
 Clean up:
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## 3. Task B: Fix product search using Data Lookup
@@ -117,7 +117,7 @@ Note:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc 'cp .backup/test_find_available_products_book_200.json examples/mock/test_find_available_products_book_200.json'
+docker compose run --rm --no-deps --entrypoint sh suite -lc 'cp .backup/test_find_available_products_book_200.json examples/mock/test_find_available_products_book_200.json'
 ```
 
 ## 4. Final verification
@@ -133,7 +133,7 @@ Tests run: 4, Successes: 4, Failures: 0, WIP: 0, Errors: 0
 
 Clean up:
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Specmatic Types to OpenAPI Types Mapping

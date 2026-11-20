@@ -95,13 +95,13 @@ Expected output:
 Stop Studio after the examples are saved:
 
 ```shell
-docker compose --profile studio down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc '
+docker compose run --rm --no-deps --entrypoint sh suite -lc '
 sed -i "2i\\  \\\"partial\\\": {" examples/test_accepted_order_request.json &&
 sed -i "\$i\\  }" examples/test_accepted_order_request.json &&
 sed -i "2i\\  \\\"partial\\\": {" examples/test_accepted_product_request.json &&
@@ -150,12 +150,12 @@ In Studio, after examples are valid:
 - Go to `Mock` and click `Run` (mock server on port `8080`).
 - Go to `Test`, set URL to `http://127.0.0.1:8080`, then click `Run`.
 
-Expected: `7` tests passing and `0` failing.
+Expected: `6` tests successful, `1` WIP, and `0` failing.
 
 ### Stop Studio
 
 ```shell
-docker compose --profile studio down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ### Why 7 tests?
@@ -177,7 +177,7 @@ Tests run: 7, Successes: 6, Failures: 0, WIP: 1, Errors: 0
 ```
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Pass Criteria

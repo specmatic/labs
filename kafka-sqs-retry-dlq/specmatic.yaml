@@ -31,12 +31,14 @@ components:
         servers:
           - host: http://localstack:4566/000000000000
             protocol: sqs
+            type: external
             adminCredentials:
               region: us-east-1
               aws.access.key.id: test
               aws.secret.access.key: test
           - host: kafka:9092
             protocol: kafka
+            type: external
 
 specmatic:
   license:

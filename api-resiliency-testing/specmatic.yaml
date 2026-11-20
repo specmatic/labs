@@ -55,12 +55,10 @@ dependencies:
         runOptions:
           asyncapi:
             type: mock
-            inMemoryBroker:
-              host: "${KAFKA_BOOTSTRAP_SERVER_HOST:localhost}"
-              port: 9092
             servers:
               - host: "${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}"
                 protocol: kafka
+                type: in-memory
   data:
     adapters:
       post_specmatic_response_processor: ./hooks/post_specmatic_response_processor.sh

@@ -66,7 +66,7 @@ Why it fails:
 Cleanup:
 
 ```shell
-docker compose --profile test down -v --remove-orphans
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Check in Studio
@@ -86,7 +86,7 @@ Open Studio:
 Stop Studio:
 
 ```shell
-docker compose --profile studio down -v --remove-orphans
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Fix path
@@ -108,7 +108,7 @@ workflow:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i '/^specmatic:/i\        workflow:\n          ids:\n            \"POST /tasks -> 200\":\n              extract: \"BODY.tasks.[0].id\"\n            \"GET /tasks/(task_id:string) -> 200\":\n              use: \"PATH.task_id\"\n            \"PUT /tasks/(task_id:string) -> 200\":\n              use: \"PATH.task_id\"\n            \"DELETE /tasks/(task_id:string) -> 204\":\n              use: \"PATH.task_id\"\n' specmatic.yaml"
+docker compose run --rm --no-deps --entrypoint sh test -lc "sed -i '/^specmatic:/i\        workflow:\n          ids:\n            \"POST /tasks -> 200\":\n              extract: \"BODY.tasks.[0].id\"\n            \"GET /tasks/(task_id:string) -> 200\":\n              use: \"PATH.task_id\"\n            \"PUT /tasks/(task_id:string) -> 200\":\n              use: \"PATH.task_id\"\n            \"DELETE /tasks/(task_id:string) -> 204\":\n              use: \"PATH.task_id\"\n' specmatic.yaml"
 ```
 
 Re-run:
@@ -126,7 +126,7 @@ Tests run: 4, Successes: 4, Failures: 0, WIP: 0, Errors: 0
 Cleanup:
 
 ```shell
-docker compose --profile test down -v --remove-orphans
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Next step

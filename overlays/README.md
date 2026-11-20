@@ -111,7 +111,7 @@ overlayFilePath: ./overlays/path-prefix.overlay.yaml
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc 'cp .backup/path-prefix.overlay.yaml overlays/path-prefix.overlay.yaml && sed -i "s/^#            overlayFilePath:/            overlayFilePath:/" specmatic.yaml'
+docker compose run --rm --no-deps --entrypoint sh test -lc 'cp .backup/path-prefix.overlay.yaml overlays/path-prefix.overlay.yaml && sed -i "s/^#            overlayFilePath:/            overlayFilePath:/" specmatic.yaml'
 ```
 
 ## Pass verification

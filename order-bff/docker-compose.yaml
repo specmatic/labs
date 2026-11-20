@@ -1,8 +1,46 @@
 services:
+  kafka:
+    image: apache/kafka:latest
+    container_name: kafka
+    networks: [bff-app-network]
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_NUM_PARTITIONS: 3
+      CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+    healthcheck:
+      test: [ "CMD-SHELL", "/opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list >/dev/null 2>&1" ]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+      start_period: 1s
+
+  kafka-init:
+    image: apache/kafka:latest
+    container_name: kafka-init
+    networks: [bff-app-network]
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint: [ "/bin/sh", "-c", "sh /specmatic/create-topics.sh" ]
+    volumes:
+      - ./create-topics.sh:/specmatic/create-topics.sh
+    restart: "no"
+
   studio:
     image: specmatic/enterprise:latest
     container_name: order-bff-studio
     profiles: ["studio"]
+    networks: [bff-app-network]
     restart: unless-stopped
     ports:
       - "9000:9000"
@@ -14,10 +52,11 @@ services:
       - ../license.txt:/specmatic/specmatic-license.txt:ro
     environment:
       APP_URL: http://order-bff-studio-sut:8080
+      MOCK: studio
       STUDIO_MAX_TEST_COUNT: 1000
       SPECMATIC_LICENSE_PATH: /specmatic/specmatic-license.txt
       KAFKA_PROPERTIES: |
-        advertised.listeners=PLAINTEXT://studio:9092
+        advertised.listeners=PLAINTEXT://kafka:9092
         listeners=PLAINTEXT://0.0.0.0:9092
         listener.security.protocol.map=PLAINTEXT:PLAINTEXT
         inter.broker.listener.name=PLAINTEXT
@@ -27,20 +66,22 @@ services:
       timeout: 2s
       retries: 30
       start_period: 3s
+    depends_on:
+      order-bff-studio-sut:
+        condition: service_healthy
 
   order-bff-studio-sut:
     image: specmaticdemo/specmatic-order-bff-java:latest
     container_name: order-bff-studio-sut
     profiles: ["studio"]
-    ports:
-      - "8080:8080"
+    networks: [bff-app-network]
     environment:
       ORDER_API_URL: http://studio:8090
-      KAFKA_BOOTSTRAP_SERVERS: "studio:9092"
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
       CORS_ORIGINS: http://localhost:3000
     depends_on:
-      studio:
-        condition: service_healthy
+      kafka-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health >/dev/null"]
       interval: 2s
@@ -52,13 +93,13 @@ services:
     image: specmaticdemo/specmatic-order-bff-java:latest
     container_name: order-bff
     profiles: ["test"]
-    network_mode: "service:suite"
+    networks: [bff-app-network]
     environment:
-      ORDER_API_URL: http://localhost:8090
-      KAFKA_BOOTSTRAP_SERVERS: "localhost:9092"
+      ORDER_API_URL: http://suite:8090
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
     depends_on:
-      suite:
-        condition: service_started
+      kafka-init:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health >/dev/null"]
       interval: 2s
@@ -68,19 +109,29 @@ services:
 
   suite:
     image: specmatic/enterprise:latest
-    container_name: order-bff-contract-suite
+    container_name: suite
     profiles: ["test"]
     command: ["run-suite"]
+    networks: [bff-app-network]
     volumes:
       - .:/usr/src/app
       - ../license.txt:/specmatic/specmatic-license.txt:ro
     environment:
-      APP_URL: http://localhost:8080
-      ORDER_API_URL: http://localhost:8090
-      KAFKA_BOOTSTRAP_SERVER_HOST: "localhost"
-      KAFKA_BOOTSTRAP_SERVERS: "localhost:9092"
+      APP_URL: http://order-bff:8080
+      ORDER_API_URL: http://suite:8090
+      MOCK: suite
+      KAFKA_BOOTSTRAP_SERVER_HOST: "kafka"
+      KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
       KAFKA_PROPERTIES: |
-        advertised.listeners=PLAINTEXT://localhost:9092
+        advertised.listeners=PLAINTEXT://kafka:9092
         listeners=PLAINTEXT://0.0.0.0:9092
         listener.security.protocol.map=PLAINTEXT:PLAINTEXT
         inter.broker.listener.name=PLAINTEXT
+    depends_on:
+      order-bff:
+        condition: service_healthy
+
+networks:
+  bff-app-network:
+    name: bff-app-network
+    driver: bridge

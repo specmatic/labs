@@ -23,3 +23,5 @@ build/
 bin/
 .specmatic/
 kafka-logs/
+__pycache__/
+*.py[cod]

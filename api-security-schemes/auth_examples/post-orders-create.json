@@ -12,7 +12,7 @@
         "headers": {
           "Content-Type": "application/x-www-form-urlencoded"
         },
-        "body": "grant_type=password&client_id=order-api&username=${KEYCLOAK_USER_USERNAME:user1}&password=${KEYCLOAK_USER_PASSWORD:password}"
+        "body": "grant_type=password&client_id=order-api&username=${KEYCLOAK_USER_USERNAME:default-username}&password=${KEYCLOAK_USER_PASSWORD:default-password}&scope=order:create"
       },
       "http-response": {
         "status": 200,
@@ -37,7 +37,7 @@
       }
     },
     "http-response": {
-      "status": 200,
+      "status": 201,
       "body": {},
       "headers": {
         "Content-Type": "application/json"

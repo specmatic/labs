@@ -96,7 +96,7 @@ In Studio, update the failing examples:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc '
+docker compose run --rm --no-deps --entrypoint sh studio -lc '
 sed -i "s/\"to-date\": \"today\"/\"to-date\": \"2025-11-28\"/" examples/test_find_available_products_book_200.json &&
 sed -i "s/\"type\": \"movie\"/\"type\": \"book\"/" examples/test_accepted_product_request.json &&
 sed -i "s/\"inventory\": \"five\"/\"inventory\": 5/" examples/test_accepted_product_request.json &&
@@ -114,7 +114,7 @@ Still in Studio, generate examples for:
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc 'cp .backup/* examples/'
+docker compose run --rm --no-deps --entrypoint sh studio -lc 'cp .backup/* examples/'
 ```
 
 ### Final Phase
@@ -149,10 +149,9 @@ Expected output:
 [OK] Examples: 6 passed and 0 failed out of 6 total
 ```
 
-
 Clean up Studio:
 ```shell
-docker compose --profile studio down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Pass Criteria

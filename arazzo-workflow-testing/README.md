@@ -77,7 +77,7 @@ Then:
 
 Clean up when done:
 ```shell
-docker compose --profile studio down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Next step

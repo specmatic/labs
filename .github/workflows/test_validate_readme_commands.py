@@ -128,7 +128,10 @@ class ParseReadmeCommandsTests(GitRepoTestCase):
             "docker compose up test --build --abort-on-container-exit\n",
         )
         self.assertEqual(len(commands[0].expected_outputs), 3)
-        self.assertEqual(commands[1].command, "docker compose down -v\n")
+        self.assertEqual(
+            commands[1].command,
+            'docker compose --profile "*" down -v --remove-orphans\n',
+        )
         self.assertEqual(commands[1].expected_outputs, [])
 
     def _write_readme(self, content: str) -> Path:
@@ -402,6 +405,16 @@ class SkipCommandTests(GitRepoTestCase):
         self.assertTrue(should_skip_command("docker compose --profile studio up --build"))
         self.assertFalse(should_skip_command("docker compose up test --build"))
         self.assertFalse(should_skip_command("open specmatic studio"))
+
+    def test_does_not_skip_one_off_compose_run_for_studio_service(self) -> None:
+        self.assertFalse(
+            should_skip_command(
+                "docker compose run --rm --no-deps --entrypoint sh studio -lc 'echo fixed'"
+            )
+        )
+
+    def test_still_skips_compose_exec_for_studio_service(self) -> None:
+        self.assertTrue(should_skip_command("docker compose exec -T studio specmatic run-suite"))
 
 
 class PreflightTests(GitRepoTestCase):

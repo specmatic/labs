@@ -1,0 +1,3 @@
+These certificates and private keys are fixed test fixtures for the local security lab.
+They are public, use the password "changeit", and must never be reused outside this demo.
+The application image excludes this directory; Docker Compose mounts it at runtime.

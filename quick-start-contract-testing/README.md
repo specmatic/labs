@@ -91,7 +91,7 @@ Ignore:
 Clean up:
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Part B: Fix the provider implementation
@@ -111,7 +111,7 @@ Do not change anything else.
 Alternatively, just run the following command:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise -lc "sed -i 's/"petType"/"type"/g' service/server.py"
+docker compose run --rm --no-deps --entrypoint sh test -lc "sed -i 's/"petType"/"type"/g' service/server.py"
 ```
 
 ## Part C: Re-run tests (expected to pass)
@@ -129,7 +129,7 @@ Tests run: 1, Successes: 1, Failures: 0, WIP: 0, Errors: 0
 Clean up:
 
 ```shell
-docker compose down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Optional: Run the same check in Studio
@@ -173,7 +173,7 @@ How to inspect the evidence:
 
 Stop services:
 ```shell
-docker compose --profile studio down -v
+docker compose --profile "*" down -v --remove-orphans
 ```
 
 ## Pass criteria

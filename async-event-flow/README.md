@@ -135,7 +135,7 @@ To:
 Alternatively, just run the following commands:
 
 ```shell
-docker run --rm --entrypoint sh -v "${PWD}:/usr/src/app" specmatic/enterprise:latest -lc 'cp .backup/acceptOrder-with-before.json examples/async-order-service/acceptOrder.json && cp .backup/outForDeliveryOrder-with-before.json examples/async-order-service/outForDeliveryOrder.json'
+docker compose run --rm --no-deps --entrypoint sh studio -lc 'cp .backup/acceptOrder-with-before.json examples/async-order-service/acceptOrder.json && cp .backup/outForDeliveryOrder-with-before.json examples/async-order-service/outForDeliveryOrder.json'
 ```
 
 4. Restart Docker Containers
