@@ -48,6 +48,7 @@ components:
         servers:
           - host: "${KAFKA_BROKER_HOST:kafka:9092}"
             protocol: kafka
+            type: external
     taxServiceMock:
       openapi:
         type: mock

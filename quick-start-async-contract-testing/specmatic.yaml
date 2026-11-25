@@ -21,6 +21,7 @@ systemUnderTest:
         servers:
           - host: kafka:9092
             protocol: kafka
+            type: external
 
 specmatic:
   license:
